@@ -1,0 +1,35 @@
+<div class="page-sidebar navbar-collapse collapse">
+
+    <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-hover-submenu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+            <li id="dashboard" class="nav-item">
+            <a class="nav-link nav-toggle" ng-click="goToDashboard('dashboard')">
+                <i class="icon-home"></i>
+                <span class="title">监控面板</span>
+            </a>
+        </li>
+        <li id="stardata" class="nav-item">
+            <a ng-click="dataConnect('stardata')">
+                <i class="icon-bar-chart"></i>
+                <span class="title">原始数据</span>
+            </a>
+        </li>
+        <li id="blank" class="nav-item">
+            <a ng-click="dataConnect('blank')">
+                <i class="icon-bar-chart"></i>
+                <span class="title">数据分析</span>
+            </a>
+        </li>
+        <li id="threshold" class="nav-item">
+            <a ng-click="dataConnect('threshold')">
+                <i class="icon-bulb"></i>
+                <span class="title">阈值报警设置</span>
+            </a>
+        </li>
+        <li id="administrator" class="nav-item" data-ng-show="adminShow">
+            <a ng-click="dataConnect('administrator')">
+                <i class="icon-user"></i>
+                <span class="title">管理员管理</span>
+            </a>
+        </li>
+    </ul>
+</div>

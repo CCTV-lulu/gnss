@@ -1,0 +1,7 @@
+{
+  "posPort":3001,
+  "statis_open":0,
+  "eph_diff":3000,
+  "ele_update":15,
+  "statis_url":"http://127.0.0.1:3002/"
+}

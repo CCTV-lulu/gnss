@@ -1,0 +1,98 @@
+<div class="page-header navbar navbar-fixed-top">
+    <div class="page-header-inner">
+        <div class="page-logo">
+            <a ng-click="toHome()">
+                <img src="assets/layout2/img/gnss.png" style="margin-top: 16px" alt="logo" class="logo-default" /> </a>
+            <div class="menu-toggler sidebar-toggler"></div>
+        </div>
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
+        <div class="page-actions" ng-show="stationShow">
+            <div class="btn-group">
+                <button type="button" class="btn btn-circle btn-outline red dropdown-toggle" data-toggle="dropdown">
+                    <span ng-bind="baseStation">&nbsp;</span>&nbsp;
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <base-Station-List></base-Station-List>
+                </ul>
+            </div>
+        </div>
+        <div class="page-actions" ng-show="starShow">
+            <div class="btn-group">
+                <button type="button" class="btn btn-circle btn-outline red dropdown-toggle" data-toggle="dropdown">
+                    <span ng-bind="baseStartStation">&nbsp;</span>&nbsp;
+                    <!--baseStartStation原始数据页面-->
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <star-Data-Station-List></star-Data-Station-List>
+                </ul>
+            </div>
+        </div>
+        <div class="page-actions" ng-show="starShow">
+            <div class="btn-group">
+                <button type="button" class="btn btn-circle btn-outline blue dropdown-toggle" data-toggle="dropdown">
+                    <span ng-bind="signalType">&nbsp;</span>&nbsp;
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <signal-Type-List></signal-Type-List>
+                </ul>
+            </div>
+        </div>
+
+        <div class="page-top">
+            <div class="top-menu">
+                <ul class="nav navbar-nav pull-right">
+                    <li class="dropdown dropdown-user" ng-show="socketStatusShow">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                           data-close-others="true">
+                            <span ng-bind="StationSocketStatus"></span>
+                        </a>
+                    </li>
+                    <li class="dropdown dropdown-user" ng-show="stationShow">
+                        <a href="javascript:;" style="float: right" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                           data-close-others="true">
+                            <span> 刷新频度 : </span>
+                            <span id="frequency" ng-bind="Frequency"> </span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-default">
+                            <li>
+                                <a href="javascript:;" ng-click="refreshFrequency(1)">
+                                     1s </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" ng-click="refreshFrequency(5)">
+                                    5s </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" ng-click="refreshFrequency(10)">
+                                    10s </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" ng-click="refreshFrequency(30)">
+                                     30s </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown dropdown-user">
+                        <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
+                           data-close-others="true">
+                            <img alt="" class="img-circle" src="assets/layout2/img/user1.png"/>
+                            <span class="username" data-ng-bind="activeUser"></span>
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-default">
+                            <li>
+                                <a href="#" ng-click="logoutGnss()">
+                                    <i class="icon-key"></i> 登 出 </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

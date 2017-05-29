@@ -1,0 +1,319 @@
+<h1 class="page-title"> 北斗卫星 数据面板 </h1>
+<div class="row">
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat dashboard-stat-v2 blue">
+            <div class="visual">
+                <i class="fa fa-comments"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-ng-bind="satelliteData.bdsSatellite"></span>
+                </div>
+                <div class="desc"> 北斗卫星</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat dashboard-stat-v2 red">
+            <div class="visual">
+                <i class="fa fa-bar-chart-o"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-ng-bind="satelliteData.gpsSatellite"></span>
+                </div>
+                <div class="desc"> GPS卫星</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat dashboard-stat-v2 green">
+            <div class="visual">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-ng-bind="satelliteData.glsSatellite"></span>
+                </div>
+                <div class="desc"> GLS卫星</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="dashboard-stat dashboard-stat-v2 purple">
+            <div class="visual">
+                <i class="fa fa-globe"></i>
+            </div>
+            <div class="details">
+                <div class="number">
+                    <span data-counter="counterup" data-ng-bind="nowTime"></span>
+                </div>
+                <div class="desc"> 当前时间</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="height: 100px;">
+    <div class="col-lg-offset-1 col-md-offset-1 col-lg-2 col-md-2 col-sm-4 col-xs-6">
+        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
+            <div class="visual"></div>
+            <div class="details">
+                <div class="desc" style="padding-top: 20px">
+                    <span data-counter="counterup" data-ng-bind="cooacc.lon"></span>
+                </div>
+                <div class="desc"> 经度</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
+            <div class="visual"></div>
+            <div class="details">
+                <div class="desc" style="padding-top: 20px">
+                    <span data-counter="counterup" data-ng-bind="cooacc.lat"></span>
+                </div>
+                <div class="desc"> 纬度</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
+            <div class="visual"></div>
+            <div class="details">
+                <div class="desc" style="padding-top: 20px">
+                    <span data-counter="counterup" data-ng-bind="cooacc.ele"></span>
+                </div>
+                <div class="desc"> 高程</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
+            <div class="visual"></div>
+            <div class="details">
+                <div class="desc" style="padding-top: 20px">
+                    <span data-counter="counterup" data-ng-bind="cooacc.latacc"></span>
+                </div>
+                <div class="desc"> 水平精度(m)</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
+        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
+            <div class="visual"></div>
+            <div class="details">
+                <div class="desc" style="padding-top: 20px">
+                    <span data-counter="counterup" data-ng-bind="cooacc.lonacc"></span>
+                </div>
+                <div class="desc"> 纬度精度(m)</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!--主页系统图-->
+<div class="table-responsive col-lg-12 col-xs-12 col-sm-12">
+    <table class="table">
+        <caption style="font-size: 23px;color: #010100">北斗卫星 数据面板</caption>
+        <thead>
+        <tr style="text-align: center">
+            <th></th>
+            <th>经度</th>
+            <th>维度</th>
+            <th>高程</th>
+            <th>定位卫星数</th>
+            <th>跟踪卫星数</th>
+            <th>故障星号</th>
+            <th>HDOP</th>
+            <th>VDOP</th>
+            <th>水平误差</th>
+            <th>垂直误差</th>
+            <th>hpl</th>
+            <th>VPL</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr style="text-align: center">
+            <td>北斗</td>
+            <td>{{bdInfo.lon}}</td>
+            <td >{{bdInfo.lat}}</td>
+            <td>{{bdInfo.alt}}</td>
+            <td><div class="number">
+                <span data-counter="counterup" >{{bdInfo.posNum}}</span>
+                </div>
+            </td>
+            <td>{{bdInfo.geNum}}</td>
+            <td>{{bdInfo.exsats}}</td>
+            <td>{{bdInfo.hdop}}</td>
+            <td>{{bdInfo.vdop}}</td>
+            <td>{{bdInfo.dh}}</td>
+            <td>{{bdInfo.dv}}</td>
+            <td>{{bdInfo.hpl}}</td>
+            <td>{{bdInfo.vpl}}</td>
+        </tr>
+        <tr style="text-align: center">
+            <td>GPS</td>
+            <td>{{gpInfo.lon}}</td>
+            <td >{{gpInfo.lat}}</td>
+            <td>{{gpInfo.alt}}</td>
+            <td><div class="number">
+                <span data-counter="counterup" >{{gpInfo.posNum}}</span>
+            </div>
+            </td>
+            <td>{{gpInfo.geNum}}</td>
+            <td>{{gpInfo.exsats}}</td>
+            <td>{{gpInfo.hdop}}</td>
+            <td>{{gpInfo.vdop}}</td>
+            <td>{{gpInfo.dh}}</td>
+            <td>{{gpInfo.dv}}</td>
+            <td>{{gpInfo.hpl}}</td>
+            <td>{{gpInfo.vpl}}</td>
+        <tr style="text-align: center">
+            <td>GLONASS</td>
+            <td>{{glInfo.lon}}</td>
+            <td >{{glInfo.lat}}</td>
+            <td>{{glInfo.alt}}</td>
+            <td><div class="number">
+                <span data-counter="counterup" >{{glInfo.posNum}}</span>
+            </div>
+            </td>
+            <td>{{glInfo.geNum}}</td>
+            <td>{{glInfo.exsats}}</td>
+            <td>{{glInfo.hdop}}</td>
+            <td>{{glInfo.vdop}}</td>
+            <td>{{glInfo.dh}}</td>
+            <td>{{glInfo.dv}}</td>
+            <td>{{glInfo.hpl}}</td>
+            <td>{{glInfo.vpl}}</td>
+        <tr style="text-align: center">
+            <td>组合</td>
+            <td>{{groupInfo.lon}}</td>
+            <td >{{groupInfo.lat}}</td>
+            <td>{{groupInfo.alt}}</td>
+            <td><div class="number">
+                <span data-counter="counterup" >{{groupInfo.posNum}}</span>
+            </div>
+            </td>
+            <td>{{groupInfo.geNum}}</td>
+            <td>{{groupInfo.exsats}}</td>
+            <td>{{groupInfo.hdop}}</td>
+            <td>{{groupInfo.vdop}}</td>
+            <td>{{groupInfo.dh}}</td>
+            <td>{{groupInfo.dv}}</td>
+            <td>{{groupInfo.hpl}}</td>
+            <td>{{groupInfo.vpl}}</td>
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div id="chartBox" class="col-lg-6 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">星空图</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="starMap_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="starMap_content" class="display-none">
+                            <div id="starMap" class="chart" style="height: 350px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-bar-chart font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">卫星数量</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="satnum_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="satnum_content" class="display-none">
+                            <div id="satnum" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-share font-red-sunglo hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">DOP值</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="DopValue_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="DopValue_content" class="display-none">
+                            <div id="DopValue" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-xs-12 col-sm-12">
+                <!-- BEGIN PORTLET-->
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-bar-chart font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">绝对误差</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="absoluteError_loading">
+                            <img src="assets/img/loading.gif" alt="loading"></div>
+                        <div id="absoluteError_content" class="display-none">
+                            <div id="absoluteError" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PORTLET-->
+            </div>
+            <div class="col-lg-6 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-share font-red-sunglo hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">定位精度</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="chartPositionPrecision_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="chartPositionPrecision_content" class="display-none">
+                            <div id="chartPositionPrecision" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title" id="div_width">
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">保护水平</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="protectionLevel_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="protectionLevel_content" class="display-none">
+                            <div id="protectionLevel" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

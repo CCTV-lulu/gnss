@@ -1,0 +1,91 @@
+<div class="row">
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="icon-settings"></i>阈值报警设置 </div>
+    </div>
+    <div class="portlet-body form">
+        <form class="form-horizontal">
+            <div class="form-body">
+
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">基站名：</label>
+                    <div class="col-md-4">
+                        <select id='single' class='form-control select2' ng-model="station" ng-change="getStationThreshold()">
+                        <option ng-repeat='blankStation in allBlankStation' value={{blankStation.name}}>{{blankStation.name}}</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">卫星数量阈值：</label>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control input-circle" ng-model="test.staNumThresholdMax"  placeholder="max值">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control input-circle" ng-model="test.staNumThresholdMin" placeholder="min值">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-circle green" ng-click="commitThreshold('staNumThresholdMax','staNumThresholdMin')">删 除</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">POD值阈值：</label>
+                    <div class="col-md-2    ">
+                        <input type="text" class="form-control input-circle" ng-model="test.pdopThresholdMax" placeholder="max值">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control input-circle" ng-model="test.pdopThresholdMin" placeholder="min值">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-circle green" ng-click="commitThreshold('pdopThresholdMax','pdopThresholdMin')">删 除</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">绝对误差阈值：</label>
+                    <div class="col-md-2    ">
+                        <input type="text" class="form-control input-circle"ng-model="test.absoluteThresholdMax" placeholder="max值">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control input-circle" ng-model="test.absoluteThresholdMin" placeholder="min值">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-circle green" ng-click="commitThreshold('absoluteThresholdMax','absoluteThresholdMin')">删 除</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">定位精度阈值：</label>
+                    <div class="col-md-2    ">
+                        <input type="text" class="form-control input-circle" ng-model="test.posaccThresholdMax" placeholder="max值">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control input-circle" ng-model="test.posaccThresholdMin" placeholder="min值">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-circle green" ng-click="commitThreshold('posaccThresholdMax','posaccThresholdMin')">删 除</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">保护水平阈值：</label>
+                    <div class="col-md-2    ">
+                        <input type="text" class="form-control input-circle" ng-model="test.protectionLevelThresholdMax" placeholder="max值">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control input-circle" ng-model="test.protectionLevelThresholdMin" placeholder="min值">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-circle green" ng-click="commitThreshold('protectionLevelThresholdMax','protectionLevelThresholdMin')">删 除</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-lg-offset-5 col-md-offset-4">
+                        <button class="btn btn-circle green col-md-2" ng-click="commitThreshold('','')"> 保 存 </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>

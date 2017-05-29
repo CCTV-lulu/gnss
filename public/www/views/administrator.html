@@ -1,0 +1,114 @@
+<div class="row">
+    <div class="portlet box blue">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-cogs"></i>用户信息表
+            </div>
+        </div>
+        <div class="portlet-body col-md-12">
+            <div class="row">
+                <button class="btn green col-md-1 col-sm-1" style="margin-left: 20px" id="clear-info"
+                        ng-click="addUsers()"
+                        style="margin-bottom: 10px">添加用户
+                </button>
+                <div class="col-md-offset-0 col-md-2 col-sm-3">
+                    <input ng-model="username" class="form-control" placeholder="用户名"
+                           id="name-info" type="text" value/></div>
+                <div class="col-md-offset-0 col-md-2 col-sm-3">
+                    <input ng-model="password" class="form-control" placeholder="密码"
+                           id="pass-info" type="password" value/></div>
+                <div class="form-group">
+                    <div class="col-md-2">
+                        <select id='{{baseStation._id}}' class='form-control select2' ng-model="station">
+                            <option ng-show=false disabled value=''>请选择基站</option>
+                            <option ng-repeat='baseStation in allStation' value={{baseStation.staId}}>
+                                {{baseStation.staId}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-3">
+                    <label id="adminAuthority" class="col-md-offset-1"><input type="checkbox" name="admin"
+                            >admin</label></div>
+
+
+            </div>
+            <div class="table-responsive" style="margin-top: 30px">
+                <all-Users-List></all-Users-List>
+            </div>
+            <!-- 模态框（Modal） -->
+            <div class="modal fade" id="navbar_edit" tabindex="-1" role="dialog"
+                 　　aria-labelledby="roleEditLabel" aria-hidden="true">
+                　　<div class="modal-dialog" style="width:500px;">
+                　　　　<div class="modal-content">
+                　　　　　　<div class="modal-header">
+                　　　　　　　　<button type="button" class="close" data-dismiss="modal">&times;</button>
+                　　　　　　　　<h4 class="modal-title" id="roleEditLabel">修改密码</h4>
+                　　　　　　</div>
+                　　　　　　<div class="modal-body" style="line-height: 0.1425">
+                　　　　　　<div style="width:90%;">
+                　　　　　　　　<form class="form-horizontal" id="navbar_pwd_reset">
+                　　　　　　　　　　<div class="form-group">
+                　　　　　　　　　　　　<label class="col-sm-4 control-label" for="old_password">旧密码：</label>
+                　　　　　　　　　　　　<div class="col-sm-8" style="padding:0">
+                　　　　　　　　　　　　<input class="col-sm-12" type="password" id="old_password" name="old_password" placeholder="请输入旧密码 " />
+                　　　　　　　　　　　　</div>
+                　　　　　　　　　　</div>
+                　　　　　　　　　　<div class="form-group">
+                　　　　　　　　　　　　<label class="col-sm-4 control-label" for="new_password">新密码：</label>
+                　　　　　　　　　　　　<div class="col-sm-8" style="padding:0">
+                　　　　　　　　　　　　<input class="col-sm-12" type="password" id="new_password" name="new_password" placeholder="请输入新密码 " />
+                　　　　　　　　　　　　</div>
+                　　　　　　　　　　</div>
+                　　　　　　　　　　<div class="form-group">
+                　　　　　　　　　　　　<label class="col-sm-4 control-label" for="confirm_password">确认新密码：</label>
+                　　　　　　　　　　　　<div class="col-sm-8" style="padding:0">
+                　　　　　　　　　　　　　　<input class="col-sm-12" type="password" id="confirm_password" name="confirm_password" placeholder="确认新密码 " />
+                　　　　　　　　　　　　</div>
+                　　　　　　　　　　</div>
+                　　　　　　　　</form>
+                　　　　　　</div>
+                　　　　</div>
+                　　　　<div class="modal-footer">
+                <!--　　　　　　<button type="button" class="btn btn-xs btn-default" data-dismiss="modal" id="navbar_close_btn">-->
+                <!--　　　　　　　　<i class="ace-icon fa fa-times bigger-110"></i> <span class="bigger-110 no-text-shadow">关闭</span>-->
+                <!--　　　　　　</button>-->
+                　　　　　　<button type="button" class="btn btn-xs btn-primary" id="navbar_save_btn">
+                　　　　　　　　<i class="ace-icon fa fa-floppy-o bigger-110"></i> <span class="bigger-110 no-text-shadow">保存</span>
+                　　　　　　</button>
+                　　　　</div>
+                　　　</div>
+                　　　　<!-- /.modal-content -->
+                　　</div>
+                <!-- /.modal -->
+            </div>
+
+        </div>
+        <div class="portlet-title">
+            <div class="caption">
+                <i class=" fa fa-cogs"></i>基站信息表
+            </div>
+        </div>
+
+        <div class="portlet-body col-md-12">
+            <div class="row">
+                <div id="reminds" style="position: absolute ; top:-1%;right:70px;z-index: 30 ;width: 300px"></div>
+                <button class="btn green col-md-1 col-sm-1" style="margin-left: 20px" ng-click="addStation()"
+                        style="margin-bottom: 10px">添加基站
+                </button>
+                <div class="col-md-offset-1 col-md-2 col-sm-3">
+                    <input ng-model="name" class="form-control" placeholder="基站名称"
+                           id="station-name" type="text" value/></div>
+                <div class="col-md-offset-1 col-md-2 col-sm-3">
+                    <input ng-model="staId" class="form-control" placeholder="基站ID"
+                           id="station-id" type="text" value/></div>
+                <!--<div class="col-md-offset-1 col-md-2 col-sm-3">-->
+                    <!--<input ng-model="stationName" class="form-control" placeholder="基站"-->
+                           <!--id="station-info" type="text" value/></div>-->
+            </div>
+            <div class="table-responsive" style="margin-top: 30px">
+                <all-Station-List></all-Station-List>
+            </div>
+        </div>
+    </div>
+</div>

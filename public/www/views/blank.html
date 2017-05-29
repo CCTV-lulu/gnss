@@ -1,0 +1,147 @@
+<h1 class="page-title"> 北斗卫星 数据分析 </h1>
+<div class="page-bar" style="margin-bottom: 0;height: 5px">
+    <div class="loading" style="background: #4271ff;height: 5px;z-index: 99999;display:none"></div>
+</div>
+<div class="page-bar">
+    <div class="row">
+        <div class="col-md-5" style="margin: 10px 10px 20px 10px;">
+            <di>时间选择：</di>
+            <div class="controls">
+                <div id="reportrange" class="pull-left dateRange" style="width:350px">
+                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                    <span id="searchDateRange"></span>
+                    <b class="caret"></b>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="margin: 28px 10px 20px 10px;">
+            <div class="form-group">
+                <blank-Station-List></blank-Station-List>
+            </div>
+        </div>
+        <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
+            <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>
+        </div>
+    </div>
+</div>
+<div id="dataStatisticsChartLoding" class="display-none" style="margin-left: 20px" >
+    <img src="assets/img/loading.gif" alt="loading"/></div>
+<div class="row" id="dataStatisticsChart" style="opacity: 0">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-settings font-dark"></i>
+                            <span class="caption-subject font-dark sbold uppercase">精确数据</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="accuracy_Hori_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="accuracy_Hori_content" class="display-none">
+                            <div id="accuracy_Hori" class="chart" style="min-width:400px;height:500px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-settings font-dark"></i>
+                            <span class="caption-subject font-dark sbold uppercase">精确数据</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="accuracy_Vert_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="accuracy_Vert_content" class="display-none">
+                            <div id="accuracy_Vert" class="chart" style="min-width:400px;height:500px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-settings font-dark"></i>
+                            <span class="caption-subject font-dark sbold uppercase">普通数据</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="accuracy_95_Hori_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="accuracy_95_Hori_content" class="display-none">
+                            <div id="accuracy_95_Hori" class="chart" style="min-width:400px;height:500px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-settings font-dark"></i>
+                            <span class="caption-subject font-dark sbold uppercase">普通数据</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="accuracy_95_Vert_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="accuracy_95_Vert_content" class="display-none">
+                            <div id="accuracy_95_Vert" class="chart" style="min-width:400px;height:500px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-book fa-fw font-dark"></i>
+                            <span class="caption-subject font-dark sbold uppercase"> 事件 </span>
+                            <button class="col-md-8 btn btn-circle green" ng-click="downloadData()"> 下 载</button>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="table-responsive">
+                            <integrity-List></integrity-List>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-10 col-lg-offset-1 col-md-offset-1">
+                    <div class="dashboard-stat dashboard-stat-v2 blue">
+                        <div class="details">
+                            <div class="number">
+                                <span data-counter="counterup" data-ng-bind="continuity"></span>
+                            </div>
+                            <div class="desc"> 连续性</div>
+                        </div>
+                        <div class="visual">
+                            <i class="fa fa-bar-chart-o"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-10">
+                    <div class="dashboard-stat dashboard-stat-v2 blue">
+                        <div class="details">
+                            <div class="number">
+                                <span data-counter="counterup" data-ng-bind="availability"></span>
+                            </div>
+                            <div class="desc"> 可用性</div>
+                        </div>
+                        <div class="visual">
+                            <i class="fa fa-bar-chart-o"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

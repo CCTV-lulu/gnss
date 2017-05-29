@@ -1,0 +1,36 @@
+{
+  "0":{
+    "startTime":0,
+    "Horizontal":{
+      "X":[0],
+      "Y":[0]
+    },
+    "Vertical":{
+      "X":[0],
+      "Y":[0]
+    },
+    "Hori95":[
+      {
+        "time":{
+          "time":1471017600,
+          "sec":0
+        },
+        "mean":0,
+        "sigma":0,
+        "count":0
+      }
+    ],
+    "Vert95":[
+      {
+        "time":{
+          "time":1471017600,
+          "sec":0
+        },
+        "mean":0,
+        "sigma":0,
+        "count":0
+      }
+    ],
+    "contEvent":[]
+  }
+}
