@@ -84,7 +84,7 @@ function writeFileSync(data, staInfo) {
     var dir_name = fileDate.Format("yyyy-MM-dd-hh");
     dir_name = dir_name + '-' + parseInt(fileDate.getMinutes() / 10);
     fs.writeFileSync("../station" + data.station_id + "/" + dir_name, JSON.stringify(staInfo) + "@qAq@", {flag: 'a'});
-    console.log('save station success')
+    //console.log('save station success')
 }
 
 
@@ -155,7 +155,7 @@ io.on('connection', function (socket) {
             StationSocketStatus[stationName] = true;
         }
         onMessage(data)
-        console.log('receive')
+        //console.log('receive')
     }, function (error) {
         console.log(error)
     });

@@ -12,8 +12,12 @@ module.exports = {
     },
     where: function (condition, limit) {
         var defer = Promise.defer();
+        console.log('where')
+        console.log("../station"+condition.station_id)
         fs.readdir("../station"+condition.station_id, function (err, files) {
+
             if(err) {
+                console.log('-------------err')
                 fs.stat("../station"+condition.station_id, function (err, stat) {
                     if (err.code == 'ENOENT'){
                         defer.resolve(false);
@@ -23,6 +27,7 @@ module.exports = {
                 })
             }else {
                 if (files.length > 0 && files.length < 2) {
+                    console.log('--------files-----')
                     fs.readFile("../station" + condition.station_id + '/' + files[0], function (err, data) {
                         if (err) {
                             defer.reject('getStationStatus error');
@@ -31,6 +36,7 @@ module.exports = {
                         getLimitData(oneFileData);
                     });
                 } else if (files.length > 1) {
+                    console.log('--------files 1-----')
                     fs.readFile("../station" + condition.station_id + '/' + files[files.length - 1], function (err, data) {
                         if (err) {
                             defer.reject('getStationStatus error');
@@ -52,7 +58,10 @@ module.exports = {
             }else if(limit == 10&&stationItem.length>10){
                 defer.resolve(stationItem.slice(-10));
             }
+            console.log('--------data-----')
+            console.log(stationItem)
         }
+
         return defer.promise;
     }
 };

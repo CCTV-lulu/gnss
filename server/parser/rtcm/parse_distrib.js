@@ -241,7 +241,7 @@ function datatype(sta_id,data){
    // console.log(rtcm)
     data.copy(rtcm.buff,rtcm.index,0,data.length);
     rtcm.index+=data.length;
-    console.log('---------------------------------------')
+
     //console.log(rtcm)
     for(i=rtcm.first;i<rtcm.index;){
         if(rtcm.buff[i]==opt.rtcm_title){
