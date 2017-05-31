@@ -1,68 +1,9 @@
 <h1 class="page-title"> 北斗卫星 数据面板 </h1>
 
 
-<div class="row" style="height: 100px;">
-    <div class="col-lg-offset-1 col-md-offset-1 col-lg-2 col-md-2 col-sm-4 col-xs-6">
-        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
-            <div class="visual"></div>
-            <div class="details">
-                <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.Lon"></span>
-                </div>
-                <div class="desc"> 经度</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
-            <div class="visual"></div>
-            <div class="details">
-                <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.lat"></span>
-                </div>
-                <div class="desc"> 纬度</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
-            <div class="visual"></div>
-            <div class="details">
-                <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.ele"></span>
-                </div>
-                <div class="desc"> 高程</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
-            <div class="visual"></div>
-            <div class="details">
-                <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.latacc"></span>
-                </div>
-                <div class="desc"> 水平精度(m)</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-        <a class="dashboard-stat dashboard-stat-v2 blue" style="height: 80px;">
-            <div class="visual"></div>
-            <div class="details">
-                <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.Lonacc"></span>
-                </div>
-                <div class="desc"> 纬度精度(m)</div>
-            </div>
-        </a>
-    </div>
-</div>
-
 <!--主页系统图-->
 <div class="table-responsive col-lg-12 col-xs-12 col-sm-12">
     <table class="table">
-        <caption style="font-size: 23px;color: #010100">北斗卫星 数据面板</caption>
         <thead>
         <tr style="text-align: center">
             <th></th>
@@ -83,73 +24,73 @@
         <tbody>
         <tr style="text-align: center">
             <td>北斗</td>
-            <td>{{bdInfo.Lon}}</td>
-            <td >{{bdInfo.Lat}}</td>
-            <td>{{bdInfo.H}}</td>
+            <td>{{bdInfo.Lon.toFixed(6)}}</td>
+            <td >{{bdInfo.Lat.toFixed(6)}}</td>
+            <td>{{bdInfo.H.toFixed(2)}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{bdInfo.posNum}}</span>
                 </div>
             </td>
             <td>{{bdInfo.trackNum}}</td>
             <td>{{bdInfo.exsats}}</td>
-            <td>{{bdInfo.HDOP}}</td>
-            <td>{{bdInfo.VDOP}}</td>
-            <td>{{bdInfo.dH}}</td>
-            <td>{{bdInfo.dV}}</td>
-            <td>{{bdInfo.HPL}}</td>
-            <td>{{bdInfo.VPL}}</td>
+            <td>{{bdInfo.HDOP.toFixed(6)}}</td>
+            <td>{{bdInfo.VDOP.toFixed(6)}}</td>
+            <td>{{bdInfo.dH.toFixed(6)}}</td>
+            <td>{{bdInfo.dV.toFixed(6)}}</td>
+            <td>{{bdInfo.HPL.toFixed(6)}}</td>
+            <td>{{bdInfo.VPL.toFixed(6)}}</td>
         </tr>
         <tr style="text-align: center">
             <td>GPS</td>
-            <td>{{gpInfo.Lon}}</td>
-            <td >{{gpInfo.Lat}}</td>
-            <td>{{gpInfo.H}}</td>
+            <td>{{gpInfo.Lon.toFixed(6)}}</td>
+            <td >{{gpInfo.Lat.toFixed(6)}}</td>
+            <td>{{gpInfo.H.toFixed(2)}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{gpInfo.posNum}}</span>
             </div>
             </td>
             <td>{{gpInfo.trackNum}}</td>
             <td>{{gpInfo.exsats}}</td>
-            <td>{{gpInfo.HDOP}}</td>
-            <td>{{gpInfo.VDOP}}</td>
-            <td>{{gpInfo.dH}}</td>
-            <td>{{gpInfo.dV}}</td>
-            <td>{{gpInfo.HPL}}</td>
-            <td>{{gpInfo.VPL}}</td>
+            <td>{{gpInfo.HDOP.toFixed(6)}}</td>
+            <td>{{gpInfo.VDOP.toFixed(6)}}</td>
+            <td>{{gpInfo.dH.toFixed(6)}}</td>
+            <td>{{gpInfo.dV.toFixed(6)}}</td>
+            <td>{{gpInfo.HPL.toFixed(6)}}</td>
+            <td>{{gpInfo.VPL.toFixed(6)}}</td>
         <tr style="text-align: center">
             <td>GLONASS</td>
-            <td>{{glInfo.Lon}}</td>
-            <td >{{glInfo.Lat}}</td>
-            <td>{{glInfo.H}}</td>
+            <td>{{glInfo.Lon.toFixed(6)}}</td>
+            <td >{{glInfo.Lat.toFixed(6)}}</td>
+            <td>{{glInfo.H.toFixed(2)}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{glInfo.posNum}}</span>
             </div>
             </td>
             <td>{{glInfo.trackNum}}</td>
             <td>{{glInfo.exsats}}</td>
-            <td>{{glInfo.HDOP}}</td>
-            <td>{{glInfo.VDOP}}</td>
-            <td>{{glInfo.dH}}</td>
-            <td>{{glInfo.dV}}</td>
-            <td>{{glInfo.HPL}}</td>
-            <td>{{glInfo.VPL}}</td>
+            <td>{{glInfo.HDOP.toFixed(6)}}</td>
+            <td>{{glInfo.VDOP.toFixed(6)}}</td>
+            <td>{{glInfo.dH.toFixed(6)}}</td>
+            <td>{{glInfo.dV.toFixed(6)}}</td>
+            <td>{{glInfo.HPL.toFixed(6)}}</td>
+            <td>{{glInfo.VPL.toFixed(6)}}</td>
         <tr style="text-align: center">
             <td>组合</td>
-            <td>{{groupInfo.Lon}}</td>
-            <td >{{groupInfo.Lat}}</td>
-            <td>{{groupInfo.H}}</td>
+            <td>{{groupInfo.Lon.toFixed(6)}}</td>
+            <td >{{groupInfo.Lat.toFixed(6)}}</td>
+            <td>{{groupInfo.H.toFixed(2)}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{groupInfo.posNum}}</span>
             </div>
             </td>
             <td>{{groupInfo.trackNum}}</td>
             <td>{{groupInfo.exsats}}</td>
-            <td>{{groupInfo.HDOP}}</td>
-            <td>{{groupInfo.VDOP}}</td>
-            <td>{{groupInfo.dH}}</td>
-            <td>{{groupInfo.dV}}</td>
-            <td>{{groupInfo.HPL}}</td>
-            <td>{{groupInfo.VPL}}</td>
+            <td>{{groupInfo.HDOP.toFixed(6)}}</td>
+            <td>{{groupInfo.VDOP.toFixed(6)}}</td>
+            <td>{{groupInfo.dH.toFixed(6)}}</td>
+            <td>{{groupInfo.dV.toFixed(6)}}</td>
+            <td>{{groupInfo.HPL.toFixed(6)}}</td>
+            <td>{{groupInfo.VPL.toFixed(6)}}</td>
         </tbody>
     </table>
 </div>
@@ -231,7 +172,7 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-share font-red-sunglo hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">定位精度</span>
+                            <span class="caption-subject font-dark bold uppercase">gpsDH</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -256,6 +197,24 @@
                             <img src="assets/img/loading.gif" alt="loading"/></div>
                         <div id="protectionLevel_content" class="display-none">
                             <div id="protectionLevel" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-xs-12 col-sm-12">
+                <div class="portlet light ">
+                    <div class="portlet-title" id="_width">
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">高程图</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="H_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="H_content" class="display-none">
+                            <div id="H" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>

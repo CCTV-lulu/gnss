@@ -335,6 +335,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         var webIn = {
             posR: algoOut,
             timestamp: timestamp,//时间戳
+            time: logJSON.time,
             dataId: dataId,//id
             obsinfo:[],
             satpos:{gpsatpos:[],glsatpos:[],bdsatpos:[]},

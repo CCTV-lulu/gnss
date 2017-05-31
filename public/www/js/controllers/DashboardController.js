@@ -155,6 +155,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
                             showChart(data.stationData[i],function(){})
                             showDH(data.stationData,'gpsDH')
+                            showDH(data.stationData,'glsDH')
+                            showDH(data.stationData,'dbsDH')
+                            showH(data.stationData,'H')
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
                             //showSatelliteNum(data.stationData[i].satnum)
@@ -171,8 +174,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
-                    StarMapChart.starMap((chartData.stationData[0]).satpos);
-                    showChart(data.stationData[i],function(){})
+                    StarMapChart.starMap((chartData.satpos));
+                    showChart(chartData,function(){})
 
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
@@ -318,10 +321,13 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         };
         var show_date = [];
         for(var i =0;i<data.length;i++){
-            console.log(data.length)
-            show_date.push(data[i].posR[types[type]].dH)
+            if(data[i].posR[types[type]]){
+                //if(data[i].posR[types[type].dV)
+                show_date.push(data[i].posR[types[type].dV,data[i].posR[types[type]].dH])
+
+            }
         }
-        console.log(show_date)
+
 
         $('#'+type+'_loading').hide();
         $('#'+type+'_content').show();
@@ -340,15 +346,14 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 endAngle: 360
             },
             xAxis: {
-                tickInterval: 30,//x间隔，分12
+                tickInterval: 30,
                 min: 0,
                 max: 360,
                 labels: {
                     formatter: function () {
-                        return this.value + '°';
+                        return this.value
                     }
                 }
-                //弹框
             },
             yAxis: {
                 tickInterval: 10,
@@ -357,24 +362,16 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 reversed: true
             },
             plotOptions: {
-                //css
                 series: {
                     marker: {
                         radius: 2,
-                        //半径，颜色
-                        color:"red",
                         symbol: "circle"
                     },
                     animation: false,
-                    lineWidth: 0,
+                    lineWidth: 1,
                     pointStart: 0,
-                    pointInterval: 45,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.id}',
-                        inside: true,
-                        verticalAlign: 'middle'
-                    }
+                    pointInterval: 45
+
                 },
                 column: {
                     pointPadding: 0,
@@ -383,11 +380,96 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             },
             series: [{
                 name: "北斗",
-                type: 'line',
-                data: show_date
+                type: 'scatter',
+                data: [[-10,190],[10,190],[50,30],[90,90]]
             }]
         });
     }
+
+
+
+
+    function showH(allSta,type){
+        var types ={
+            'gpsDH':0,
+            'glsDH':1,
+            'dbsDH':2,
+            'groupDH':3
+        };
+        var xAxis = [],gpsY=[],dbsY=[],groupY=[],glsY=[]
+
+        allSta.forEach(function(sta){
+            xAxis.push(sta.time);
+            gpsY.push(sta.posR[0]);
+            glsY.push(sta.posR[1]?sta.posR[1].H:0);
+            dbsY.push(sta.posR[2]?sta.posR[2].H:0);
+            groupY.push(sta.posR[3]?sta.posR[3].H:0);
+        });
+
+
+        $('#'+type+'_loading').hide();
+        $('#'+type+'_content').show();
+        Highcharts.setOptions({
+            lang: {
+                resetZoom: '重置',
+                resetZoomTitle: '重置缩放比例'
+            }
+        });
+        $('#'+type).highcharts({
+
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                type: 'line',
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift',
+                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+                resetZoomButton: {
+                    position:{
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: 0,
+                        y: -30
+                    },
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 0,
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            subtitle: {
+                text: '双击选中区域放大图标，按住shift点击拖动'
+            },
+            xAxis: {
+                categories: xAxis
+            },
+            series: [{
+                name: 'gpsDH',
+                data: gpsY
+            },{
+                name: 'glsDH',
+                data: glsY
+            },{
+                name: 'dbsDH',
+                data: dbsY
+            },{
+                name: 'groupDH',
+                data: groupY
+            }]
+        })
+    }
+
 
 
 
