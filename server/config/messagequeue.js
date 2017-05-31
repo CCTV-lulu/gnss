@@ -134,6 +134,8 @@ function onMessage(data) {
     var results = parse.parser_pos(0, bigBuff);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
+        console.log('-------------result')
+        console.log(sta_data)
         try {
             sta_data.station_id =  message.sta_id;
             saveStaInfo(sta_data)

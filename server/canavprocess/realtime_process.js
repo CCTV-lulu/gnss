@@ -69,7 +69,8 @@ function pos_config(sta_id) {
 }
 
 module.exports.parser_pos=function(sta_id,data) {
-    var rtcm=rtcm_init(sta_id);
+    var rtcm=rtcm_init(sta_id)
+
     var para=pos_config(sta_id);
     var pos_list = [];
     if(para!=0){
