@@ -33,8 +33,9 @@ Date.prototype.Format = function (fmt) { //author: meizz
 }
 
 function changeTimestamp(data) {
+
     if (data.posR && data.posR.Lat == 0 && data.posR.Lon == 0) return 0;
-    var receiveTime = data.posR.time.replace(new RegExp('-', 'gm'), ',')
+    var receiveTime = data.time.replace(new RegExp('-', 'gm'), ',')
         .replace(new RegExp(' ', 'gm'), ',')
         .replace(new RegExp(':', 'gm'), ',');
     var dateArr = receiveTime.split(',')
@@ -134,8 +135,6 @@ function onMessage(data) {
     var results = parse.parser_pos(0, bigBuff);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
-        console.log('-------------result')
-        console.log(sta_data)
         try {
             sta_data.station_id =  message.sta_id;
             saveStaInfo(sta_data)
