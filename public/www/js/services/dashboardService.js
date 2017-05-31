@@ -70,15 +70,15 @@ MetronicApp.factory('DataArray', function() {
             series: [{
                 name: "北斗",
                 type: 'scatter',
-                data: data.bdsatposArr
+                data: data.bdsatpos
             }, {
                 name: "gls",
                 type: 'scatter',
-                data: data.glsatposArr
+                data: data.glsatpos
             }, {
                 name: "gps",
                 type: 'scatter',
-                data: data.gpsatposArr
+                data: data.gpsatpos
             }]
         });
     }

@@ -141,14 +141,18 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     }
 
     function htmlString(data) {
+
         return "<tr>" +
-            "<td> " + data.prn + "</td>" +
-            "<td>" + data.sys + "</td>" +
+            "<td> " + data.sat + "</td>" +
             "<td>" + data.svh + "</td>" +
-            "<td>" + data.ion + "</td>" +
+            "<td>" + data.Ele + "</td>" +
+            "<td>" + data.Azi + "</td>" +
+            "<td>" + data.ura + "</td>" +
+            "<td>" + data.rura + "</td>" +
+            "<td>" + data.udre + "</td>" +
             "<td>" + data.week + "</td>" +
             "<td>" + data.tow + "</td>" +
-            "<td>" + data.time + "</td>" +
+            "<td>" + new Date(data.time).getTime() + "</td>" +
             "</tr>"
     }
 //原始数据页面

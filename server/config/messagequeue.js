@@ -35,7 +35,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
 function changeTimestamp(data) {
 
     if (data.posR && data.posR.Lat == 0 && data.posR.Lon == 0) return 0;
-    var receiveTime = data.time.replace(new RegExp('-', 'gm'), ',')
+    var receiveTime = data      .time.replace(new RegExp('-', 'gm'), ',')
         .replace(new RegExp(' ', 'gm'), ',')
         .replace(new RegExp(':', 'gm'), ',');
     var dateArr = receiveTime.split(',')

@@ -53,7 +53,7 @@ module.exports = {
             stationItem.pop();
             if(limit == 1){
                 defer.resolve(stationItem.slice(-1));
-            }else if(limit == 10&&stationItem.length>10){
+            }else if(limit == 10&&stationItem.length<=10){
                 defer.resolve(stationItem);
             }else if(limit == 10&&stationItem.length>10){
                 defer.resolve(stationItem.slice(-10));

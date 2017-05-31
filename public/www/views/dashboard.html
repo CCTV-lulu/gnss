@@ -1,58 +1,5 @@
 <h1 class="page-title"> 北斗卫星 数据面板 </h1>
-<div class="row">
-    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="dashboard-stat dashboard-stat-v2 blue">
-            <div class="visual">
-                <i class="fa fa-comments"></i>
-            </div>
-            <div class="details">
-                <div class="number">
-                    <span data-counter="counterup" data-ng-bind="satelliteData.bdsSatellite"></span>
-                </div>
-                <div class="desc"> 北斗卫星</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="dashboard-stat dashboard-stat-v2 red">
-            <div class="visual">
-                <i class="fa fa-bar-chart-o"></i>
-            </div>
-            <div class="details">
-                <div class="number">
-                    <span data-counter="counterup" data-ng-bind="satelliteData.gpsSatellite"></span>
-                </div>
-                <div class="desc"> GPS卫星</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="dashboard-stat dashboard-stat-v2 green">
-            <div class="visual">
-                <i class="fa fa-shopping-cart"></i>
-            </div>
-            <div class="details">
-                <div class="number">
-                    <span data-counter="counterup" data-ng-bind="satelliteData.glsSatellite"></span>
-                </div>
-                <div class="desc"> GLS卫星</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-        <div class="dashboard-stat dashboard-stat-v2 purple">
-            <div class="visual">
-                <i class="fa fa-globe"></i>
-            </div>
-            <div class="details">
-                <div class="number">
-                    <span data-counter="counterup" data-ng-bind="nowTime"></span>
-                </div>
-                <div class="desc"> 当前时间</div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <div class="row" style="height: 100px;">
     <div class="col-lg-offset-1 col-md-offset-1 col-lg-2 col-md-2 col-sm-4 col-xs-6">
@@ -60,7 +7,7 @@
             <div class="visual"></div>
             <div class="details">
                 <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.lon"></span>
+                    <span data-counter="counterup" data-ng-bind="cooacc.Lon"></span>
                 </div>
                 <div class="desc"> 经度</div>
             </div>
@@ -104,7 +51,7 @@
             <div class="visual"></div>
             <div class="details">
                 <div class="desc" style="padding-top: 20px">
-                    <span data-counter="counterup" data-ng-bind="cooacc.lonacc"></span>
+                    <span data-counter="counterup" data-ng-bind="cooacc.Lonacc"></span>
                 </div>
                 <div class="desc"> 纬度精度(m)</div>
             </div>
@@ -129,87 +76,87 @@
             <th>VDOP</th>
             <th>水平误差</th>
             <th>垂直误差</th>
-            <th>hpl</th>
+            <th>HPL</th>
             <th>VPL</th>
         </tr>
         </thead>
         <tbody>
         <tr style="text-align: center">
             <td>北斗</td>
-            <td>{{bdInfo.lon}}</td>
-            <td >{{bdInfo.lat}}</td>
-            <td>{{bdInfo.alt}}</td>
+            <td>{{bdInfo.Lon}}</td>
+            <td >{{bdInfo.Lat}}</td>
+            <td>{{bdInfo.H}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{bdInfo.posNum}}</span>
                 </div>
             </td>
-            <td>{{bdInfo.geNum}}</td>
+            <td>{{bdInfo.trackNum}}</td>
             <td>{{bdInfo.exsats}}</td>
-            <td>{{bdInfo.hdop}}</td>
-            <td>{{bdInfo.vdop}}</td>
-            <td>{{bdInfo.dh}}</td>
-            <td>{{bdInfo.dv}}</td>
-            <td>{{bdInfo.hpl}}</td>
-            <td>{{bdInfo.vpl}}</td>
+            <td>{{bdInfo.HDOP}}</td>
+            <td>{{bdInfo.VDOP}}</td>
+            <td>{{bdInfo.dH}}</td>
+            <td>{{bdInfo.dV}}</td>
+            <td>{{bdInfo.HPL}}</td>
+            <td>{{bdInfo.VPL}}</td>
         </tr>
         <tr style="text-align: center">
             <td>GPS</td>
-            <td>{{gpInfo.lon}}</td>
-            <td >{{gpInfo.lat}}</td>
-            <td>{{gpInfo.alt}}</td>
+            <td>{{gpInfo.Lon}}</td>
+            <td >{{gpInfo.Lat}}</td>
+            <td>{{gpInfo.H}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{gpInfo.posNum}}</span>
             </div>
             </td>
-            <td>{{gpInfo.geNum}}</td>
+            <td>{{gpInfo.trackNum}}</td>
             <td>{{gpInfo.exsats}}</td>
-            <td>{{gpInfo.hdop}}</td>
-            <td>{{gpInfo.vdop}}</td>
-            <td>{{gpInfo.dh}}</td>
-            <td>{{gpInfo.dv}}</td>
-            <td>{{gpInfo.hpl}}</td>
-            <td>{{gpInfo.vpl}}</td>
+            <td>{{gpInfo.HDOP}}</td>
+            <td>{{gpInfo.VDOP}}</td>
+            <td>{{gpInfo.dH}}</td>
+            <td>{{gpInfo.dV}}</td>
+            <td>{{gpInfo.HPL}}</td>
+            <td>{{gpInfo.VPL}}</td>
         <tr style="text-align: center">
             <td>GLONASS</td>
-            <td>{{glInfo.lon}}</td>
-            <td >{{glInfo.lat}}</td>
-            <td>{{glInfo.alt}}</td>
+            <td>{{glInfo.Lon}}</td>
+            <td >{{glInfo.Lat}}</td>
+            <td>{{glInfo.H}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{glInfo.posNum}}</span>
             </div>
             </td>
-            <td>{{glInfo.geNum}}</td>
+            <td>{{glInfo.trackNum}}</td>
             <td>{{glInfo.exsats}}</td>
-            <td>{{glInfo.hdop}}</td>
-            <td>{{glInfo.vdop}}</td>
-            <td>{{glInfo.dh}}</td>
-            <td>{{glInfo.dv}}</td>
-            <td>{{glInfo.hpl}}</td>
-            <td>{{glInfo.vpl}}</td>
+            <td>{{glInfo.HDOP}}</td>
+            <td>{{glInfo.VDOP}}</td>
+            <td>{{glInfo.dH}}</td>
+            <td>{{glInfo.dV}}</td>
+            <td>{{glInfo.HPL}}</td>
+            <td>{{glInfo.VPL}}</td>
         <tr style="text-align: center">
             <td>组合</td>
-            <td>{{groupInfo.lon}}</td>
-            <td >{{groupInfo.lat}}</td>
-            <td>{{groupInfo.alt}}</td>
+            <td>{{groupInfo.Lon}}</td>
+            <td >{{groupInfo.Lat}}</td>
+            <td>{{groupInfo.H}}</td>
             <td><div class="number">
                 <span data-counter="counterup" >{{groupInfo.posNum}}</span>
             </div>
             </td>
-            <td>{{groupInfo.geNum}}</td>
+            <td>{{groupInfo.trackNum}}</td>
             <td>{{groupInfo.exsats}}</td>
-            <td>{{groupInfo.hdop}}</td>
-            <td>{{groupInfo.vdop}}</td>
-            <td>{{groupInfo.dh}}</td>
-            <td>{{groupInfo.dv}}</td>
-            <td>{{groupInfo.hpl}}</td>
-            <td>{{groupInfo.vpl}}</td>
+            <td>{{groupInfo.HDOP}}</td>
+            <td>{{groupInfo.VDOP}}</td>
+            <td>{{groupInfo.dH}}</td>
+            <td>{{groupInfo.dV}}</td>
+            <td>{{groupInfo.HPL}}</td>
+            <td>{{groupInfo.VPL}}</td>
         </tbody>
     </table>
 </div>
 <div class="row">
     <div class="col-md-12">
         <div class="row">
-            <div id="chartBox" class="col-lg-6 col-xs-12 col-sm-12">
+            <div id="chartBox" class="col-lg-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
                     <div class="portlet-title">
                         <div class="caption">
@@ -226,54 +173,54 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="col-lg-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-bar-chart font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">卫星数量</span>
+                            <span class="caption-subject font-dark bold uppercase">GPSSNY</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="satnum_loading">
+                        <div id="gpsSNY_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="satnum_content" class="display-none">
-                            <div id="satnum" class="chart" style="height: 350px;"></div>
+                        <div id="gpsSNY_content" class="display-none">
+                            <div id="gpsSNY" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="col-lg-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-share font-red-sunglo hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">DOP值</span>
+                            <span class="caption-subject font-dark bold uppercase">glsSNY</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="DopValue_loading">
+                        <div id="glsSNY_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="DopValue_content" class="display-none">
-                            <div id="DopValue" class="chart" style="height: 350px;"></div>
+                        <div id="glsSNY_content" class="display-none">
+                            <div id="glsSNY" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-xs-12 col-sm-12">
+            <div class="col-lg-12 col-xs-12 col-sm-12">
                 <!-- BEGIN PORTLET-->
                 <div class="portlet light ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="icon-bar-chart font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">绝对误差</span>
+                            <span class="caption-subject font-dark bold uppercase">bdsSNY</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="absoluteError_loading">
+                        <div id="bdsSNY_loading">
                             <img src="assets/img/loading.gif" alt="loading"></div>
-                        <div id="absoluteError_content" class="display-none">
-                            <div id="absoluteError" class="chart" style="height: 350px;"></div>
+                        <div id="bdsSNY_content" class="display-none">
+                            <div id="bdsSNY" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -288,10 +235,10 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="chartPositionPrecision_loading">
+                        <div id="gpsDH_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="chartPositionPrecision_content" class="display-none">
-                            <div id="chartPositionPrecision" class="chart" style="height: 350px;"></div>
+                        <div id="gpsDH_content" class="display-none">
+                            <div id="gpsDH" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>

@@ -151,57 +151,52 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length-1)) {
-                            StarMapChart.starMap(StarMapChart.starMapData(data.stationData[i].satpos))
-                            //console.log(data.stationData[i].satpos.bdsatpos北斗)
+                            StarMapChart.starMap((data.stationData[i]).satpos)
 
-
-                            $scope.conacc_bd_jd = data.stationData[i].satpos.bdsatpos[0].az.toFixed(6);
-                            //console.log( data.stationData[i])
-                            $scope.conacc_bd_wd = data.stationData[i].satpos.bdsatpos[0].el.toFixed(6);
-                            $scope.conacc_GPS_jd = data.stationData[i].satpos.gpsatpos[0].az;
-                            $scope.conacc_GPS_wd = data.stationData[i].satpos.gpsatpos[0].el;
-                            $scope.conacc_GLO_jd = data.stationData[i].satpos.glsatpos[0].az;
-                            $scope.conacc_GLO_wd = data.stationData[i].satpos.glsatpos[0].el;
-
-                            //$scope.conacc_GPS_jd = data.stationData[0].satpos.bdsatpos[0].az;
                             showChart(data.stationData[i],function(){})
-                            dataArray.cooacc = data.stationData[i].cooacc//给前端
-
-                            showSatelliteNum(data.stationData[i].satnum)
+                            showDH(data.stationData,'gpsDH')
+                            //dataArray.cooacc = data.stationData[i].cooacc//给前端
+                            //
+                            //showSatelliteNum(data.stationData[i].satnum)
                         } else {
-                            DataArray.arrange(dataId, data.stationData[i].dataId)
-                            handleData(data.stationData[i])
+                            //DataArray.arrange(dataId, data.stationData[i].dataId)
+                            //handleData(data.stationData[i])
                         }
-                        settingSys(data.stationData[i].dataInfo)
+                        settingSys(data.stationData[i])
                     }
                 }
                 //实时一条一条动态加载
             } else if(limit == 1 && data.stationData != false) {
                 data.stationData.forEach(function (chartData) {
-                    if (dataId.indexOf(chartData.dataId) == -1) {
-                        //settingSys(data.stationData[i].dataInfo)
-                        DataArray.arrange(dataId, chartData.dataId);
-                        StarMapChart.starMap(StarMapChart.starMapData(chartData.satpos))
-                        dataArray.cooacc = chartData.cooacc;//给前端
-                        updataChart(chartData);
-                        showSatelliteNum(chartData.satnum)
+                    //if (dataId.indexOf(chartData.dataId) == -1) {
+                    //    //settingSys(data.stationData[i].dataInfo)
+                    //    DataArray.arrange(dataId, chartData.dataId);
+                    StarMapChart.starMap((chartData.stationData[0]).satpos);
+                    showChart(data.stationData[i],function(){})
 
-                    }
+                    //    dataArray.cooacc = chartData.cooacc;//给前端
+                    //    updataChart(chartData);
+                    //    showSatelliteNum(chartData.satnum)
+                    //
+                    //}
                 })
             }
         })
     }
 
     function settingSys(dataInfo){
-        if(dataInfo.type==0){
-            $scope.gpInfo = dataInfo
-        }else if(dataInfo.type==1){
-            $scope.glInfo = dataInfo
 
-        }else if(dataInfo.type ==2){
-            $scope.bdInfo = dataInfo
-        }else{
-            $scope.groupInfo = dataInfo
+        if(dataInfo.posR[0]){
+            $scope.gpInfo = dataInfo.posR[0]
+        }
+        if(dataInfo.posR[1]){
+            $scope.glInfo = dataInfo.posR[1]
+        }
+        if(dataInfo.posR[2]){
+            $scope.bdInfo = dataInfo.posR[2]
+        }
+        if(dataInfo.posR[3]){
+            $scope.groupInfo = dataInfo.posR[3]
         }
 
     }
@@ -222,18 +217,31 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function showChart(chartData) {
+
+
+        showSNR(chartData.SNY,'gpsSNY')
+        showSNR(chartData.SNY,'glsSNY')
+        showSNR(chartData.SNY,'bdsSNY')
+
         getCommitThreshold.threshold(localStorage.getItem('baseStation'),function (data) {
             //getCommitThreshold.threshold获取阈值超值弹框
-            var Threshold = data.staThreshold;
-            timeArray = DataArray.arrange(timeArray, chartData.timestamp)
+            //var Threshold = data.staThreshold;
+            //timeArray = DataArray.arrange(timeArray, chartData.timestamp)
+            //
+            //$scope.cooacc = chartData.cooacc;
+            ////console.log($scope.cooacc)
+            //Initialise.dataConnect('satnum', Threshold.staNumThresholdMax, Threshold.staNumThresholdMin, "卫星数量", timeArray, chartData.satnum, dataArray, $scope.seriesList, xAxisTickPixelInterval)
+            //Initialise.dataConnect('DopValue', Threshold.pdopThresholdMax, Threshold.pdopThresholdMin, 'DOP值', timeArray, chartData.dopinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
+            //Initialise.dataConnect('absoluteError', Threshold.absoluteThresholdMax, Threshold.absoluteThresholdMin, '绝对误差', timeArray, chartData.abserror, dataArray, $scope.seriesList, xAxisTickPixelInterval);
+            //Initialise.dataConnect('chartPositionPrecision', Threshold.posaccThresholdMax, Threshold.posaccThresholdMin, '定位精度', timeArray, chartData.accinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
+            //Initialise.dataConnect('protectionLevel', Threshold.protectionLevelThresholdMax, Threshold.protectionLevelThresholdMin, '保护水平', timeArray, chartData.plinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
 
-            $scope.cooacc = chartData.cooacc;
-            //console.log($scope.cooacc)
-            Initialise.dataConnect('satnum', Threshold.staNumThresholdMax, Threshold.staNumThresholdMin, "卫星数量", timeArray, chartData.satnum, dataArray, $scope.seriesList, xAxisTickPixelInterval)
-            Initialise.dataConnect('DopValue', Threshold.pdopThresholdMax, Threshold.pdopThresholdMin, 'DOP值', timeArray, chartData.dopinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
-            Initialise.dataConnect('absoluteError', Threshold.absoluteThresholdMax, Threshold.absoluteThresholdMin, '绝对误差', timeArray, chartData.abserror, dataArray, $scope.seriesList, xAxisTickPixelInterval);
-            Initialise.dataConnect('chartPositionPrecision', Threshold.posaccThresholdMax, Threshold.posaccThresholdMin, '定位精度', timeArray, chartData.accinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
-            Initialise.dataConnect('protectionLevel', Threshold.protectionLevelThresholdMax, Threshold.protectionLevelThresholdMin, '保护水平', timeArray, chartData.plinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
+
+
+
+
+
+
             if(localStorage.getItem('Frequency')) {
                 var Frequency = localStorage.getItem('Frequency');
             }else {
@@ -247,22 +255,141 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
 
-    function handleData(chartData) {
-        //console.log(chartData.abserror.hor)
-        DataArray.arrange(timeArray, chartData.timestamp)
-        DataArray.arrange(dataArray.bdsatnum, chartData.satnum.bdsatnum)
-        DataArray.arrange(dataArray.glsatnum, chartData.satnum.glsatnum)
-        DataArray.arrange(dataArray.gpsatnum, chartData.satnum.gpsatnum)
-        DataArray.arrange(dataArray.hdop, chartData.dopinfo.hdop)
-        DataArray.arrange(dataArray.vdop, chartData.dopinfo.vdop)
-        DataArray.arrange(dataArray.pdop, chartData.dopinfo.pdop)
-        DataArray.arrange(dataArray.hor, chartData.abserror.hor)
-        DataArray.arrange(dataArray.ver, chartData.abserror.ver)
-        DataArray.arrange(dataArray.hacc, chartData.accinfo.hacc)
-        DataArray.arrange(dataArray.vacc, chartData.accinfo.vacc)
-        DataArray.arrange(dataArray.hpl, chartData.plinfo.hpl)
-        DataArray.arrange(dataArray.vpl, chartData.plinfo.vpl)
+    function showSNR(data,type) {
+        var showData = data[type];
+        $('#'+type +'_loading').hide();
+        $('#'+type+'_content').show();
+        $('#'+type).highcharts({
+            chart: {
+                type: 'column'
+            },
+            //线类型
+            title: {
+                text: ''
+            },
+            //标题
+            subtitle: {
+                text: ''
+            },
+            //副标题
+            xAxis: {
+                type: 'category',
+                //坐标轴类型:分类轴
+                labels: {
+                    rotation: -45,
+                    //倾斜度
+                    style: {
+                        fontSize: '13px',
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ''
+                }
+            },
+            legend: {
+                enabled: true
+            },
+            //图例开关,默认是：true
+            series: [{
+                name: '1频点',
+                color: '#0011FF',
+                data: showData[0]
+            },
+                {
+                    name: '2频点',
+                    color: '#00FF00',
+                    data: showData[1]
+                }]
+        });
     }
+
+
+    function showDH(data, type){
+
+        var types ={
+            'gpsDH':0,
+            'glsDH':1,
+            'dbsDH':2,
+            'groupDH':3
+        };
+        var show_date = [];
+        for(var i =0;i<data.length;i++){
+            console.log(data.length)
+            show_date.push(data[i].posR[types[type]].dH)
+        }
+        console.log(show_date)
+
+        $('#'+type+'_loading').hide();
+        $('#'+type+'_content').show();
+        $('#'+type).highcharts({
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                polar: true
+            },
+            title: {
+                text: ''
+            },
+            pane: {
+                startAngle: 0,
+                endAngle: 360
+            },
+            xAxis: {
+                tickInterval: 30,//x间隔，分12
+                min: 0,
+                max: 360,
+                labels: {
+                    formatter: function () {
+                        return this.value + '°';
+                    }
+                }
+                //弹框
+            },
+            yAxis: {
+                tickInterval: 10,
+                min: 0,
+                max: 90,
+                reversed: true
+            },
+            plotOptions: {
+                //css
+                series: {
+                    marker: {
+                        radius: 2,
+                        //半径，颜色
+                        color:"red",
+                        symbol: "circle"
+                    },
+                    animation: false,
+                    lineWidth: 0,
+                    pointStart: 0,
+                    pointInterval: 45,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.id}',
+                        inside: true,
+                        verticalAlign: 'middle'
+                    }
+                },
+                column: {
+                    pointPadding: 0,
+                    groupPadding: 0
+                }
+            },
+            series: [{
+                name: "北斗",
+                type: 'line',
+                data: show_date
+            }]
+        });
+    }
+
+
 
 })
 ;
