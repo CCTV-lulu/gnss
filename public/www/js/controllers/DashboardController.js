@@ -399,8 +399,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         var xAxis = [],gpsY=[],dbsY=[],groupY=[],glsY=[]
 
         allSta.forEach(function(sta){
-            xAxis.push(sta.time?sta.posR[0].H:0);
-            gpsY.push(sta.posR[0]);
+            xAxis.push(sta.time);
+            gpsY.push(sta.posR[0]?sta.posR[0].H:0);
             glsY.push(sta.posR[1]?sta.posR[1].H:0);
             dbsY.push(sta.posR[2]?sta.posR[2].H:0);
             groupY.push(sta.posR[3]?sta.posR[3].H:0);
