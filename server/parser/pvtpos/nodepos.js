@@ -324,6 +324,7 @@ function ephCopyGPS(eph_t) {
     eph.iodc=eph_t.iodc;
     eph.week=eph_t.week;
     eph.toe=cmn.gpst2time(eph_t.week,eph_t.toe);
+
     eph.toc=cmn.gpst2time(eph_t.week,eph_t.toc);
     eph.toes=eph_t.toe;
     eph.tocs=eph_t.toc;

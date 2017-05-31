@@ -330,7 +330,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         var algoIn = logJSON.obsR,//原始数据[28]
             algoOut = logJSON.posR;//
 
-
+        console.log(JSON.parse(JSON.stringify(logJSON)))
         var webIn = {
 
 

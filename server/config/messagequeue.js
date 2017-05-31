@@ -13,7 +13,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var amqp = require('amqp-connection-manager');
-var parser = require('../parser');
+//var parser = require('../parser');
+var parse=require('../canavprocess/realtime_process.js');
 
 Date.prototype.Format = function (fmt) { //author: meizz
     var o = {
@@ -130,7 +131,7 @@ function onMessage(data) {
     var buffLength = cacheBuffers.buffLength;
     var buffers = cacheBuffers.buffers;
     var bigBuff = Buffer.concat(buffers);
-    var results = parser.parse(getStationId(message.station, message.sta_id), bigBuff);
+    var results = parser.parser_pos(0, bigBuff);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {

@@ -1,0 +1,18 @@
+{
+  "sys":[0,1,2,3],
+  "start_time":[2017,3,21,0,0,0],
+  "eph_diff":3000,
+  "rtcm_title":211,
+  "buff_len":8192,
+  "slip_time":3600,
+  "midd_time":3600,
+  "obs_type":[1012,2004,2104,1074,1084,1124],
+  "alertTime":10,
+  "HAL":556,
+  "VAL":556,
+  "HDOP":4,
+  "VDOP":4,
+  "hpl_cant":1,
+  "hpl_exceed":2,
+  "her_exceed":3
+}
