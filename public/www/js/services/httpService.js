@@ -326,10 +326,37 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
 }).factory("getStationStatus", function ($http, settingInfo, Passport, httpRequest, Prompt) {
     //对数据分类处理
     //整理数据
+
+    function PosR(){
+        this.stat=0;//定位结果状态
+        this.week= 0;//定位时间GPS周
+        this.tow= 0;//定位时间GPS周内秒
+        this.time= "";//定位结果对应的年月日时间
+        this.X= 0;//定位结果，ECEF坐标
+        this.Y= 0;
+        this.Z= 0;
+        this.dX= 0;//定位误差，本地坐标系下水平东向
+        this.dY= 0;//北向
+        this.dZ= 0;//垂向
+        this.Lat= 0;//定位结果纬度
+        this.Lon= 0;//定位结果经度
+        this.H= 0;//定位结果高程
+        this.GDOP= 0;//几何精度GDOP
+        this.PDOP= 0;//
+        this.HDOP= 0;
+        this.VDOP= 0;
+        this.VPL= 0;//定位垂直保护水平
+        this.HPL= 0;//定位水平保护水平
+        this.posNum= 0;//定位卫星数
+        this.trackNum=0;//当前跟踪卫星数
+        this.exsats= "";//定位排除的卫星
+        this.minEl= 0;//最小卫星仰角
+        this.navsys=[];//定位卫星系统
+
+    }
     var mapping = function (logJSON, dataId, timestamp) {
         var algoIn = logJSON.satR,//原始数据[28]
             algoOut = logJSON.posR;//
-        console.log(logJSON)
 
         var webIn = {
             posR: algoOut,
@@ -339,6 +366,11 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             obsinfo:[],
             satpos:{gpsatpos:[],glsatpos:[],bdsatpos:[]},
             SNY:{gpsSNY:[[],[]],glsSNY:[[],[]],bdsSNY:[[],[]]}
+        };
+        for(var i in webIn.posR){
+            if(webIn.posR[i].stat ==0){
+                webIn.posR[i] =  new PosR()
+            }
         }
 
         //console.log(webIn.satpos)
@@ -361,8 +393,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     id: obs.sat//型号卫星id
                 }
 
-                webIn.SNY.gpsSNY[0].push([obs.sat, obs.SNR[0]]);
-                webIn.SNY.gpsSNY[1].push([obs.sat, obs.SNR[1]]);
+                webIn.SNY.gpsSNY[0].push([obs.sat.toString(), obs.SNR[0]]);
+                webIn.SNY.gpsSNY[1].push([obs.sat.toString(), obs.SNR[1]]);
                 webIn.satpos.gpsatpos.push(gpsatpos);//push到webin，放到大对象里
 
             } else if (1 === obs.sys) {
@@ -374,8 +406,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     SNR:{1:[obs.sat, obs.SNR[0]],2:[obs.sat, obs.SNR[1]]},
                     id: obs.sat
                 };
-                webIn.SNY.glsSNY[0].push([obs.sat, obs.SNR[0]]);
-                webIn.SNY.glsSNY[1].push([obs.sat, obs.SNR[1]]);
+                webIn.SNY.glsSNY[0].push([obs.sat.toString(), obs.SNR[0]]);
+                webIn.SNY.glsSNY[1].push([obs.sat.toString(), obs.SNR[1]]);
                 webIn.satpos.glsatpos.push(glsatpos);
 
             } else if (2 === obs.sys) {
@@ -386,8 +418,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     SNR:{1:[obs.sat, obs.SNR[0]],2:[obs.sat, obs.SNR[1]]},
                     id: obs.sat
                 }
-                webIn.SNY.bdsSNY[0].push([obs.sat, obs.SNR[0]]);
-                webIn.SNY.bdsSNY[1].push([obs.sat, obs.SNR[1]]);
+                webIn.SNY.bdsSNY[0].push([obs.sat.toString(), obs.SNR[0]]);
+                webIn.SNY.bdsSNY[1].push([obs.sat.toString(), obs.SNR[1]]);
                 webIn.satpos.bdsatpos.push(bdsatpos);
 
             }

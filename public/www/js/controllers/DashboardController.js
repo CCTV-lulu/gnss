@@ -217,6 +217,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function settingSys(dataInfo) {
+        var time = new Date(dataInfo.timestamp)
+        $scope.utcTime = time.getUTCFullYear() +'-'+time.getUTCMonth()+'-'+time.getUTCDate()+' ' +time.getUTCHours()+':'+time.getUTCMinutes()+':'+time.getUTCSeconds()
 
         if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
@@ -249,6 +251,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function showChart(chartData) {
+        console.log(chartData.SNY)
         showSNR(chartData.SNY, 'gpsSNY');
         showSNR(chartData.SNY, 'glsSNY');
         showSNR(chartData.SNY, 'bdsSNY')
@@ -270,6 +273,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     function showSNR(data, type) {
         var showData = data[type];
+        console.log(showData[0].slice(0,15))
+
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
         $('#' + type).highcharts({
@@ -310,12 +315,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             series: [{
                 name: '1频点',
                 color: '#0011FF',
-                data: showData[0]
+                data: showData[0].slice(0,15)
             },
                 {
                     name: '2频点',
                     color: '#00FF00',
-                    data: showData[1]
+                    data: showData[1].slice(0,15)
                 }]
         });
     }
@@ -340,7 +345,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         if(length>100){
             return false
         }
-        return [isNaN(rotat) ? 0 : rotat, 100-length]
+        return [isNaN(rotat) ? 0 : rotat, length]
     }
 
 
@@ -395,7 +400,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 max: 360,
                 labels: {
                     formatter: function () {
-                        return this.value
+
+                        return ''
                     }
                 }
             },
@@ -403,7 +409,13 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 tickInterval: 10,
                 min: 0,
                 max: 90,
-                reversed: true
+                reversed: false,
+                labels: {
+                    formatter: function () {
+
+                            return ''
+                    }
+                }
             },
             plotOptions: {
                 series: {
