@@ -315,9 +315,17 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         var show_date = [];
         for (var i = 0; i < data.length; i++) {
             if (data[i].posR[types[type]]) {
-                show_date.push(data[i].posR[types[type].dV, data[i].posR[types[type]].dH])
+                console.log(data[i].posR[types[type]])
+                var info = data[i].posR[types[type]];
+                var x = Math.abs(info.dX);
+                var y = Math.abs(info.dY);
+                var z = Math.sqrt(x*x+y*y);
+                var rotat = Math.round((Math.asin(x/z)/Math.PI*180));
+                var length = 5*z;
+                show_date.push([rotat,length])
             }
         }
+        console.log(show_date)
 
 
         $('#' + type + '_loading').hide();
@@ -372,7 +380,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             series: [{
                 name: "北斗",
                 type: 'scatter',
-                data: [[-10, 190], [10, 190], [50, 30], [90, 90]]
+                data: show_date
             }]
         });
     }

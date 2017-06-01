@@ -83,38 +83,7 @@ MetronicApp.factory('DataArray', function() {
         });
     }
 
-    var starMapData = function(data) {
-        var starMapdata = {
-            bdsatposArr: [],
-            gpsatposArr: [],
-            glsatposArr: []
-        }
-        data.bdsatpos.forEach(function (dbst) {
-            var arr = {}
-            arr.x = (dbst.az)//x坐标
-            arr.y = (dbst.el)//y坐标
-            arr.id = (dbst.prn)
-            starMapdata.bdsatposArr.push(arr)
-        });
-        data.gpsatpos.forEach(function (gpst) {
-            var arr = {}
-            arr.x = (gpst.az)
-            arr.y = (gpst.el)
-            arr.id = (gpst.prn)
-            starMapdata.gpsatposArr.push(arr)
-        });
-        data.glsatpos.forEach(function (glst) {
-            var arr = {}
-            arr.x = (glst.az)
-            arr.y = (glst.el)
-            arr.id = (glst.prn)
-            starMapdata.glsatposArr.push(arr)
-        });
-        //console.log(starMapdata)
-        return starMapdata;
-    }
-
-    return {starMapData: starMapData,starMap: starMap}
+    return {starMap: starMap}
 
 }).factory('StarChart', function() {
     var lineChart = function(chartData, id, seriesList, xAxisTickPixelInterval) {
