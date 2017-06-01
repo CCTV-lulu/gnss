@@ -115,6 +115,20 @@ function updateStaId(req, res) {
 function getStationStatus(req, res, next) {
     var data = {station_id: parseInt(req.query.staId)};
     var limit = parseInt(req.query.limit);
+
+    StationSocketStatus.StationSocketStatus[req.query.staId] = true
+    var stationData = {};
+    if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
+        stationData.StationSocketStatus = false;
+    } else {
+        var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
+        stationData.StationSocketStatus = socketStatus;
+    }
+    stationData.stationData = StationSocketStatus.getstatINFO(limit,2);
+
+    res.send(stationData);
+
+
     StationStatus.where(data, limit)
 
         .then(function (success_data) {

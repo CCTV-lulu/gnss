@@ -11,6 +11,7 @@ var app = express();
 var server = require('http').Server(app);
 
 var io = require('socket.io')(server);
+var statINFO={2:[]}
 
 var amqp = require('amqp-connection-manager');
 //var parser = require('../parser');
@@ -53,6 +54,10 @@ function saveStaInfo(data) {
         updated_at: updated_at,
         data: data
     };
+    statINFO[2].push(staInfo);
+    if(statINFO[2].length>300){
+        statINFO[2].shift()
+    }
 
     fs.stat("../station" + data.station_id, function (err, stat) {
         if (err == null) {
@@ -152,18 +157,31 @@ io.on('connection', function (socket) {
         StationSocketStatus[stationName] = false
     });
     StationSocketStatus[stationName] = true;
+
     socket.on('' + stationName, function (data) {
         if (!StationSocketStatus[stationName]) {
             StationSocketStatus[stationName] = true;
         }
+
         onMessage(data)
         //console.log('receive')
     }, function (error) {
         console.log(error)
     });
 });
+
+
+function getstatINFO(number,id){
+    if(number>1){
+        return statINFO[id]
+    }else{
+        return statINFO[id][statINFO.length-1]
+    }
+
+}
 module.exports = {
-    StationSocketStatus: StationSocketStatus
+    StationSocketStatus: StationSocketStatus,
+    getstatINFO: getstatINFO
 };
 
 
