@@ -316,9 +316,6 @@ function killChild(username) {
     }
 }
 function batchProcessDate(station, filter, userName) {
-    console.log(filter);
-    console.log(station);
-    console.log(userName);
     var child_process = require('child_process');
     var child = child_process.fork('./server/batch_process_data/batch_process_data.js');
     childInfo[userName] = child;

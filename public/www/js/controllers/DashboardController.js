@@ -7,27 +7,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     var dashboardPolling;
     var initPolling;
     var stationDataStatus = true;
-    //var dataArray = {
-    //    "bdsatnum": [],
-    //    "glsatnum": [],
-    //    "gpsatnum": [],
-    //    "hor": [],
-    //    "ver": [],
-    //    "hacc": [],
-    //    "vacc": [],
-    //    "hdop": [],
-    //    "vdop": [],
-    //    "pdop": [],
-    //    "hpl": [],
-    //    "vpl": [],
-    //    "alt": [],
-    //    "lat": [],
-    //    "lon": [],
-    //    "rura": [],
-    //    "type": [],
-    //    "udre": [],
-    //    "utc": []
-    //};
+
     $scope.seriesList = {};
 
 
@@ -200,11 +180,24 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         console.log(staInfo)
         //console.log($scope.seriesList.glsDH.points.length)
         //staInfo.time = new Date().getTime()
-            console.log(staInfo.time)
-        $scope.seriesList.glsDH.addPoint([staInfo.time, staInfo.posR[1].H], true, true);
-        $scope.seriesList.gpsDH.addPoint([staInfo.time, staInfo.posR[0].H], true, true);
-        $scope.seriesList.dbsDH.addPoint([staInfo.time, staInfo.posR[2].H], true, true);
-        $scope.seriesList.groupDH.addPoint([staInfo.time, staInfo.posR[3].H], true, true);
+        console.log(staInfo.time)
+        console.log(staInfo.posR[0].H)
+        if(staInfo.posR[0]){
+            $scope.seriesList.gpsDH.addPoint([staInfo.time, staInfo.posR[0].H], true, true);
+
+        }
+        if(staInfo.posR[1]){
+            $scope.seriesList.glsDH.addPoint([staInfo.time, staInfo.posR[1].H], true, true);
+
+        }
+        if(staInfo.posR[2]){
+            $scope.seriesList.dbsDH.addPoint([staInfo.time, staInfo.posR[2].H], true, true);
+
+        }
+        if(staInfo.posR[3]){
+            $scope.seriesList.groupDH.addPoint([staInfo.time, staInfo.posR[3].H], true, true);
+        }
+
     }
 
     function settingSys(dataInfo) {
@@ -419,6 +412,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 push_data(sta.posR[i], staArrs[i])
             }
         });
+        console.log(gpsY)
+        console.log(xAxis)
 
         function activeLastPointToolip(chart) {
             var points = chart.series[0].points;
@@ -483,7 +478,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
-                type: 'datetime',
+
                 categories: xAxis
             },
             series: [{
