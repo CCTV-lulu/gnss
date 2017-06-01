@@ -10,15 +10,15 @@ MetronicApp.factory('settingInfo', function () {
     return [
         'BDS',
         'GPS',
-        'GLS',
-        '兼容'
+        'GLS'
+
     ]
 }).factory('signalTypObj', function () {
     return  {
         'BDS' : 2,
         'GPS' : 0,
-        'GLS' : 1,
-        '兼容': 3
+        'GLS' : 1
+        //'兼容': 3
     };
 });
 //区分卫星，原始数据
