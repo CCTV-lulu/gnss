@@ -169,9 +169,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             //DataArray.arrange(dataId, data.stationData[i].dataId)
                             //handleData(data.stationData[i])
                         }
-                        console.log(data.stationData[i].satpos.gpsatpos[0].y)
-                        
-                        if(data.stationData[i].satpos.gpsatpos[0].y != NaN){
+
+                        if(!isNaN(data.stationData[i].satpos.gpsatpos[0].y)){
                             StarMapChart.starMap((data.stationData[i]).satpos);
                         }
 
@@ -184,6 +183,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
+                    if(!isNaN(data.stationData[i].satpos.gpsatpos[0].y)){
+                        StarMapChart.starMap((data.stationData[i]).satpos);
+                    }
                     StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);
                     settingSys(chartData);
