@@ -390,6 +390,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             title: {
                 text: ''
             },
+            tooltip:{
+                enabled: false
+            },
+
             pane: {
                 startAngle: 0,
                 endAngle: 360
