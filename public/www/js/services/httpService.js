@@ -329,7 +329,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
     var mapping = function (logJSON, dataId, timestamp) {
         var algoIn = logJSON.satR,//原始数据[28]
             algoOut = logJSON.posR;//
-
+        console.log(logJSON)
 
         var webIn = {
             posR: algoOut,
@@ -420,6 +420,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     var result = [];
                     var stationData = [];
                     req.stationData.forEach(function (fileData) {
+
                         var data = fileData
                         //var data = JSON.parse(fileData);
 

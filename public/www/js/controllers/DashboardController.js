@@ -136,19 +136,19 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             showDH(data.stationData, 'gpsDH');
                             showDH(data.stationData, 'glsDH');
                             showDH(data.stationData, 'dbsDH');
+                            showDH(data.stationData, 'groupDH');
                             showH(data.stationData, 'H');
-                            startOneStaStatus();
+                            //
                             settingSys(data.stationData[i]);
                             StarMapChart.starMap((data.stationData[i]).satpos);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
+                            startOneStaStatus();
                             //showSatelliteNum(data.stationData[i].satnum)
                         } else {
                             //DataArray.arrange(dataId, data.stationData[i].dataId)
                             //handleData(data.stationData[i])
                         }
-
-
 
 
                     }
@@ -166,7 +166,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);
                     settingSys(chartData);
-                    updateH(chartData)
+                    updateH(chartData);
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
                     //    showSatelliteNum(chartData.satnum)
@@ -177,21 +177,21 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         })
     }
 
-    function updateH(staInfo){
+    function updateH(staInfo) {
 
-        if(staInfo.posR[0]){
+        if (staInfo.posR[0]) {
             $scope.seriesList.gpsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[0].H], true, true);
 
         }
-        if(staInfo.posR[1]){
+        if (staInfo.posR[1]) {
             $scope.seriesList.glsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[1].H], true, true);
 
         }
-        if(staInfo.posR[2]){
+        if (staInfo.posR[2]) {
             $scope.seriesList.dbsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[2].H], true, true);
 
         }
-        if(staInfo.posR[3]){
+        if (staInfo.posR[3]) {
             $scope.seriesList.groupDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[3].H], true, true);
         }
 
@@ -238,7 +238,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     }
 
-    function startOneStaStatus(){
+    function startOneStaStatus() {
         if (localStorage.getItem('Frequency')) {
             var Frequency = localStorage.getItem('Frequency');
         } else {
@@ -315,18 +315,26 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         var show_date = [];
         for (var i = 0; i < data.length; i++) {
             if (data[i].posR[types[type]]) {
-                console.log(data[i].posR[types[type]])
                 var info = data[i].posR[types[type]];
                 var x = Math.abs(info.dX);
                 var y = Math.abs(info.dY);
-                var z = Math.sqrt(x*x+y*y);
-                var rotat = Math.round((Math.asin(x/z)/Math.PI*180));
-                var length = 5*z;
-                show_date.push([rotat,length])
+                var z = Math.sqrt(x * x + y * y);
+
+                var rotat = Math.round((Math.asin(x / z) / Math.PI * 180));
+
+                if (x > 0 && y < 0) {
+                    rotat += 90
+                }
+                if (x < 0 && y < 0) {
+                    rotat = 180 - rotat
+                }
+                if (x < 0 && y > 0) {
+                    rotat = 360 - rotat
+                }
+                var length = 5 * z;
+                show_date.push([isNaN(rotat) ? 0 : rotat, 100-length])
             }
         }
-        console.log(show_date)
-
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -378,7 +386,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 }
             },
             series: [{
-                name: "北斗",
+                name: type,
                 type: 'scatter',
                 data: show_date
             }]
@@ -420,7 +428,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
         function activeLastPointToolip(chart) {
             var points = chart.series[0].points;
-            chart.tooltip.refresh(points[points.length -1]);
+            chart.tooltip.refresh(points[points.length - 1]);
         }
 
 
@@ -473,7 +481,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                         //// set up the updating of the chart each second
                         var series = this.series[0],
                             chart = this;
-                        this.series.forEach(function(serie){
+                        this.series.forEach(function (serie) {
                             $scope.seriesList[serie.name] = serie;
                             $scope.seriesList['H'] = chart
                         });

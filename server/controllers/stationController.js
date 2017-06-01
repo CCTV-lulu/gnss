@@ -68,7 +68,7 @@ function getUserStationId(req, res) {
                                 var station = {
                                     userStation: userStation,//普通用户发一个，管理员都发
                                     allStation: []
-                                }
+                                };
                                 //console.log('user')
 
                                 res.send(station)
@@ -77,7 +77,7 @@ function getUserStationId(req, res) {
                                 var station = {
                                     userStation: userStationId,//普通用户发一个，管理员都发
                                     allStation: stations
-                                }
+                                };
                                 res.send(station)
                             }
                         })
@@ -140,7 +140,8 @@ function getStationStatus(req, res, next) {
     //            var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
     //            stationData.StationSocketStatus = socketStatus;
     //        }
-    //        var result = []
+    //        var result = [];
+    //
     //        success_data.forEach(function(data){
     //            result.push(JSON.parse(data))
     //        })
