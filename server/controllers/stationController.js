@@ -129,25 +129,25 @@ function getStationStatus(req, res, next) {
     res.send(stationData);
 
 
-    StationStatus.where(data, limit)
-
-        .then(function (success_data) {
-            StationSocketStatus.StationSocketStatus[req.query.staId] = true
-            var stationData = {};
-            if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
-                stationData.StationSocketStatus = false;
-            } else {
-                var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
-                stationData.StationSocketStatus = socketStatus;
-            }
-            stationData.stationData = success_data;
-            res.send(stationData);
-        }, function (error) {
-            res.send({
-                status: 400,
-                message: error
-            });
-        })
+    //StationStatus.where(data, limit)
+    //
+    //    .then(function (success_data) {
+    //        StationSocketStatus.StationSocketStatus[req.query.staId] = true
+    //        var stationData = {};
+    //        if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
+    //            stationData.StationSocketStatus = false;
+    //        } else {
+    //            var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
+    //            stationData.StationSocketStatus = socketStatus;
+    //        }
+    //        stationData.stationData = success_data;
+    //        res.send(stationData);
+    //    }, function (error) {
+    //        res.send({
+    //            status: 400,
+    //            message: error
+    //        });
+    //    })
 }
 function getStations(req, res) {
     Station.all().then(function (stations) {

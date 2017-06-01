@@ -160,7 +160,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
                     //if(!isNaN(chartData.satpos.gpsatpos[0].y)){
-                        StarMapChart.starMap(chartData.satpos);
+
+                    StarMapChart.starMap(chartData.satpos);
                     //}
                     //StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);

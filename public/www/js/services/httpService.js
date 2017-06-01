@@ -420,7 +420,9 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     var result = [];
                     var stationData = [];
                     req.stationData.forEach(function (fileData) {
-                        var data = JSON.parse(fileData);
+                        var data = fileData
+                        //var data = JSON.parse(fileData);
+
                         data = mapping(data.data, data._id, data.updated_at)
                         stationData.push(data)
                     });
