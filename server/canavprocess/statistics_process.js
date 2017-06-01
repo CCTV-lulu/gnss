@@ -62,9 +62,15 @@ module.exports.statistic_data=function (data) {
     if(cmn.timediff(data.time,statistic_para.bt)<0 || cmn.timediff(data.time,statistic_para.et)>0)
         return 1;
     for(var sys in statistic_result){
-        if(data.data.hasOwnProperty(sys)){
-            integ.integrity_strunt(data.data[sys],statistic_para.hist[sys],statistic_para.option[sys],statistic_result[sys]);
+        try{
+            if(data.data.hasOwnProperty(sys)){
+                integ.integrity_strunt(data.data[sys],statistic_para.hist[sys],statistic_para.option[sys],statistic_result[sys]);
+            }
         }
+        catch(err){
+            console.log(err);
+        }
+
     }
     return 0;
 };

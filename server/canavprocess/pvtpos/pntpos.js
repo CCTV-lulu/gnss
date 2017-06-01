@@ -193,12 +193,12 @@ function estpos(obs, rs, dts,vars, svh, nav,opt,NX ,sol, vsat,azel,vare,H,v,sst)
         nsys=new Array();
         nv=rescode(i,obs,rs,dts,vars,svh,nav,x,NX,opt,vt,Ht,vart,azel,vsat,resp,sstt,nsys);
         nx=Ht.length;
-        for(j=0;j<Ht.length;j++){
+        /*for(j=0;j<Ht.length;j++){
             H[j]=new Array(Ht[j].length);
             for(k=0;k<Ht[j].length;k++)
                 H[j][k]=Ht[j][k];
-        }
-        //for(j=0;j<Ht.length;j++)H[j]=Ht[j];
+        }*/
+        for(j=0;j<Ht.length;j++)H[j]=Ht[j];
         if (nv<nx) {
             break;
         }
@@ -355,25 +355,25 @@ function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
     FSN = v[0]*v[0]/S[0][0];
     FSat = "";
     if(S[0][0]<0)
-        S[0][0]=-S[0][0];
+        return 3;
     HPL = math.sqrt((A[0][0]*A[0][0]+A[1][0]*A[1][0])/S[0][0]);
     VPL = math.sqrt((A[2][0]*A[2][0])/S[0][0]);
     for(i=1;i<n;i++){
         if(S[i][i]<0)
-            S[i][i]=-S[i][i];
+            return 3;
         FSN_t = v[i]*v[i]/S[i][i];
         HPL_t = math.sqrt((A[0][i]*A[0][i]+A[1][i]*A[1][i])/S[i][i]);
         VPL_t = math.sqrt((A[2][i]*A[2][i])/S[i][i]);
-        if(HPL_t==Infinity || VPL_t==Infinity)
+        if(HPL_t==Infinity || VPL_t==Infinity || isNaN(HPL_t) || isNaN(VPL_t))
             continue;
         if(FSN_t>FSN){
             FSN = FSN_t;
-            //FSat = sst[i];
+            FSat = sst[i];
             //HPL = HPL_t;
             //VPL = VPL_t;
         }
         if(HPL_t>HPL){
-            FSat = sst[i];
+            //FSat = sst[i];
             HPL = HPL_t;
         }
         if(VPL_t>VPL)

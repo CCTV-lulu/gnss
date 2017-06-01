@@ -14,7 +14,7 @@ stream = fs.createReadStream(test_file);
     //console.log('data event is strigger');
     parse.datatype(sta_id,data);
 });*/
-parse.procinit(0,[2017,4,29,7,45,0],[2017,4,31,18,10,30],400);
+parse.procinit(0,[2017,4,31,0,45,0],[2017,5,1,18,10,30],400);
 var fwrite=fs.createWriteStream(log_file);
 stream.on('readable',function () {
     var data;

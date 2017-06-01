@@ -69,8 +69,7 @@ function pos_config(sta_id) {
 }
 
 module.exports.parser_pos=function(sta_id,data) {
-    var rtcm=rtcm_init(sta_id)
-
+    var rtcm=rtcm_init(sta_id);
     var para=pos_config(sta_id);
     var pos_list = [];
     if(para!=0){
@@ -136,51 +135,64 @@ module.exports.parser_pos=function(sta_id,data) {
         });
     }
     return pos_list;
-}
+};
 module.exports.procset=function (sta_id) {
-    if(stationPara.hasOwnProperty(sta_id)){
-        var prcopt=getProopt(sta_id);
-        var prcUp=stationPara[sta_id].prcopt;
-        prcUp.mode=prcopt.mode;           /* positioning mode (PMODE_???) */
-        prcUp.nf=prcopt.nf;             /* number of frequencies (1:L1,2:L1+L2,3:L1+L2+L5) */
-        prcUp.navsys=prcopt.navsys;         /* navigation system */
-        prcUp.elmin=new function () {
-            var elmin=[];
-            for(var i=0;i<prcopt.elmin.length;i++){
-                elmin.push(prcopt.elmin[i] * ca.D2R)
-            }
-            return elmin;
-        };       /* elevation mask angle (rad) */
-        prcUp.snrmask= prcopt.snrmask;  /* SNR mask */
-        prcUp.ionoopt=prcopt.ionoopt;        /* ionosphere option (IONOOPT_???) */
-        prcUp.tropopt=prcopt.tropopt;        /* troposphere option (TROPOPT_???) */
-        prcUp.eratio=prcopt.eratio; /* code/phase error ratio */
-        prcUp.err=prcopt.err;      /* measurement error factor */
-        prcUp.rbinit=prcopt.rbinit;
-        prcUp.isrb=prcopt.isrb;
-        prcUp.rb=prcopt.rb;      /* base position for relative mode {x,y,z} (ecef) (m) */
-        prcUp.mul_vare=prcopt.mul_vare;
-        prcUp.init_vare=prcopt.init_vare;
-        prcUp.exsats=prcopt.exsats; /* excluded satellites (1:excluded,2:included) */
-        prcUp.maxgdop=prcopt.maxgdop;
-        prcUp.threshold_PFD=prcopt.threshold_PFD;
-        prcUp.nclamda_PMD=prcopt.nclamda_PMD;
-        prcUp.sys=prcopt.sys;
-        return 0;
+    try{
+        if(stationPara.hasOwnProperty(sta_id)){
+            var prcopt=getProopt(sta_id);
+            var prcUp=stationPara[sta_id].prcopt;
+            prcUp.mode=prcopt.mode;           /* positioning mode (PMODE_???) */
+            prcUp.nf=prcopt.nf;             /* number of frequencies (1:L1,2:L1+L2,3:L1+L2+L5) */
+            prcUp.navsys=prcopt.navsys;         /* navigation system */
+            prcUp.elmin=new function () {
+                var elmin=[];
+                for(var i=0;i<prcopt.elmin.length;i++){
+                    elmin.push(prcopt.elmin[i] * ca.D2R)
+                }
+                return elmin;
+            };       /* elevation mask angle (rad) */
+            prcUp.snrmask= prcopt.snrmask;  /* SNR mask */
+            prcUp.ionoopt=prcopt.ionoopt;        /* ionosphere option (IONOOPT_???) */
+            prcUp.tropopt=prcopt.tropopt;        /* troposphere option (TROPOPT_???) */
+            prcUp.eratio=prcopt.eratio; /* code/phase error ratio */
+            prcUp.err=prcopt.err;      /* measurement error factor */
+            prcUp.rbinit=prcopt.rbinit;
+            prcUp.isrb=prcopt.isrb;
+            prcUp.rb=prcopt.rb;      /* base position for relative mode {x,y,z} (ecef) (m) */
+            prcUp.mul_vare=prcopt.mul_vare;
+            prcUp.init_vare=prcopt.init_vare;
+            prcUp.exsats=prcopt.exsats; /* excluded satellites (1:excluded,2:included) */
+            prcUp.maxgdop=prcopt.maxgdop;
+            prcUp.threshold_PFD=prcopt.threshold_PFD;
+            prcUp.nclamda_PMD=prcopt.nclamda_PMD;
+            prcUp.sys=prcopt.sys;
+            return 0;
+        }
+        else {
+            return 1;
+        }
     }
-    else {
+    catch (err){
+        console.log(err);
         return 1;
     }
-}
+
+};
 module.exports.delconfig=function (sta_id) {
-    if(rtcmParse.hasOwnProperty(sta_id)){
-        delete rtcmParse[sta_id];
+    try{
+        if(rtcmParse.hasOwnProperty(sta_id)){
+            delete rtcmParse[sta_id];
+        }
+        if(stationPara.hasOwnProperty(sta_id)){
+            delete stationPara[sta_id];
+        }
+        return 0;
     }
-    if(stationPara.hasOwnProperty(sta_id)){
-        delete stationPara[sta_id];
+    catch(err){
+        console.log(err);
+        return 1;
     }
-    return 0;
-}
+};
 
 function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     prcopt.sys = sys;

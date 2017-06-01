@@ -120,5 +120,5 @@ function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posOutStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     logjson.time=sol.time;
-    console.log(sys,sol.time, sol.pos, logjson.posR[sys].HPL);
+    console.log(sys,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL);
 }

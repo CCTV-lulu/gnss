@@ -9,7 +9,7 @@ var cmn=require('../routes/comn.js');
 var pnt=require('./pntpos.js');
 var opt=require('../config/optcomm.json');
 var ephcalc=require('./ephemeris.js');
-
+//bd 电离层数据对象构建
 function ioncreate_cmp() {
     var ion_cmp=new ca.ionM();
     ion_cmp.sys=ca.SYS_CMP;
@@ -17,6 +17,7 @@ function ioncreate_cmp() {
         ion_cmp.ion[i]=0.0;
     return ion_cmp;
 };
+//gps 电离层数据对象构建
 function ioncreate_gps() {
     var ion_gps=new ca.ionM();
     ion_gps.sys=ca.SYS_GPS;
@@ -24,7 +25,7 @@ function ioncreate_gps() {
         ion_gps.ion[i]=0.0;
     return ion_gps;
 }
-
+//定位处理观测数据之外数据对象
 function nav_create(){        /* navigation data type */
     this.eph=[];         /* GPS/QZS/GAL ephemeris */
     this.geph=[];       /* GLONASS ephemeris */
@@ -42,11 +43,13 @@ function nav_create(){        /* navigation data type */
     this.rura=[];
     this.lam=new cmn.wavelencreate();/* carrier wave lengths (m) */
 };
+//星历更新最小仰角对象构建
 function ele_create() {
     this.el_gps=new Array();
     this.el_cmp=new Array();
     this.el_glo=new Array();
 }
+//定位处理配置文件对象构建
 function prcopt_create(prcopt){        /* processing options type */
     this.mode=prcopt.mode;           /* positioning mode (PMODE_???) */
     this.nf=prcopt.nf;             /* number of frequencies (1:L1,2:L1+L2,3:L1+L2+L5) */
@@ -74,6 +77,7 @@ function prcopt_create(prcopt){        /* processing options type */
     this.nclamda_PMD=prcopt.nclamda_PMD;
     this.sys=-1;
 };
+//定位处理结果对象构建
 function sol_create(){        /* solution type */
     this.time=new Date();       /* time (GPST) */
     this.rr=[0,0,0];       /* position/velocity (m|m/s) */
@@ -92,6 +96,7 @@ function sol_create(){        /* solution type */
     this.svh=new Array();
     this.navsys=[];
 } ;
+//预处理定位结果对象构建
 function posResult() {
     this.stat=0;//定位结果状态
     this.week= 0;//定位时间GPS周
@@ -118,6 +123,7 @@ function posResult() {
     this.minEl= 0;//最小卫星仰角
     this.navsys=[];//定位卫星系统
 };module.exports.posResult=posResult;
+//预处理观测数据对象构建
 function obscreate() {
     this.sys=0;//卫星所属导航系统
     this.sat=0;//卫星PRN号
@@ -131,13 +137,7 @@ function obscreate() {
     this.Azi=0;//方位角
     this.Ele=0;    //仰角
 }
-function syncreate() {
-    this.utc=0.0;//当前精确UTC时间
-    this.bias=0.0;//北斗时与UTC时间差
-    this.gps=0.0;//北斗时与GPS时间差
-    this.glo=0.0;//北斗时与GLONASS时间差
-    this.gal=0.0;//北斗时与galileo时间差
-}
+//预处理输出对象构建
 function logOutJson() {
     this.time=time2string(cmn.timenow());
     this.posR={};
@@ -150,6 +150,7 @@ function logOutJson() {
     this.udre=new Array();
     this.rura=new Array();
 };module.exports.logOutJson=logOutJson;
+//实时处理输出对象构建
 function posR_create() {
     this.stat=0;
     this.week=0;
@@ -163,14 +164,16 @@ function posR_create() {
     this.exsats="";
     this.HDOP=0;
     this.VDOP=0;
+    this.dX=0;
+    this.dY=0;
+    this.dZ=0;
     this.dH=0;
     this.dV=0;
-    this.Hc=0;
-    this.Vc=0;
     this.HPL=0;
     this.VPL=0;
     this.navsys=[]
 }module.exports.posR_create=posR_create;
+//实时处理观测数据对象构建
 function satR_create() {
     this.sys=0;
     this.sat=0;
@@ -185,11 +188,13 @@ function satR_create() {
     this.rura=0;
     this.udre=0;
 }module.exports.satR_create=satR_create;
+//实时处理输出对象构建
 function showJson() {
     this.time=cmn.timenow();
     this.posR={};
     this.satR=[];
 }module.exports.showJson=showJson;
+//定位处理数据对象构建
 function posPara_create(prcopt) {
     this.obs={};
     this.nav=new nav_create();
@@ -202,13 +207,14 @@ function posPara_create(prcopt) {
     this.rb=prcopt.rb;
     this.sigma={};
 };module.exports.posPara_create=posPara_create;
-
+//实时定位中间结果暂存对象构建
 function posMiddle_create() {
     this.rr={};
     this.count={};
     this.mean={};
     this.sigma={};
 }
+//构建暂存过程对象
 function midd_init(posInit,sta_id) {
     posInit[sta_id]={
         "rr":{},
@@ -236,6 +242,7 @@ function midd_init(posInit,sta_id) {
     posInit[sta_id].sigma[ca.SYS_GLO]=[0,0,0,0];
     posInit[sta_id].sigma[ca.SYS_CMP]=[0,0,0,0];
 }
+//使用暂存过程对象初始化定位参数
 function posParainit(sta_id,para) {
     var cwd=path.resolve(__dirname,'..');
     var posave=path.join(cwd,'/config/posmidd.json');
@@ -271,47 +278,7 @@ function posParainit(sta_id,para) {
         console.log(err);
     }
 };module.exports.posParainit=posParainit;
-
-//后处理定位
-function postpos(sta_id,sta_data,post_para,postprc) {
-    var logjson=new logOutJson();
-    var posR=new posResult();
-    if (updateObsNav(sta_data,postprc,logjson)) {
-        //console.log(sta_data.obs.data[0].time.time);
-        if(cmn.timediff(postprc.obs[0].time,post_para.bt)>=0 &&
-            cmn.timediff(postprc.obs[0].time,post_para.et)<=0){
-            if(!pnt.pntpos_RAIM(postprc.obs, postprc.nav, postprc.prcopt, postprc.sol))
-                return 1;
-            postOut(posR,post_para,postprc);
-            return posR;
-        }
-    }
-    return 1;
-};module.exports.postpos=postpos;
-function posMiddleUpdate(sta_id,para) {
-    var midd;
-    if(stationMiddle.hasOwnProperty(sta_id)){
-        midd=stationMiddle[sta_id];
-    }
-    else{
-        midd=new posMiddle_create();
-        stationMiddle[sta_id]=midd;
-    }
-    midd.sol=para.sol;
-    midd.count=para.count;
-    midd.mean=para.mean;
-    midd.sigma=para.sigma;
-};module.exports.posMiddleUpdate=posMiddleUpdate;
-function posStatistic(sta_id,posR) {
-    var options = {
-        headers: {"Connection": "close"},
-        url: opt.statis_url+"add",
-        method: 'POST',
-        json:true,
-        body: {"sta_id":sta_id,"posR":posR}
-    };
-    request(options,callback);
-};module.exports.posStatistic=posStatistic;
+//定位处理中间暂存过程对象存储
 function middleSaveAll(sta_id,stationPara) {
     var cwd=path.resolve(__dirname,'..');
     var posave=path.join(cwd,'/config/posmidd.json');
@@ -365,79 +332,9 @@ function middleSaveAll(sta_id,stationPara) {
         }
     });
 };module.exports.middleSaveAll=middleSaveAll;
-//GPS星历复制
-function ephCopyGPS(eph_t) {
-    var eph=Object.create(ca.eph_t);
-    eph.sys=eph_t.sys;
-    eph.sat=eph_t.sat;
-    eph.sva=eph_t.sva;
-    eph.svh=eph_t.svh;
-    eph.iode=eph_t.iode;
-    eph.iodc=eph_t.iodc;
-    eph.week=eph_t.week;
-    eph.toe=cmn.gpst2time(eph_t.week,eph_t.toe);
-    eph.toc=cmn.gpst2time(eph_t.week,eph_t.toc);
-    eph.toes=eph_t.toe;
-    eph.tocs=eph_t.toc;
-    eph.A=eph_t.A;
-    eph.e=eph_t.e;
-    eph.i0=eph_t.i0;
-    eph.OMG0=eph_t.OMG0;
-    eph.omg=eph_t.omg;
-    eph.M0=eph_t.M0;
-    eph.deln=eph_t.deln;
-    eph.OMGd=eph_t.OMGd;
-    eph.idot=eph_t.idot;
-    eph.crc=eph_t.crc;
-    eph.crs=eph_t.crs;
-    eph.cuc=eph_t.cuc;
-    eph.cus=eph_t.cus;
-    eph.cic=eph_t.cic;
-    eph.cis=eph_t.cis;
-    eph.f0=eph_t.f0;
-    eph.f1=eph_t.f1;
-    eph.f2=eph_t.f2;
-    eph.tgd[0]=eph_t.tgd;
-    return eph;
-}
-//Beidou星历复制
-function ephCopyBeidou(eph_t) {
-    var eph=Object.create(ca.eph_t);
-    eph.sys=eph_t.sys;
-    eph.sat=eph_t.sat;
-    eph.sva=eph_t.sva;
-    eph.svh=eph_t.svh;
-    eph.iode=eph_t.iode;
-    eph.iodc=eph_t.iodc;
-    eph.week=eph_t.week;
-    eph.toe=cmn.gpst2time(eph_t.week,eph_t.toe);
-    eph.toc=cmn.gpst2time(eph_t.week,eph_t.toc);
-    eph.toes=eph_t.toe;
-    eph.tocs=eph_t.toc;
-    eph.A=eph_t.A;
-    eph.e=eph_t.e;
-    eph.i0=eph_t.i0;
-    eph.OMG0=eph_t.OMG0;
-    eph.omg=eph_t.omg;
-    eph.M0=eph_t.M0;
-    eph.deln=eph_t.deln;
-    eph.OMGd=eph_t.OMGd;
-    eph.idot=eph_t.idot;
-    eph.crc=eph_t.crc;
-    eph.crs=eph_t.crs;
-    eph.cuc=eph_t.cuc;
-    eph.cus=eph_t.cus;
-    eph.cic=eph_t.cic;
-    eph.cis=eph_t.cis;
-    eph.f0=eph_t.f0;
-    eph.f1=eph_t.f1;
-    eph.f2=eph_t.f2;
-    eph.tgd[0]=eph_t.tgd[0];
-    eph.tgd[1]=eph_t.tgd[1];
-    return eph;
-}
 
-//更新观测数据及星历数据
+
+//使用新接收数据更新当前定位处理对象（预处理使用）
 function updateObsNav(sta_data,para,logjson) {
     var i,j;
     var reg=0;
@@ -571,6 +468,7 @@ function updateObsNav(sta_data,para,logjson) {
     }
     return reg;
 };module.exports.updateObsNav=updateObsNav;
+//使用新接收数据更新当前定位处理对象（实时定位处理使用）
 function updateObsNav_show(sta_data,para,logjson) {
     var i,j;
     var reg=0;
@@ -701,6 +599,7 @@ function updateObsNav_show(sta_data,para,logjson) {
     }
     return reg;
 };module.exports.updateObsNav_show=updateObsNav_show;
+//组合定位观测数据时间一致性检测
 function obsTimeConsistent(time,obs) {
     var n=obs.length;
     for(var i=0;i<n;i++){
@@ -709,6 +608,7 @@ function obsTimeConsistent(time,obs) {
     }
     return 1;
 };module.exports.obsTimeConsistent=obsTimeConsistent;
+//组合定位观测数据时间不一致数据排除
 function obsMostNumber(obs) {
     var n=obs.length;
     var obs_time=[];
@@ -743,6 +643,7 @@ function obsMostNumber(obs) {
         }
     }
 };module.exports.obsMostNumber=obsMostNumber;
+//广播星历更新前故障检测
 function ephConsistent(epha,ephb) {
     var time;
     var sys=ephb.sys;
@@ -798,6 +699,7 @@ function ephConsistent(epha,ephb) {
     }
     return 0;
 }
+//使用新接收星历更新当前定位星历参数（预处理使用）
 function ephUpdate(time,naveph,eph,logeph) {
     if (naveph[eph.sat - 1] != undefined) {
         if(!ephConsistent(naveph[eph.sat - 1],eph)){
@@ -815,6 +717,7 @@ function ephUpdate(time,naveph,eph,logeph) {
         logeph.push(eph);
     }
 }
+//使用新接收星历更新当前定位星历参数（实时定位处理使用）
 function ephUpdate_show(time,naveph,eph) {
     if (naveph[eph.sat - 1] != undefined) {
         if(!ephConsistent(naveph[eph.sat - 1],eph)){
@@ -825,6 +728,7 @@ function ephUpdate_show(time,naveph,eph) {
         naveph[eph.sat - 1] = eph;
     }
 }
+//实时定位定位结果对象构建
 function posShowStruct(para,sys,logjson) {
     var i,j;
     var time;
@@ -889,11 +793,12 @@ function posShowStruct(para,sys,logjson) {
         rd[1] = sol.rr[1] - rb[1];
         rd[2] = sol.rr[2] - rb[2];
         cmn.ecef2enu(pos, rd, enu);
-        posR.dH =math.sqrt(enu[0]*enu[0]+ enu[1]*enu[1]);
-        posR.dV =enu[2];
+        posR.dX =enu[0];
+        posR.dY =enu[1];
+        posR.dZ =enu[2];
         mean_enu(sigma,enu,count);
-        posR.Hc=sigma[0]+ math.sqrt(sigma[2])*1.96;
-        posR.Vc=sigma[1]+ math.sqrt(sigma[3])*1.96;
+        posR.dH=sigma[0]+ math.sqrt(sigma[2])*1.96;
+        posR.dV=sigma[1]+ math.sqrt(sigma[3])*1.96;
 
         bootc++;
         para.count[sys]=count;
@@ -911,6 +816,7 @@ function posShowStruct(para,sys,logjson) {
     posR.posNum = sol.ns;
     posR.navsys=sol.navsys;
 };module.exports.posShowStruct=posShowStruct;
+//实时定位观测数据结果对象构建
 function satShowStruct(obs,nav,sol,logjson) {
     var satR=logjson.satR;
     var ws=[0,0];
@@ -964,7 +870,7 @@ function satShowStruct(obs,nav,sol,logjson) {
         satR.push(ob);
     }
 };module.exports.satShowStruct=satShowStruct;
-
+//预处理结果输出对象构建
 function  posOutStruct(para,sys,logjson) {
     var i,j;
     var time;
@@ -1063,6 +969,7 @@ function  posOutStruct(para,sys,logjson) {
         }
     }
 };module.exports.posOutStruct=posOutStruct;
+//更新最新卫星仰角数据
 function eleUpdate(sol,obs,ele) {
     var i;
     if(sol.stat) {
@@ -1076,59 +983,7 @@ function eleUpdate(sol,obs,ele) {
         }
     }
 };module.exports.eleUpdate=eleUpdate;
-function postOut(posR,post_para,para) {
-    var ws=[0,0];
-    var pos=[0,0,0];
-    var enu=[0,0,0];
-    var rd=[0,0,0];
-    var sigma=para.sigma;
-    var sol=para.sol;
-    var mean=para.mean;
-    posR.stat=sol.stat;
-    cmn.time2gpst(sol.time, ws);
-    posR.week = ws[0];
-    posR.tow = ws[1];
-    posR.time = time2string(sol.time);
-    if(sol.stat) {
-        posR.X = sol.rr[0];
-        posR.Y = sol.rr[1];
-        posR.Z = sol.rr[2];
-        posR.mX=mean[0];
-        posR.mY=mean[1];
-        posR.mZ=mean[2];
-        posR.vX=math.sqrt(mean[3]);
-        posR.vY=math.sqrt(mean[4]);
-        posR.vZ=math.sqrt(mean[5]);
-        cmn.ecef2pos(sol.rr, pos);
-
-        rd[0] = sol.rr[0] - post_para.rb[0];
-        rd[1] = sol.rr[1] - post_para.rb[1];
-        rd[2] = sol.rr[2] - post_para.rb[2];
-        cmn.ecef2enu(post_para.pos, rd, enu);
-        posR.dX = enu[0];
-        posR.dY = enu[1];
-        posR.dZ = enu[2];
-        mean_enu(sigma,enu,post_para.count);
-        posR.dH=sigma[0]+ math.sqrt(sigma[2])*2;
-        posR.dV=sigma[1]+ math.sqrt(sigma[3])*2;
-
-        post_para.count++;
-
-        posR.Lat = pos[0]*ca.R2D;
-        posR.Lon = pos[1]*ca.R2D;
-        posR.H = pos[2];
-        posR.GDOP = sol.dop[0];
-        posR.PDOP = sol.dop[1];
-        posR.HDOP = sol.dop[2];
-        posR.VDOP = sol.dop[3];
-        posR.VPL = sol.VPL;
-        posR.HPL = sol.HPL;
-        posR.posNum = sol.ns;
-        posR.exsats = sol.ex;
-        posR.navsys=sol.navsys;
-    }
-    posR.minEl=para.prcopt.elmin;
-}
+//计算定位结果均值方差
 function mean_rr(mean,rr,count) {
     mean[0] = cmn.Average(rr[0], mean[0], count);
     mean[1] = cmn.Average(rr[1], mean[1], count);
@@ -1144,6 +999,7 @@ function mean_rr(mean,rr,count) {
         mean[5] = cmn.vare(rr[2], mean[5], count, mean[2]);
     }
 }
+//计算定位误差均值方差
 function mean_enu(mean,rr,count) {
     var h=math.sqrt(rr[0]*rr[0]+rr[1]*rr[1]);
     mean[0] = cmn.Average(h, mean[0], count);
@@ -1157,6 +1013,7 @@ function mean_enu(mean,rr,count) {
         mean[3] = cmn.vare(rr[2], mean[3], count, mean[1]);
     }
 }
+//按导航系统分解观测数据
 function obsBySys(obs,sta_obs) {
     sta_obs.forEach(function(obi){
         if(obs.hasOwnProperty(obi.sys)){
@@ -1169,43 +1026,7 @@ function obsBySys(obs,sta_obs) {
     });
     obs[ca.SYS_ALL]=sta_obs;
 }
-
-function obssort(obs) {
-    var i,j;
-    var obs_t=new Array(3);
-    var ind=0;
-    for(j=0;j<3;j++)obs_t[j]=new Array();
-    for(i=0;i<obs.length;i++){
-        switch (obs[i].sys){
-            case ca.SYS_GPS:
-                obsSysSatSort(obs[i],obs_t[ca.SYS_GPS]);
-                break;
-            case ca.SYS_GLO:
-                obsSysSatSort(obs[i],obs_t[ca.SYS_GLO]);
-                break;
-            case ca.SYS_CMP:
-                obsSysSatSort(obs[i],obs_t[ca.SYS_CMP]);
-                break;
-        }
-    }
-
-    for(i=0;i<3;i++)for(j=0;j<obs_t[i].length;j++)obs[ind++]=obs_t[i][j];
-}
-function obsSysSatSort(obs,obs_t) {
-    var j;
-    if(obs_t.length==0)
-        obs_t.push(obs);
-    else{
-        for(j=0;j<obs_t.length;j++){
-            if(obs.sat<obs_t[j].sat){
-                obs_t.splice(j,0,obs);
-                break;
-            }
-        }
-        if(j==obs_t.length)
-            obs_t.push(obs);
-    }
-}
+//服务系统定义时间格式转换到年月日形式
 function time2string(time) {
     var t=new Date((time.time+time.sec)*1000);
     var month=t.getUTCMonth()+1;
@@ -1214,43 +1035,3 @@ function time2string(time) {
         t.getUTCMinutes()+":"+t.getUTCSeconds()+"."+
         t.getMilliseconds();
 };module.exports.time2string=time2string;
-//对象克隆
-function clone(obj) {
-    // Handle the 3 simple types, and null or undefined
-    if (null == obj || "object" != typeof obj) return obj;
-
-    // Handle Date
-    if (obj instanceof Date) {
-        var copy = new Date();
-        copy.setTime(obj.getTime());
-        return copy;
-    }
-
-    // Handle Array
-    if (obj instanceof Array) {
-        var copy = [];
-        for (var i = 0,  len = obj.length; i < len; ++i) {
-            copy[i] = clone(obj[i]);
-        }
-        return copy;
-    }
-
-    // Handle Object
-    if (obj instanceof Object) {
-        var copy = {};
-        for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
-        }
-        return copy;
-    }
-
-    throw new Error("Unable to copy obj! Its type isn't supported.");
-}
-function callback(error, response, data) {
-    if (error) {
-        console.log(error.message);
-    }
-    else{
-
-    }
-}
