@@ -152,9 +152,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
-                            console.log((data.stationData[i]).satpos)
-
-
                             showChart(data.stationData[i]);
                             showDH(data.stationData, 'gpsDH');
                             showDH(data.stationData, 'glsDH');
@@ -162,6 +159,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             showH(data.stationData, 'H');
                             startOneStaStatus();
                             settingSys(data.stationData[i]);
+                            StarMapChart.starMap((data.stationData[i]).satpos);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
                             //showSatelliteNum(data.stationData[i].satnum)
@@ -170,9 +168,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             //handleData(data.stationData[i])
                         }
 
-                        if(!isNaN(data.stationData[i].satpos.gpsatpos[0].y)){
-                            StarMapChart.starMap((data.stationData[i]).satpos);
-                        }
+
 
 
                     }
@@ -183,13 +179,13 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
-                    if(!isNaN(chartData.satpos.gpsatpos[0].y)){
+                    //if(!isNaN(chartData.satpos.gpsatpos[0].y)){
                         StarMapChart.starMap(chartData.satpos);
-                    }
+                    //}
                     //StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);
                     settingSys(chartData);
-                    //updateH(chartData)
+                    updateH(chartData)
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
                     //    showSatelliteNum(chartData.satnum)
@@ -202,7 +198,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     function updateH(staInfo){
         console.log(staInfo)
-        staInfo.time =
+        //console.log($scope.seriesList.glsDH.points.length)
+        //staInfo.time = new Date().getTime()
+            console.log(staInfo.time)
         $scope.seriesList.glsDH.addPoint([staInfo.time, staInfo.posR[1].H], true, true);
         $scope.seriesList.gpsDH.addPoint([staInfo.time, staInfo.posR[0].H], true, true);
         $scope.seriesList.dbsDH.addPoint([staInfo.time, staInfo.posR[2].H], true, true);
@@ -471,19 +469,13 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 events: {
                     load: function () {
                         //// set up the updating of the chart each second
-                        //var series = this.series[0],
-                        //
-                        //    chart = this;
-                        //this.series.forEach(function(serie){
-                        //    $scope.seriesList[serie.name] = serie
-                        //});
-                        //setInterval(function () {
-                        //    var x = (new Date()).getTime(), // current time
-                        //        y = Math.random();
-                        //    series.addPoint([x, y], true, true);
-                        //
-                        //    //activeLastPointToolip(chart)
-                        //}, 1000);
+                        var series = this.series[0],
+
+                            chart = this;
+                        this.series.forEach(function(serie){
+                            $scope.seriesList[serie.name] = serie
+                        });
+
                     }
                 }
             },
@@ -491,6 +483,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
+                type: 'datetime',
                 categories: xAxis
             },
             series: [{
