@@ -354,6 +354,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             webIn.obsinfo.push(obsinfo);
             if (0 === obs.sys) {
                 //gps
+                console.log(obs.Ele)
                 var gpsatpos = {
                     x: obs.Azi * (180.0 / 3.1415926535897932),//x方位角
                     y: obs.Ele * (180.0 / 3.1415926535897932),//y 仰角
