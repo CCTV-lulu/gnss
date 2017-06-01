@@ -199,19 +199,19 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     function updateH(staInfo) {
 
         if (staInfo.posR[0]) {
-            $scope.seriesList.gpsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[0].H], true, true);
+            $scope.seriesList.gpsDH.addPoint([staInfo.posR[0].H], true, true);
 
         }
         if (staInfo.posR[1]) {
-            $scope.seriesList.glsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[1].H], true, true);
+            $scope.seriesList.glsDH.addPoint([staInfo.posR[1].H], true, true);
 
         }
         if (staInfo.posR[2]) {
-            $scope.seriesList.dbsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[2].H], true, true);
+            $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
 
         }
         if (staInfo.posR[3]) {
-            $scope.seriesList.groupDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[3].H], true, true);
+            $scope.seriesList.groupDH.addPoint([staInfo.posR[3].H], true, true);
         }
 
     }
@@ -455,9 +455,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             }
         }
 
-        allSta.forEach(function (sta) {
+        allSta.forEach(function (sta,index) {
 
-            xAxis.push(new Date(sta.time).getTime());
+            xAxis.push(index);
             for (var i in sta.posR) {
                 push_data(sta.posR[i], staArrs[i])
             }
