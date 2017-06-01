@@ -27,7 +27,7 @@ MetronicApp.factory('DataArray', function() {
             },
             pane: {
                 startAngle: 0,
-                endAngle: 360,
+                endAngle: 360
             },
             xAxis: {
                 tickInterval: 30,
@@ -250,7 +250,7 @@ MetronicApp.factory('DataArray', function() {
             chartData.series[g].data = data;
         }
         StarChart.lineChart( chartData.series, id, seriesList, xAxisTickPixelInterval)
-    }
+    };
 
     return {dataConnect: dataConnect}
-})
+});

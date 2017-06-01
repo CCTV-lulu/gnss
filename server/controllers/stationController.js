@@ -17,7 +17,7 @@ function checkUserStationId(userStationId, userStationInfo) {
         .then(function (station) {
             if (!station) {
                 userStationId[userStationInfo[0][0]] = userStationInfo[0][1];
-                userStationId[userStationInfo[1][0]] = userStationInfo[1][1]
+                userStationId[userStationInfo[1][0]] = userStationInfo[1][1];
                 userStationId.save(function (err, userStationId) {
                     defer.resolve(userStationId)
                 })
@@ -118,6 +118,7 @@ function getStationStatus(req, res, next) {
     StationStatus.where(data, limit)
 
         .then(function (success_data) {
+            StationSocketStatus.StationSocketStatus[req.query.staId] = true
             var stationData = {};
             if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
                 stationData.StationSocketStatus = false;
@@ -303,7 +304,7 @@ function getUserFindStaData(req, res) {
             fs.writeFileSync("./server/" + req.user.username + ".json", JSON.stringify(batchProcesStatus.data.data.integrity));
             return res.send({status: 200, result: a})
         }
-        console.log('----------------------------------------waiting')
+
         return res.send({status: 202, message: 'wait'})
     })
 }

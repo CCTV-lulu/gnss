@@ -3,43 +3,43 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     var timeArray = []
     var dataId = [];
     var chartWidth = $('#chartBox').css('width')
-    var xAxisTickPixelInterval = Math.round((Number(chartWidth.substring(0,3))-200)/10);
+    var xAxisTickPixelInterval = Math.round((Number(chartWidth.substring(0, 3)) - 200) / 10);
     var dashboardPolling;
     var initPolling;
     var stationDataStatus = true;
-    var dataArray = {
-        "bdsatnum": [],
-        "glsatnum": [],
-        "gpsatnum": [],
-        "hor": [],
-        "ver": [],
-        "hacc": [],
-        "vacc": [],
-        "hdop": [],
-        "vdop": [],
-        "pdop": [],
-        "hpl": [],
-        "vpl": [],
-        "alt": [],
-        "lat": [],
-        "lon": [],
-        "rura": [],
-        "type": [],
-        "udre": [],
-        "utc": []
-    };
+    //var dataArray = {
+    //    "bdsatnum": [],
+    //    "glsatnum": [],
+    //    "gpsatnum": [],
+    //    "hor": [],
+    //    "ver": [],
+    //    "hacc": [],
+    //    "vacc": [],
+    //    "hdop": [],
+    //    "vdop": [],
+    //    "pdop": [],
+    //    "hpl": [],
+    //    "vpl": [],
+    //    "alt": [],
+    //    "lat": [],
+    //    "lon": [],
+    //    "rura": [],
+    //    "type": [],
+    //    "udre": [],
+    //    "utc": []
+    //};
     $scope.seriesList = {};
 
 
     var stationId;
-    $scope.$on('allStation-to-dash', function(event, data) {
-        var arr=[]
-        for(var i = 0;i<data.allStation.length;i++) {
+    $scope.$on('allStation-to-dash', function (event, data) {
+        var arr = []
+        for (var i = 0; i < data.allStation.length; i++) {
             arr.push(JSON.stringify(data.allStation[i].staId))
         }
-        if(arr.indexOf(localStorage.getItem('staId')) == -1) {
+        if (arr.indexOf(localStorage.getItem('staId')) == -1) {
             stationId = data.allStation[0].staId;
-        }else {
+        } else {
             stationId = localStorage.getItem('staId');
         }
         init_station_info()
@@ -53,7 +53,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     $interval.cancel(dashboardPolling)
     $interval.cancel(initPolling)
 
-    $scope.$on('$destroy', function(event) {
+    $scope.$on('$destroy', function (event) {
         $interval.cancel(dashboardPolling);
         $interval.cancel(initPolling);
     })
@@ -74,14 +74,14 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     $scope.$on('logout', function (event, url) {
         $interval.cancel(dashboardPolling);
         $interval.cancel(initPolling)
-        $scope.$emit('logout-connect-app','data')
+        $scope.$emit('logout-connect-app', 'data')
     });
 
     $scope.$on('frequencyUpdate', function (event, frequency) {
         $interval.cancel(dashboardPolling);
         dashboardPolling = $interval(function () {
             getStationInfo(stationId, 1)
-        }, frequency * 1000 )
+        }, frequency * 1000)
     });
 
     function showTime() {
@@ -103,61 +103,64 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             "glsSatellite": data.glsatnum
         }
     }
-    function showSatelliteLon(){
+
+    function showSatelliteLon() {
 
     }
+
     function init() {
         showTime()
         $interval(showTime, 1000)
     }
+
     init()
 
-    function init_station_info(){
+    function init_station_info() {
         initPolling = $interval(function () {
             getStationInfo(stationId, 10);
-        },1000)
+        }, 1000)
     }
 
-    function getStationInfo(staId, limit){
-        if(stationDataStatus == false) return;
+    function getStationInfo(staId, limit) {
+        if (stationDataStatus == false) return;
         try {
             loadStationStatus(staId, limit)
-        } catch(err) {
+        } catch (err) {
             stationDataStatus = true;
         }
     }
+
 //MongoDB中读取指定数量的数据记录,大小为读取的记录条数
     function loadStationStatus(staId, limit) {
         stationDataStatus = false;
         getStationStatus.getStationStatus(staId, limit, function (data) {
             //console.log(data)
             stationDataStatus = true;
-            if(data.StationSocketStatus == true) {
+            if (data.StationSocketStatus == true) {
                 $scope.$emit('socketStatus_to_app', '实时数据接收中');
-            }else {
+            } else {
                 $scope.$emit('socketStatus_to_app', '实时数据未连接');
             }
             //10条是以前的
+
             if (limit == 10 && data.stationData != false) {
                 if (data.stationData.length < 10) {
                     return
                 }
-                //console.log(data)
                 $interval.cancel(initPolling);
-                //够10条后一条一条拉
-
-                //console.log(data)
 
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
-                        if (i == (data.stationData.length-1)) {
-                            StarMapChart.starMap((data.stationData[i]).satpos)
+                        if (i == (data.stationData.length - 1)) {
+                            StarMapChart.starMap((data.stationData[i]).satpos);
 
-                            showChart(data.stationData[i],function(){})
-                            showDH(data.stationData,'gpsDH')
-                            showDH(data.stationData,'glsDH')
-                            showDH(data.stationData,'dbsDH')
-                            showH(data.stationData,'H')
+                            showChart(data.stationData[i]);
+                            showDH(data.stationData, 'gpsDH');
+                            showDH(data.stationData, 'glsDH');
+                            showDH(data.stationData, 'dbsDH');
+                            showH(data.stationData, 'H');
+                            startOneStaStatus();
+                            settingSys(data.stationData[i]);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
                             //showSatelliteNum(data.stationData[i].satnum)
@@ -165,18 +168,19 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             //DataArray.arrange(dataId, data.stationData[i].dataId)
                             //handleData(data.stationData[i])
                         }
-                        settingSys(data.stationData[i])
+
                     }
                 }
                 //实时一条一条动态加载
-            } else if(limit == 1 && data.stationData != false) {
+            } else if (limit == 1 && data.stationData != false) {
                 data.stationData.forEach(function (chartData) {
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
-                    StarMapChart.starMap((chartData.satpos));
-                    showChart(chartData,function(){})
-
+                    //StarMapChart.starMap((chartData.satpos));
+                    //showChart(chartData);
+                    //settingSys(chartData);
+                    //updateH(chartData)
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
                     //    showSatelliteNum(chartData.satnum)
@@ -187,18 +191,27 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         })
     }
 
-    function settingSys(dataInfo){
+    function updateH(staInfo){
+        console.log(staInfo)
+        staInfo.time =
+        $scope.seriesList.glsDH.addPoint([staInfo.time, staInfo.posR[1].H], true, true);
+        $scope.seriesList.gpsDH.addPoint([staInfo.time, staInfo.posR[0].H], true, true);
+        $scope.seriesList.dbsDH.addPoint([staInfo.time, staInfo.posR[2].H], true, true);
+        $scope.seriesList.groupDH.addPoint([staInfo.time, staInfo.posR[3].H], true, true);
+    }
 
-        if(dataInfo.posR[0]){
+    function settingSys(dataInfo) {
+
+        if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
         }
-        if(dataInfo.posR[1]){
+        if (dataInfo.posR[1]) {
             $scope.glInfo = dataInfo.posR[1]
         }
-        if(dataInfo.posR[2]){
+        if (dataInfo.posR[2]) {
             $scope.bdInfo = dataInfo.posR[2]
         }
-        if(dataInfo.posR[3]){
+        if (dataInfo.posR[3]) {
             $scope.groupInfo = dataInfo.posR[3]
         }
 
@@ -206,7 +219,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     function updataChart(chartData) {
         $scope.latestData = [];
-        getCommitThreshold.threshold(localStorage.getItem('baseStation') ,function (data) {
+        getCommitThreshold.threshold(localStorage.getItem('baseStation'), function (data) {
             var Threshold = data.staThreshold;
             $scope.cooacc = chartData.cooacc;
             //console.log(chartData.cooacc)
@@ -222,47 +235,30 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     function showChart(chartData) {
 
 
-        showSNR(chartData.SNY,'gpsSNY')
-        showSNR(chartData.SNY,'glsSNY')
-        showSNR(chartData.SNY,'bdsSNY')
+        showSNR(chartData.SNY, 'gpsSNY')
+        showSNR(chartData.SNY, 'glsSNY')
+        showSNR(chartData.SNY, 'bdsSNY')
 
-        getCommitThreshold.threshold(localStorage.getItem('baseStation'),function (data) {
-            //getCommitThreshold.threshold获取阈值超值弹框
-            //var Threshold = data.staThreshold;
-            //timeArray = DataArray.arrange(timeArray, chartData.timestamp)
-            //
-            //$scope.cooacc = chartData.cooacc;
-            ////console.log($scope.cooacc)
-            //Initialise.dataConnect('satnum', Threshold.staNumThresholdMax, Threshold.staNumThresholdMin, "卫星数量", timeArray, chartData.satnum, dataArray, $scope.seriesList, xAxisTickPixelInterval)
-            //Initialise.dataConnect('DopValue', Threshold.pdopThresholdMax, Threshold.pdopThresholdMin, 'DOP值', timeArray, chartData.dopinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
-            //Initialise.dataConnect('absoluteError', Threshold.absoluteThresholdMax, Threshold.absoluteThresholdMin, '绝对误差', timeArray, chartData.abserror, dataArray, $scope.seriesList, xAxisTickPixelInterval);
-            //Initialise.dataConnect('chartPositionPrecision', Threshold.posaccThresholdMax, Threshold.posaccThresholdMin, '定位精度', timeArray, chartData.accinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
-            //Initialise.dataConnect('protectionLevel', Threshold.protectionLevelThresholdMax, Threshold.protectionLevelThresholdMin, '保护水平', timeArray, chartData.plinfo, dataArray, $scope.seriesList, xAxisTickPixelInterval);
+    }
 
-
-
-
-
-
-
-            if(localStorage.getItem('Frequency')) {
-                var Frequency = localStorage.getItem('Frequency');
-            }else {
-                var Frequency = 1;
-            }
-            $interval.cancel(dashboardPolling);
-            dashboardPolling = $interval(function () {
-                getStationInfo(stationId, 1);
-            }, Frequency * 1000)//频率
-        });
+    function startOneStaStatus(){
+        if (localStorage.getItem('Frequency')) {
+            var Frequency = localStorage.getItem('Frequency');
+        } else {
+            var Frequency = 1;
+        }
+        $interval.cancel(dashboardPolling);
+        dashboardPolling = $interval(function () {
+            getStationInfo(stationId, 1);
+        }, Frequency * 1000)
     }
 
 
-    function showSNR(data,type) {
+    function showSNR(data, type) {
         var showData = data[type];
-        $('#'+type +'_loading').hide();
-        $('#'+type+'_content').show();
-        $('#'+type).highcharts({
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        $('#' + type).highcharts({
             chart: {
                 type: 'column'
             },
@@ -311,27 +307,25 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
 
-    function showDH(data, type){
+    function showDH(data, type) {
 
-        var types ={
-            'gpsDH':0,
-            'glsDH':1,
-            'dbsDH':2,
-            'groupDH':3
+        var types = {
+            'gpsDH': 0,
+            'glsDH': 1,
+            'dbsDH': 2,
+            'groupDH': 3
         };
         var show_date = [];
-        for(var i =0;i<data.length;i++){
-            if(data[i].posR[types[type]]){
-                //if(data[i].posR[types[type].dV)
-                show_date.push(data[i].posR[types[type].dV,data[i].posR[types[type]].dH])
-
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].posR[types[type]]) {
+                show_date.push(data[i].posR[types[type].dV, data[i].posR[types[type]].dH])
             }
         }
 
 
-        $('#'+type+'_loading').hide();
-        $('#'+type+'_content').show();
-        $('#'+type).highcharts({
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        $('#' + type).highcharts({
             exporting: {
                 enabled: false
             },
@@ -381,41 +375,59 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             series: [{
                 name: "北斗",
                 type: 'scatter',
-                data: [[-10,190],[10,190],[50,30],[90,90]]
+                data: [[-10, 190], [10, 190], [50, 30], [90, 90]]
             }]
         });
     }
 
 
-
-
-    function showH(allSta,type){
-        var types ={
-            'gpsDH':0,
-            'glsDH':1,
-            'dbsDH':2,
-            'groupDH':3
+    function showH(allSta, type) {
+        var types = {
+            'gpsDH': 0,
+            'glsDH': 1,
+            'dbsDH': 2,
+            'groupDH': 3
         };
-        var xAxis = [],gpsY=[],dbsY=[],groupY=[],glsY=[]
+        var xAxis = [], gpsY = [], dbsY = [], groupY = [], glsY = [];
+        var staArrs = [gpsY, glsY, dbsY, groupY];
 
-        allSta.forEach(function(sta){
+        function push_data(data, staArr) {
+            if (data) {
+                staArr.push(data.H)
+            }
+            else {
+                if (staArr.length == 0) {
+                    staArr.push(0)
+                }
+                else {
+                    staArr.push(staArr[staArr.length - 1])
+                }
+            }
+        }
+
+        allSta.forEach(function (sta) {
+
             xAxis.push(sta.time);
-            gpsY.push(sta.posR[0]?sta.posR[0].H:0);
-            glsY.push(sta.posR[1]?sta.posR[1].H:0);
-            dbsY.push(sta.posR[2]?sta.posR[2].H:0);
-            groupY.push(sta.posR[3]?sta.posR[3].H:0);
+            for (var i in sta.posR) {
+                push_data(sta.posR[i], staArrs[i])
+            }
         });
 
+        function activeLastPointToolip(chart) {
+            var points = chart.series[0].points;
+            chart.tooltip.refresh(points[points.length -1]);
+        }
 
-        $('#'+type+'_loading').hide();
-        $('#'+type+'_content').show();
+
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
         Highcharts.setOptions({
             lang: {
                 resetZoom: '重置',
                 resetZoomTitle: '重置缩放比例'
             }
         });
-        $('#'+type).highcharts({
+        $('#' + type).highcharts({
 
             exporting: {
                 enabled: false
@@ -427,7 +439,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 panKey: 'shift',
                 selectionMarkerFill: 'rgba(0,0,0, 0.2)',
                 resetZoomButton: {
-                    position:{
+                    position: {
                         align: 'right',
                         verticalAlign: 'top',
                         x: 0,
@@ -446,6 +458,24 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             }
                         }
                     }
+                },
+                events: {
+                    load: function () {
+                        //// set up the updating of the chart each second
+                        //var series = this.series[0],
+                        //
+                        //    chart = this;
+                        //this.series.forEach(function(serie){
+                        //    $scope.seriesList[serie.name] = serie
+                        //});
+                        //setInterval(function () {
+                        //    var x = (new Date()).getTime(), // current time
+                        //        y = Math.random();
+                        //    series.addPoint([x, y], true, true);
+                        //
+                        //    //activeLastPointToolip(chart)
+                        //}, 1000);
+                    }
                 }
             },
             subtitle: {
@@ -457,20 +487,20 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             series: [{
                 name: 'gpsDH',
                 data: gpsY
-            },{
-                name: 'glsDH',
-                data: glsY
-            },{
-                name: 'dbsDH',
-                data: dbsY
-            },{
-                name: 'groupDH',
-                data: groupY
-            }]
+            }
+                , {
+                    name: 'glsDH',
+                    data: glsY
+                }, {
+                    name: 'dbsDH',
+                    data: dbsY
+                }, {
+                    name: 'groupDH',
+                    data: groupY
+                }
+            ]
         })
     }
-
-
 
 
 })
