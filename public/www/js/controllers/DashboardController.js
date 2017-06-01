@@ -133,10 +133,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
                             showChart(data.stationData[i]);
-                            showDH(data.stationData, 'gpsDH');
-                            showDH(data.stationData, 'glsDH');
-                            showDH(data.stationData, 'dbsDH');
-                            showDH(data.stationData, 'groupDH');
+                            showDxDy(data.stationData, 'gpsDxDy');
+                            showDxDy(data.stationData, 'glsDxDy');
+                            showDxDy(data.stationData, 'dbsDxDy');
+                            showDxDy(data.stationData, 'groupDxDy');
                             showH(data.stationData, 'H');
                             //
                             settingSys(data.stationData[i]);
@@ -167,6 +167,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     showChart(chartData);
                     settingSys(chartData);
                     updateH(chartData);
+                    updateDxDy(chartData)
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
                     //    showSatelliteNum(chartData.satnum)
@@ -175,6 +176,23 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 })
             }
         })
+    }
+    function updateDxDy(staInfo){
+        if (staInfo.posR[0]) {
+            $scope.seriesList.gpsDxDy.addPoint(getDxDy(staInfo.posR[0]), true, true);
+
+        }
+        if (staInfo.posR[1]) {
+            $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
+
+        }
+        if (staInfo.posR[2]) {
+            $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
+
+        }
+        if (staInfo.posR[3]) {
+            $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
+        }
     }
 
     function updateH(staInfo) {
@@ -230,10 +248,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function showChart(chartData) {
-
-
-        showSNR(chartData.SNY, 'gpsSNY')
-        showSNR(chartData.SNY, 'glsSNY')
+        showSNR(chartData.SNY, 'gpsSNY');
+        showSNR(chartData.SNY, 'glsSNY');
         showSNR(chartData.SNY, 'bdsSNY')
 
     }
@@ -303,36 +319,41 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         });
     }
 
+    function getDxDy(info){
+        var x = Math.abs(info.dX);
+        var y = Math.abs(info.dY);
+        var z = Math.sqrt(x * x + y * y);
 
-    function showDH(data, type) {
+        var rotat = Math.round((Math.asin(x / z) / Math.PI * 180));
+
+        if (x > 0 && y < 0) {
+            rotat += 90
+        }
+        if (x < 0 && y < 0) {
+            rotat = 180 - rotat
+        }
+        if (x < 0 && y > 0) {
+            rotat = 360 - rotat
+        }
+        var length = 5 * z;
+        return [isNaN(rotat) ? 0 : rotat, 100-length]
+    }
+
+
+    function showDxDy(data, type) {
 
         var types = {
-            'gpsDH': 0,
-            'glsDH': 1,
-            'dbsDH': 2,
-            'groupDH': 3
+            'gpsDxDy': 0,
+            'glsDxDy': 1,
+            'dbsDxDy': 2,
+            'groupDxDy': 3
         };
         var show_date = [];
         for (var i = 0; i < data.length; i++) {
             if (data[i].posR[types[type]]) {
                 var info = data[i].posR[types[type]];
-                var x = Math.abs(info.dX);
-                var y = Math.abs(info.dY);
-                var z = Math.sqrt(x * x + y * y);
 
-                var rotat = Math.round((Math.asin(x / z) / Math.PI * 180));
-
-                if (x > 0 && y < 0) {
-                    rotat += 90
-                }
-                if (x < 0 && y < 0) {
-                    rotat = 180 - rotat
-                }
-                if (x < 0 && y > 0) {
-                    rotat = 360 - rotat
-                }
-                var length = 5 * z;
-                show_date.push([isNaN(rotat) ? 0 : rotat, 100-length])
+                show_date.push(getDxDy(info))
             }
         }
 
@@ -343,7 +364,19 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 enabled: false
             },
             chart: {
-                polar: true
+                polar: true,
+                events: {
+                    load: function () {
+                        //// set up the updating of the chart each second
+                        var series = this.series[0],
+                            chart = this;
+                        this.series.forEach(function (serie) {
+                            $scope.seriesList[serie.name] = serie;
+                        });
+
+
+                    }
+                }
             },
             title: {
                 text: ''
@@ -387,7 +420,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             },
             series: [{
                 name: type,
-                type: 'scatter',
+                type: 'line',
                 data: show_date
             }]
         });
