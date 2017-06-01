@@ -152,6 +152,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
+                            console.log((data.stationData[i]).satpos)
                             StarMapChart.starMap((data.stationData[i]).satpos);
 
                             showChart(data.stationData[i]);
@@ -177,9 +178,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
-                    //StarMapChart.starMap((chartData.satpos));
-                    //showChart(chartData);
-                    //settingSys(chartData);
+                    console.log('-----------console--------------')
+                    console.log((chartData.satpos));
+                    StarMapChart.starMap((chartData.satpos));
+                    showChart(chartData);
+                    settingSys(chartData);
                     //updateH(chartData)
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
