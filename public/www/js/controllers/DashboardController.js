@@ -531,7 +531,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
-                type: 'datetime',
                 categories: xAxis
             },
             series: [{
