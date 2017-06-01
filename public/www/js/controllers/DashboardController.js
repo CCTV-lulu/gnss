@@ -177,25 +177,21 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function updateH(staInfo){
-        console.log(staInfo)
-        //console.log($scope.seriesList.glsDH.points.length)
-        //staInfo.time = new Date().getTime()
-        console.log(staInfo.time)
-        console.log(staInfo.posR[0].H)
+
         if(staInfo.posR[0]){
-            $scope.seriesList.gpsDH.addPoint([staInfo.time, staInfo.posR[0].H], true, true);
+            $scope.seriesList.gpsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[0].H], true, true);
 
         }
         if(staInfo.posR[1]){
-            $scope.seriesList.glsDH.addPoint([staInfo.time, staInfo.posR[1].H], true, true);
+            $scope.seriesList.glsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[1].H], true, true);
 
         }
         if(staInfo.posR[2]){
-            $scope.seriesList.dbsDH.addPoint([staInfo.time, staInfo.posR[2].H], true, true);
+            $scope.seriesList.dbsDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[2].H], true, true);
 
         }
         if(staInfo.posR[3]){
-            $scope.seriesList.groupDH.addPoint([staInfo.time, staInfo.posR[3].H], true, true);
+            $scope.seriesList.groupDH.addPoint([new Date(staInfo.time).getTime(), staInfo.posR[3].H], true, true);
         }
 
     }
@@ -407,13 +403,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
         allSta.forEach(function (sta) {
 
-            xAxis.push(sta.time);
+            xAxis.push(new Date(sta.time).getTime());
             for (var i in sta.posR) {
                 push_data(sta.posR[i], staArrs[i])
             }
         });
-        console.log(gpsY)
-        console.log(xAxis)
 
         function activeLastPointToolip(chart) {
             var points = chart.series[0].points;
@@ -427,8 +421,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             lang: {
                 resetZoom: '重置',
                 resetZoomTitle: '重置缩放比例'
+            },
+            global: {
+                useUTC: false
             }
         });
+
         $('#' + type).highcharts({
 
             exporting: {
@@ -478,7 +476,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
-
+                type: 'datetime',
                 categories: xAxis
             },
             series: [{
