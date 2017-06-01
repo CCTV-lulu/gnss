@@ -825,6 +825,8 @@ function satShowStruct(obs,nav,sol,logjson) {
         var ob=new satR_create();
         ob.sys=obs[i].sys;
         ob.sat=obs[i].sat;
+        ob.SNR[0]=obs[i].SNR[0]*0.25;
+        ob.SNR[1]=obs[i].SNR[1]*0.25;
         if(sol.stat){
             ob.Azi = sol.azel[i * 2];
             ob.Ele = sol.azel[1 + i * 2];
