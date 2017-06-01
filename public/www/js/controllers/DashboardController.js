@@ -153,7 +153,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
                             console.log((data.stationData[i]).satpos)
-                            StarMapChart.starMap((data.stationData[i]).satpos);
+
 
                             showChart(data.stationData[i]);
                             showDH(data.stationData, 'gpsDH');
@@ -169,6 +169,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             //DataArray.arrange(dataId, data.stationData[i].dataId)
                             //handleData(data.stationData[i])
                         }
+                        if(data.stationData[i].satpos.gpsatpos.y != NaN){
+                            StarMapChart.starMap((data.stationData[i]).satpos);
+                        }
+
 
                     }
                 }
@@ -178,8 +182,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
                     //    DataArray.arrange(dataId, chartData.dataId);
-                    console.log('-----------console--------------')
-                    console.log((chartData.satpos));
                     StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);
                     settingSys(chartData);

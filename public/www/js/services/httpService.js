@@ -327,7 +327,6 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
     //对数据分类处理
     //整理数据
     var mapping = function (logJSON, dataId, timestamp) {
-        console.log()
         var algoIn = logJSON.satR,//原始数据[28]
             algoOut = logJSON.posR;//
 
@@ -354,8 +353,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             webIn.obsinfo.push(obsinfo);
             if (0 === obs.sys) {
                 //gps
-                console.log('------------ele')
-                console.log(obs.Ele)
+
                 var gpsatpos = {
                     x: obs.Azi * (180.0 / 3.1415926535897932),//x方位角
                     y: obs.Ele * (180.0 / 3.1415926535897932),//y 仰角
@@ -368,8 +366,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 webIn.satpos.gpsatpos.push(gpsatpos);//push到webin，放到大对象里
 
             } else if (1 === obs.sys) {
-                console.log('------------ele')
-                console.log(obs.Ele)
+
                 var glsatpos = {
                     //gls
                     x: obs.Azi * (180.0 / 3.1415926535897932),
@@ -382,8 +379,6 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 webIn.satpos.glsatpos.push(glsatpos);
 
             } else if (2 === obs.sys) {
-                console.log('------------ele')
-                console.log(obs.Ele)
                 //北斗
                 var bdsatpos = {
                     x: obs.Azi * (180.0 / 3.1415926535897932),
