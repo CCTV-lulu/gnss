@@ -354,6 +354,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             webIn.obsinfo.push(obsinfo);
             if (0 === obs.sys) {
                 //gps
+                console.log('------------ele')
                 console.log(obs.Ele)
                 var gpsatpos = {
                     x: obs.Azi * (180.0 / 3.1415926535897932),//x方位角
@@ -367,6 +368,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 webIn.satpos.gpsatpos.push(gpsatpos);//push到webin，放到大对象里
 
             } else if (1 === obs.sys) {
+                console.log('------------ele')
+                console.log(obs.Ele)
                 var glsatpos = {
                     //gls
                     x: obs.Azi * (180.0 / 3.1415926535897932),
@@ -379,6 +382,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 webIn.satpos.glsatpos.push(glsatpos);
 
             } else if (2 === obs.sys) {
+                console.log('------------ele')
+                console.log(obs.Ele)
                 //北斗
                 var bdsatpos = {
                     x: obs.Azi * (180.0 / 3.1415926535897932),
@@ -426,7 +431,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     req.stationData.forEach(function (fileData) {
                         //ajax请求发送回来数据，查找原始数据的话直接打印，打印不出来则是解析错误
                         var data = JSON.parse(fileData);
-                        data = mapping(data.data, data._id, data.updated_at)
+                            data = mapping(data.data, data._id, data.updated_at)
                         stationData.push(data)
                     })
 
