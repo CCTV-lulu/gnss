@@ -169,7 +169,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             //DataArray.arrange(dataId, data.stationData[i].dataId)
                             //handleData(data.stationData[i])
                         }
-                        if(data.stationData[i].satpos.gpsatpos.y != NaN){
+                        console.log(data.stationData[i].satpos.gpsatpos[0].y)
+                        
+                        if(data.stationData[i].satpos.gpsatpos[0].y != NaN){
                             StarMapChart.starMap((data.stationData[i]).satpos);
                         }
 
