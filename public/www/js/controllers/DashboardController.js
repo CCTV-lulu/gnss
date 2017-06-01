@@ -124,7 +124,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             //10条是以前的
 
             if (limit == 10 && data.stationData != false) {
-                if (data.stationData.length < 10) {
+                if (data.stationData.length < 100) {
                     return
                 }
                 $interval.cancel(initPolling);
