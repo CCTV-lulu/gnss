@@ -140,7 +140,11 @@ function getStationStatus(req, res, next) {
     //            var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
     //            stationData.StationSocketStatus = socketStatus;
     //        }
-    //        stationData.stationData = success_data;
+    //        var result = []
+    //        success_data.forEach(function(data){
+    //            result.push(JSON.parse(data))
+    //        })
+    //        stationData.stationData = result;
     //        res.send(stationData);
     //    }, function (error) {
     //        res.send({

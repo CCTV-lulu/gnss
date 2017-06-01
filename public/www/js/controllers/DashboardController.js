@@ -464,11 +464,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     load: function () {
                         //// set up the updating of the chart each second
                         var series = this.series[0],
-
                             chart = this;
                         this.series.forEach(function(serie){
-                            $scope.seriesList[serie.name] = serie
+                            $scope.seriesList[serie.name] = serie;
+                            $scope.seriesList['H'] = chart
                         });
+
 
                     }
                 }
