@@ -414,22 +414,16 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         cb = cb || function () {}
         var getStationStatusUrl = "http://" + settingInfo.server + ":" + settingInfo.port + "/getStationStatus?staId=" + staId + "&limit=" + limit
         httpRequest.httpGet(getStationStatusUrl, function(req) {
-            //console.log(req)先十条然后动态１条
-            //console.log(req.stationData)
-            //console.log(req.stationData)大数组里对象为字符串10条数据
             if(req.status == 400){
                return Prompt.promptBox("warning", data.message)
             } else if(req.stationData) {
-                var result = [];
-                if(req.stationData.length == 10) {
+                    var result = [];
                     var stationData = [];
                     req.stationData.forEach(function (fileData) {
-                        //ajax请求发送回来数据，查找原始数据的话直接打印，打印不出来则是解析错误
                         var data = JSON.parse(fileData);
-                            data = mapping(data.data, data._id, data.updated_at)
+                        data = mapping(data.data, data._id, data.updated_at)
                         stationData.push(data)
-                    })
-
+                    });
                     var by = function(name){
                         return function(o, p){
                             var a, b;
@@ -451,16 +445,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                     };
                     req.stationData = stationData.sort(by('timestamp'))//按照时间戳排序
                     cb(req);
-                }else {
-                    req.stationData.forEach(function (fileData) {
-                        var data = JSON.parse(fileData);
 
-                        var newData = mapping(data.data, data._id, data.updated_at)
-                        result.push(newData)
-                    })
-                    req.stationData = result;
-                    cb(req);
-                }
             }else{
                 cb(req);
             }
