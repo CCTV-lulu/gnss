@@ -178,19 +178,20 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         })
     }
     function updateDxDy(staInfo){
-        if (staInfo.posR[0]) {
+
+        if (staInfo.posR[0]&&getDxDy(staInfo.posR[0])) {
             $scope.seriesList.gpsDxDy.addPoint(getDxDy(staInfo.posR[0]), true, true);
 
         }
-        if (staInfo.posR[1]) {
+        if (staInfo.posR[1]&&getDxDy(staInfo.posR[1])){
             $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
 
         }
-        if (staInfo.posR[2]) {
+        if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
             $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
 
         }
-        if (staInfo.posR[3]) {
+        if (staInfo.posR[3]&&getDxDy(staInfo.posR[3])) {
             $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
         }
     }
@@ -336,6 +337,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             rotat = 360 - rotat
         }
         var length = 5 * z;
+        if(length>100){
+            return false
+        }
         return [isNaN(rotat) ? 0 : rotat, 100-length]
     }
 
