@@ -217,9 +217,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function settingSys(dataInfo) {
-        var time = new Date(dataInfo.timestamp)
+        var time = new Date(dataInfo.timestamp);
         $scope.utcTime = time.getUTCFullYear() +'-'+time.getUTCMonth()+'-'+time.getUTCDate()+' ' +time.getUTCHours()+':'+time.getUTCMinutes()+':'+time.getUTCSeconds()
-
+        console.log(dataInfo)
         if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
         }
@@ -273,8 +273,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     function showSNR(data, type) {
         var showData = data[type];
-        console.log(showData[0].slice(0,15))
-
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
         $('#' + type).highcharts({

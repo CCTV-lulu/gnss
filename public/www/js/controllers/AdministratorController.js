@@ -56,7 +56,43 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
 
             }
         }
+    };
+
+    $scope.addUser = function(){
+        var station = $scope.station;
+        var isAdmin = document.getElementById('isAdmin').checked;
+        if ($scope.username && $scope.password && station) {
+            Mongodb.addUsers($scope.username, $scope.password, station, isAdmin, function (data) {
+                if (data == "用户名已存在！") {
+                    Prompt.promptBox('warning', data)
+                } else {
+                    $scope.config($scope.name, $scope.staId);
+                    Mongodb.findAllUsers(function (data) {
+                        $scope.allUsers = data[0];
+                    });
+                    var message = "添加用户成功！";
+                    Prompt.promptBox('success', message);
+                    $scope.allUsers.push(data);
+                    clearInput()
+                }
+            })
+        } else {
+            Prompt.promptBox('warning', '请输入用户名或密码！')
+
+        }
+
+    };
+
+
+    function clearInput(){
+        $("#name-info").val('');
+        $("#pass-info").val('')
     }
+
+    function a(){}
+
+
+
     $scope.changePassword = function(){
         $("#navbar_edit").modal({
             backdrop :'static'

@@ -828,21 +828,21 @@ function satShowStruct(obs,nav,sol,logjson) {
         ob.SNR[0]=obs[i].SNR[0]*0.25;
         ob.SNR[1]=obs[i].SNR[1]*0.25;
         if(sol.stat){
-            ob.Azi = sol.azel[i * 2];
-            ob.Ele = sol.azel[1 + i * 2];
+            ob.Azi = sol.azel[i * 2]*ca.R2D;
+            ob.Ele = sol.azel[1 + i * 2]*ca.R2D;
         }
         if(ob.sys==ca.SYS_GPS){
-            if(nav.ura_gps.indexOf(ob.sat-1)!=-1){
+            if(nav.ura_gps[ob.sat-1]!=undefined){
                 ob.ura=nav.ura_gps[ob.sat-1].ura;
             }
-            if(nav.eph.indexOf(ob.sat-1)!=-1){
+            if(nav.eph[ob.sat-1]!=undefined){
                 ob.svh=nav.eph[ob.sat-1].svh;
             }
             cmn.time2gpst(obs[i].time,ws);
             time=time2string(obs[i].time);
         }
         else if(ob.sys==ca.SYS_GLO){
-            if(nav.geph.indexOf(ob.sat-1)!=-1){
+            if(nav.geph[ob.sat-1]!=undefined){
                 ob.svh=nav.geph[ob.sat-1].svh;
                 //ob.ura=para.nav.geph[ob.sat-1].sva;
             }
@@ -850,16 +850,16 @@ function satShowStruct(obs,nav,sol,logjson) {
             time=time2string(time);
         }
         else if(ob.sys==ca.SYS_CMP){
-            if(nav.ura_cmp.indexOf(ob.sat-1)!=-1){
+            if(nav.ura_cmp[ob.sat-1]!=undefined){
                 ob.ura=nav.ura_cmp[ob.sat-1].ura;
             }
-            if(nav.ceph.indexOf(ob.sat-1)!=-1){
+            if(nav.ceph[ob.sat-1]!=undefined){
                 ob.svh=nav.ceph[ob.sat-1].svh;
             }
-            if(nav.rura.indexOf(ob.sat-1)!=-1){
+            if(nav.rura[ob.sat-1]!=undefined){
                 ob.rura=nav.rura[ob.sat-1];
             }
-            if(nav.udre.indexOf(ob.sat-1)!=-1){
+            if(nav.udre[ob.sat-1]!=undefined){
                 ob.udre=nav.udre[ob.sat-1];
             }
             time=cmn.timeadd(obs[i].time,-14);

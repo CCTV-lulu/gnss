@@ -353,7 +353,7 @@ function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
             return 3;
     }
     FSN = v[0]*v[0]/S[0][0];
-    FSat = "";
+    FSat = sst[0];
     if(S[0][0]<0)
         return 3;
     HPL = math.sqrt((A[0][0]*A[0][0]+A[1][0]*A[1][0])/S[0][0]);
