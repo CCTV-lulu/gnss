@@ -164,10 +164,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     StarMapChart.starMap(chartData.satpos);
                     //}
                     //StarMapChart.starMap((chartData.satpos));
-                    updateChart(chartData);
+
                     settingSys(chartData);
                     updateH(chartData);
                     updateDxDy(chartData)
+                    updateChart(chartData);
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
                     //    showSatelliteNum(chartData.satnum)
@@ -280,7 +281,16 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         $('#' + type + '_content').show();
         $('#' + type).highcharts({
             chart: {
-                type: 'column'
+                type: 'column',
+                events: {
+                    load: function () {
+                        //// set up the updating of the chart each second
+                        $scope.seriesList[type] = this.series;
+
+
+
+                    }
+                }
             },
             //线类型
             title: {
@@ -303,16 +313,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     }
                 }
             },
-            events: {
-                load: function () {
-                    //// set up the updating of the chart each second
-                    this.series.forEach(function (serie) {
-                        $scope.seriesList[type] = this.series;
-                    });
 
-
-                }
-            },
             plotOptions: {
                 series: {
                     animation: false
@@ -343,6 +344,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     function updateSNR(staInfo,type){
             var showData = staInfo[type];
+            console.log($scope.seriesList)
             $scope.seriesList[type][0].setData(showData[0].slice(0,15))
             $scope.seriesList[type][1].setData(showData[1].slice(0,15))
 

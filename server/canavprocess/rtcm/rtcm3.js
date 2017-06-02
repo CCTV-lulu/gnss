@@ -1117,6 +1117,7 @@ function decode_type2009(buff,rtcm){
         prn    = getbitu(buff,i,  6);              i+= 6;
         sow    = getbitu32(buff,i, 32);              i+= 32;
         cmn.time2bdt(rtcm.time,ws);
+        rtcm.utc.sat=prn;
         rtcm.utc.week=ws[0];
         rtcm.utc.tow=sow;
         rtcm.utc.time=cmn.bdt2gpst(cmn.bdt2time(ws[0],sow));
@@ -1142,6 +1143,7 @@ function decode_type2019(buff,rtcm){
         prn    = getbitu(buff,i,  6);              i+= 6;
         sow    = getbitu32(buff,i, 32);              i+= 32;
         cmn.time2gpst(rtcm.time,ws);
+        rtcm.utc.sat=prn;
         rtcm.utc.week=ws[0];
         rtcm.utc.tow=sow;
         rtcm.utc.time=cmn.gpst2time(ws[0],sow);
