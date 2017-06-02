@@ -203,17 +203,17 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             $scope.seriesList.gpsDH.addPoint([staInfo.posR[0].H], true, true);
 
         }
-        if (staInfo.posR[1]) {
-            $scope.seriesList.glsDH.addPoint([staInfo.posR[1].H], true, true);
-
-        }
-        if (staInfo.posR[2]) {
-            $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
-
-        }
-        if (staInfo.posR[3]) {
-            $scope.seriesList.groupDH.addPoint([staInfo.posR[3].H], true, true);
-        }
+        //if (staInfo.posR[1]) {
+        //    $scope.seriesList.glsDH.addPoint([staInfo.posR[1].H], true, true);
+        //
+        //}
+        //if (staInfo.posR[2]) {
+        //    $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
+        //
+        //}
+        //if (staInfo.posR[3]) {
+        //    $scope.seriesList.groupDH.addPoint([staInfo.posR[3].H], true, true);
+        //}
 
     }
 
@@ -299,6 +299,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     }
                 }
             },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             yAxis: {
                 min: 0,
                 title: {
@@ -355,7 +360,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             'groupDxDy': 3
         };
         var show_date = [];
-        for (var i = 0; i < data.length; i++) {
+        for (var i = 0; i < 600; i++) {
             if (data[i].posR[types[type]]) {
                 var info = data[i].posR[types[type]];
 
@@ -390,6 +395,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             tooltip:{
                 enabled: false
             },
+
 
             pane: {
                 startAngle: 0,
