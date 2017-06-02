@@ -263,7 +263,7 @@ function bdUTC(){
     this.sys=0;
     this.week=0;
     this.tow=0;
-    this.stat=0;
+    this.sat=0;
     this.time=new gtime();
     this.A0utc=0;
     this.A1utc=0;
@@ -274,7 +274,7 @@ function bdUTC(){
 };module.exports.bdUTC=bdUTC;
 function gpsUTC() {
     this.sys=0;
-    this.stat=0;
+    this.sat=0;
     this.week=0;
     this.tow=0;
     this.time=new gtime();

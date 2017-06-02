@@ -82,8 +82,9 @@ module.exports.parser_pos=function(data) {
             catch (err){
                 console.log(err);
             }
+            logjson.time=sta_data.time;
+            pos_list.push(logjson);
         }
-        pos_list.push(logjson);
     });
     return pos_list;
 };
@@ -119,6 +120,6 @@ function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     logjson.posR[sys] = new nodepos.posResult();
     nodepos.posOutStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
-    logjson.time=sol.time;
-    console.log(sys,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL);
+    //logjson.time=sol.time;
+    //console.log(sys,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL);
 }

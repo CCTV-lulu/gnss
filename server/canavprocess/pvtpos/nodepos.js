@@ -796,10 +796,8 @@ function posShowStruct(para,sys,logjson) {
         posR.dX =enu[0];
         posR.dY =enu[1];
         posR.dZ =enu[2];
-        if(math.sqrt(enu[0]*enu[0]+enu[1]*enu[1])<opt.HAL){
+        if(math.sqrt(enu[0]*enu[0]+enu[1]*enu[1])<opt.HAL)
             mean_enu(sigma,enu,count);
-        }
-
         posR.dH=sigma[0]+ math.sqrt(sigma[2])*1.96;
         posR.dV=sigma[1]+ math.sqrt(sigma[3])*1.96;
 
