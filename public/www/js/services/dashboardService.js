@@ -66,6 +66,12 @@ MetronicApp.factory('DataArray', function() {
                     pointPadding: 0,
                     groupPadding: 0
                 }
+
+            },
+            tooltip: {
+                pointFormat: '<tr><td style="color: {series.color}">Azi: </td>' +
+                '<td style="text-align: right"><b>{point.x} </b></td></tr>'+'<br><tr><td style="color: {series.color}">Ele: </td>' +
+                '<td style="text-align: right"><b>{point.y} </b></td></tr>'
             },
             series: [{
                 name: "北斗",
