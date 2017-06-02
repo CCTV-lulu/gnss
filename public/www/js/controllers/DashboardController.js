@@ -164,7 +164,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     StarMapChart.starMap(chartData.satpos);
                     //}
                     //StarMapChart.starMap((chartData.satpos));
-                    showChart(chartData);
+                    updateChart(chartData);
                     settingSys(chartData);
                     updateH(chartData);
                     updateDxDy(chartData)
@@ -198,6 +198,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function updateH(staInfo) {
+
 
         if (staInfo.posR[0]) {
             $scope.seriesList.gpsDH.addPoint([staInfo.posR[0].H], true, true);
@@ -250,11 +251,14 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function showChart(chartData) {
-        console.log(chartData.SNY)
         showSNR(chartData.SNY, 'gpsSNY');
         showSNR(chartData.SNY, 'glsSNY');
         showSNR(chartData.SNY, 'bdsSNY')
-
+    }
+    function updateChart(chartData){
+        updateSNR(chartData.SNY, 'gpsSNY');
+        updateSNR(chartData.SNY, 'glsSNY');
+        updateSNR(chartData.SNY, 'bdsSNY')
     }
 
     function startOneStaStatus() {
@@ -299,6 +303,16 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     }
                 }
             },
+            events: {
+                load: function () {
+                    //// set up the updating of the chart each second
+                    this.series.forEach(function (serie) {
+                        $scope.seriesList[type] = this.series;
+                    });
+
+
+                }
+            },
             plotOptions: {
                 series: {
                     animation: false
@@ -325,6 +339,13 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     data: showData[1].slice(0,15)
                 }]
         });
+    }
+
+    function updateSNR(staInfo,type){
+            var showData = staInfo[type];
+            $scope.seriesList[type].series[0].setData(showData[0].slice(0,15))
+
+
     }
 
     function getDxDy(info){
@@ -363,8 +384,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
         for (var i = 0; i < data.length; i++) {
             if (data[i].posR[types[type]]) {
                 var info = data[i].posR[types[type]];
+                if(getDxDy(info)){
+                    show_date.push(getDxDy(info))
+                }
 
-                show_date.push(getDxDy(info))
             }
         }
 
