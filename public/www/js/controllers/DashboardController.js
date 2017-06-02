@@ -137,7 +137,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             showDxDy(data.stationData, 'glsDxDy');
                             showDxDy(data.stationData, 'dbsDxDy');
                             showDxDy(data.stationData, 'groupDxDy');
-                            showH(data.stationData, 'H');
+                            //showH(data.stationData, 'H');
                             //
                             settingSys(data.stationData[i]);
                             StarMapChart.starMap((data.stationData[i]).satpos);
@@ -166,7 +166,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);
                     settingSys(chartData);
-                    updateH(chartData);
+                    //updateH(chartData);
                     updateDxDy(chartData)
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
@@ -180,6 +180,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     function updateDxDy(staInfo){
 
         if (staInfo.posR[0]&&getDxDy(staInfo.posR[0])) {
+            console.log($scope.seriesList.gpsDxDy.points.length)
             $scope.seriesList.gpsDxDy.addPoint(getDxDy(staInfo.posR[0]), true, true);
 
         }
@@ -217,9 +218,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     }
 
     function settingSys(dataInfo) {
-        var time = new Date(dataInfo.timestamp);
-        $scope.utcTime = time.getUTCFullYear() +'-'+time.getUTCMonth()+'-'+time.getUTCDate()+' ' +time.getUTCHours()+':'+time.getUTCMinutes()+':'+time.getUTCSeconds()
-        console.log(dataInfo)
+        $scope.utcTime = dataInfo.timestamp
         if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
         }

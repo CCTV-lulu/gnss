@@ -387,8 +387,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 //gps
 
                 var gpsatpos = {
-                    x: obs.Azi * (180.0 / 3.1415926535897932),//x方位角
-                    y: obs.Ele * (180.0 / 3.1415926535897932),//y 仰角
+                    x: obs.Azi ,//x方位角
+                    y: obs.Ele ,//y 仰角
 
                     id: obs.sat//型号卫星id
                 }
@@ -401,8 +401,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
 
                 var glsatpos = {
                     //gls
-                    x: obs.Azi * (180.0 / 3.1415926535897932),
-                    y: obs.Ele * (180.0 / 3.1415926535897932),
+                    x: obs.Azi ,
+                    y: obs.Ele,
                     SNR:{1:[obs.sat, obs.SNR[0]],2:[obs.sat, obs.SNR[1]]},
                     id: obs.sat
                 };
@@ -413,8 +413,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             } else if (2 === obs.sys) {
                 //北斗
                 var bdsatpos = {
-                    x: obs.Azi * (180.0 / 3.1415926535897932),
-                    y: obs.Ele * (180.0 / 3.1415926535897932),
+                    x: obs.Azi ,
+                    y: obs.Ele,
                     SNR:{1:[obs.sat, obs.SNR[0]],2:[obs.sat, obs.SNR[1]]},
                     id: obs.sat
                 }
@@ -456,7 +456,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                         var data = fileData
                         //var data = JSON.parse(fileData);
 
-                        data = mapping(data.data, data._id, data.updated_at)
+                        data = mapping(data.data, data._id, data.time)
                         stationData.push(data)
                     });
                     var by = function(name){

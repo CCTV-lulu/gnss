@@ -88,7 +88,7 @@ module.exports.parser_pos=function(sta_id,data) {
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_GLO)) {
                         real_pos(para,para.obs[ca.SYS_GLO],para.nav, para.prcopt, para.sol[ca.SYS_GLO],ca.SYS_GLO,logjson);
-                        logjson.time=cmn.time2string_Local(cmn.gpst2utc(para.sol[ca.SYS_GLO].time));
+                        logjson.time=cmn.time2string_UTC(cmn.gpst2utc(para.sol[ca.SYS_GLO].time));
                     }
                 }
                 catch(err){
@@ -98,10 +98,10 @@ module.exports.parser_pos=function(sta_id,data) {
                     if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
                         real_pos(para,para.obs[ca.SYS_CMP],para.nav, para.prcopt, para.sol[ca.SYS_CMP],ca.SYS_CMP,logjson);
                         if(para.nav.utc_cmp.stat==1){
-                            logjson.time=cmn.time2string_Local(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
+                            logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
                         }
                         else{
-                            logjson.time=cmn.time2string_Local(para.sol[ca.SYS_CMP].time);
+                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
                         }
                     }
                 }
@@ -117,10 +117,10 @@ module.exports.parser_pos=function(sta_id,data) {
                         nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logjson);
                         nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
                         if(para.nav.utc_gps.stat==1){
-                            logjson.time=cmn.time2string_Local(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
+                            logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
                         }
                         else{
-                            logjson.time=cmn.time2string_Local(para.sol[ca.SYS_ALL].time);
+                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
                         }
                     }
                     if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
