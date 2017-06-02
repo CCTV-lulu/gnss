@@ -16,8 +16,8 @@
             <th>故障星号</th>
             <th>HDOP</th>
             <th>VDOP</th>
-            <th>水平误差</th>
-            <th>垂直误差</th>
+            <th>水平精度</th>
+            <th>垂直精度</th>
             <th>HPL</th>
             <th>VPL</th>
         </tr>
@@ -36,8 +36,8 @@
             <td>{{bdInfo.exsats}}</td>
             <td>{{bdInfo.HDOP.toFixed(6)}}</td>
             <td>{{bdInfo.VDOP.toFixed(6)}}</td>
-            <td>{{bdInfo.dX.toFixed(6)}},{{bdInfo.dY.toFixed(6)}}</td>
-            <td>{{bdInfo.dZ.toFixed(6)}}</td>
+            <td>{{bdInfo.dH.toFixed(6)}}</td>
+            <td>{{bdInfo.dV.toFixed(6)}}</td>
             <td>{{bdInfo.HPL.toFixed(6)}}</td>
             <td>{{bdInfo.VPL.toFixed(6)}}</td>
         </tr>
@@ -54,8 +54,8 @@
             <td>{{gpInfo.exsats}}</td>
             <td>{{gpInfo.HDOP.toFixed(6)}}</td>
             <td>{{gpInfo.VDOP.toFixed(6)}}</td>
-            <td>{{gpInfo.dX.toFixed(6)}},{{gpInfo.dY.toFixed(6)}}</td>
-            <td>{{gpInfo.dZ.toFixed(6)}}</td>
+            <td>{{gpInfo.dH.toFixed(6)}}</td>
+            <td>{{gpInfo.dV.toFixed(6)}}</td>
             <td>{{gpInfo.HPL.toFixed(6)}}</td>
             <td>{{gpInfo.VPL.toFixed(6)}}</td>
         <tr style="text-align: center">
@@ -71,8 +71,8 @@
             <td>{{glInfo.exsats}}</td>
             <td>{{glInfo.HDOP.toFixed(6)}}</td>
             <td>{{glInfo.VDOP.toFixed(6)}}</td>
-            <td>{{glInfo.dX.toFixed(6)}},{{glInfo.dY.toFixed(6)}}</td>
-            <td>{{glInfo.dZ.toFixed(6)}}</td>
+            <td>{{glInfo.dH.toFixed(6)}}</td>
+            <td>{{glInfo.dV.toFixed(6)}}</td>
             <td>{{glInfo.HPL.toFixed(6)}}</td>
             <td>{{glInfo.VPL.toFixed(6)}}</td>
         <tr style="text-align: center">
@@ -88,8 +88,8 @@
             <td>{{groupInfo.exsats}}</td>
             <td>{{groupInfo.HDOP.toFixed(6)}}</td>
             <td>{{groupInfo.VDOP.toFixed(6)}}</td>
-            <td>{{groupInfo.dX.toFixed(6)}},{{groupInfo.dY.toFixed(6)}}</td>
-            <td>{{groupInfo.dZ.toFixed(6)}}</td>
+            <td>{{groupInfo.dH.toFixed(6)}}</td>
+            <td>{{groupInfo.dV.toFixed(6)}}</td>
             <td>{{groupInfo.HPL.toFixed(6)}}</td>
             <td>{{groupInfo.VPL.toFixed(6)}}</td>
         </tbody>

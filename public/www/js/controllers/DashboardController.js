@@ -540,6 +540,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     }
                 }
             },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
