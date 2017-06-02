@@ -152,7 +152,7 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
             "<td>" + data.udre + "</td>" +
             "<td>" + data.week + "</td>" +
             "<td>" + data.tow + "</td>" +
-            "<td>" + new Date(data.time).getTime() + "</td>" +
+            "<td>" + new Date(data.time).getTime()+8*60*60*1000 + "</td>" +
             "</tr>"
     }
 //原始数据页面
