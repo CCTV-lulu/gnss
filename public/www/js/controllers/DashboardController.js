@@ -343,8 +343,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
     function updateSNR(staInfo,type){
             var showData = staInfo[type];
-            $scope.seriesList[type].series[0].setData(showData[0].slice(0,15))
-            $scope.seriesList[type].series[1].setData(showData[1].slice(0,15))
+            $scope.seriesList[type][0].setData(showData[0].slice(0,15))
+            $scope.seriesList[type][1].setData(showData[1].slice(0,15))
 
 
     }
