@@ -119,7 +119,7 @@ MetronicApp.controller('HeaderController', ['$interval','$rootScope','$scope','S
                 $scope.signalType = localStorage.getItem('signalType');
             }
         }
-        getLocalStorageStationItem()
+        getLocalStorageStationItem();
 
         $scope.changeBaseStation = function (name, staId) {
             if(localStorage.getItem('staId') != staId){
@@ -173,5 +173,28 @@ MetronicApp.controller('HeaderController', ['$interval','$rootScope','$scope','S
             $scope.$emit('updateFrequency', frequency);
             localStorage.setItem('Frequency',frequency);
         }
+
+
+
+
+
+
+
+
+
+        function updateUserStationInfo(realTimeStation){
+            Mongodb.setUserStaId
+        }
+
+        function getUserStationInfo(){
+            Mongodb.getUserStaId(function (data) {
+                $rootScope.userStationInfo = data
+            })
+        }
+
+
+
+
+
 
     }]);

@@ -10,7 +10,8 @@ MetronicApp.factory('DataArray', function() {
     }
     return {arrange: arrange}
 
-}).factory('StarMapChart', function() {
+})
+    .factory('StarMapChart', function() {
     //对数据展示处理
     var starMap = function(data) {
         $('#starMap_loading').hide();
@@ -91,7 +92,8 @@ MetronicApp.factory('DataArray', function() {
 
     return {starMap: starMap}
 
-}).factory('StarChart', function() {
+})
+    .factory('StarChart', function() {
     var lineChart = function(chartData, id, seriesList, xAxisTickPixelInterval) {
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
@@ -211,7 +213,8 @@ MetronicApp.factory('DataArray', function() {
 
     return{getSatelliteNumber: getSatelliteNumber}
 
-}).factory('Initialise', function(StarData, StarChart) {
+})
+    .factory('Initialise', function(StarData, StarChart) {
     var dataConnect = function(id, max, min, name, timeArray, data, data_array, seriesList, xAxisTickPixelInterval) {
         var chartData = StarData.getSatelliteNumber(id, timeArray, data, data_array, max, min, name)
         for(var g=0;g<chartData.series.length;g++) {

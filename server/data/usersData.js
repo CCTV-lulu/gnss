@@ -2,42 +2,24 @@ var User = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
 module.exports = {
     createUser: function (user, callback) {
+
+
         User.findOne({username: user.username}, function (err, users) {
             if (err) {
                 return callback(err)
             }
             if (users) {
-                return callback(null, "用户名已存在！")
-            } else {
-                if (user.roles.length > 1) {
-                    User.create(user, function (err, user) {
-                        if (err) {
-                            return callback(err)
-                        } else {
-                            return callback(null, user)
-                        }
-                    })
-                } else {
-                    Station.findOne({staId: user.station}, function (err, station) {
-                        if (err) {
-                            return callback(err)
-                        }
-                        if (!station) {
-                            return callback(null, {status: false, message: "基站不存在！"})
-                        }
-                        else {
-                            User.create(user, function (err, user) {
-                                if (err) {
-                                    return callback(err)
-                                } else {
-                                    return callback(null, user)
-                                }
-                            })
-                        }
-                    })
-                }
-
+                return callback(null, {status: false, message: "用户名已存在"})
             }
+
+            User.create(user, function (err, user) {
+                if (err) {
+                    return callback(err)
+                } else {
+                    return callback(null, user)
+                }
+            })
+
         })
 
     },
@@ -98,6 +80,7 @@ module.exports = {
             }
         });
     },
+
     deleteUserStationList: function (query) {
         var defer = Promise.defer();
         User.find({station: query}).exec(function (err, UserStationList) {

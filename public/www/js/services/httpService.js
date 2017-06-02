@@ -107,25 +107,11 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 },
                 success : function(data) {
 
-                },
+                }
             });
         });
     }
-    var addAdmin = function (username, password, admin, callback) {
-        var data = {
-            username: username,
-            password: password,
-            type: JSON.stringify(admin[0].checked)
-        }
-        var addAdminUrl = url + "/addAdmin"
-        httpRequest.post(addAdminUrl, data, function(data) {
-            if(data.status == false){
-                Prompt.promptBox("warning", data.message)
-            }else{
-                callback(data)
-            }
-        })
-    }
+
     var addUsers = function (username, password,station, admin, callback) {
         var data = {
             username: username,
@@ -236,12 +222,14 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             }
         })
     };
+
+
     return {
         setUserStaId: setUserStaId,setUserStartStaId:setUserStartStaId,
         getUserStaId: getUserStaId, findAllUsers: findAllUsers, addUsers: addUsers, deleteUser: deleteUser,
         findSatData: findSatData, addStation: addStation, getStation: getStation, deleteStation: deleteStation,
         getUserFindStaData:getUserFindStaData,downloadSatData:downloadSatData,changePassword:changePassword,
-        getConfig:getConfig,addAdmin:addAdmin
+        getConfig:getConfig
 
     };
 
@@ -488,7 +476,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         var userName = localStorage.getItem('userName')
     };
     return {getStationStatus: getStationStatus};
-}).factory("httpRequest",function($http, $rootScope, Show, $location, settingInfo){
+})
+    .factory("httpRequest",function($http, $rootScope, Show, $location, settingInfo){
     var post = function(url, data, cb) {
         var req = {
             url: url,
@@ -532,4 +521,24 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
 
     return {post: post, httpGet: httpGet}
 })
+    .factory('userStationInfo', function ($http, $location, settingInfo, Prompt, Passport, httpRequest) {
+        var url = "http://" + settingInfo.server + ":" + settingInfo.port;
+        function updateUserStationInfo(data){
+            var setUserStartStaIdUrl = url + "/updateUserStationInfo";
+            httpRequest.post(setUserStartStaIdUrl, data, function(result) {
+                if(result.status == false){
+                    return Prompt.promptBox("warning", result.message)
+                }
+                cb(result)
+            });
+        }
+
+
+
+        return {
+            updateUserStationInfo: updateUserStationInfo
+
+        };
+
+    })
 

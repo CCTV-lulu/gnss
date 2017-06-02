@@ -23,7 +23,7 @@ module.exports = function(app) {
     app.post('/changePassword',controllers.users.changePassword);
     app.get('/findAllUsers',  auth.isInRole('admin'), controllers.users.getAllUser);
 
-    app.post('/addAdmin',controllers.users.addAdmin);
+
     app.post('/addUser',controllers.users.addUser);
 
 
@@ -58,5 +58,8 @@ module.exports = function(app) {
     app.get('/getStartInfo',function (req,res) {
         res.send(true)
     });
+
+    /*================new*/
+    app.post('/updateUserStationInfo',auth.isInRole('admin'),controllers.station.updateUserStationInfo)
 
 };

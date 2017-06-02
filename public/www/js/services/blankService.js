@@ -85,7 +85,8 @@ MetronicApp.factory('DateTable',  function() {
     }
     return {dateTable: dateTable, allDate: allDate}
 
-}).factory('DataAnalyseChart', function() {
+})
+    .factory('DataAnalyseChart', function() {
     function lineChart(data,key1,key2,id) {
         var xAxis = [];
         data[key1][key2].X.forEach(function(data_x) {
@@ -159,7 +160,8 @@ MetronicApp.factory('DateTable',  function() {
     }
     return {lineChart: lineChart}
 
-}).factory('EventData', function() {
+})
+    .factory('EventData', function() {
     var table = function(results) {
         var type = {'0':'卫星数不足','1':'hpl超限','2':'误差超限','3':'数据有中断'}
         for(var i=0;i<results.integrity.length;i++) {
