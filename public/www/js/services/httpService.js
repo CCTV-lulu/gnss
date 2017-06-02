@@ -456,7 +456,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                         var data = fileData
                         //var data = JSON.parse(fileData);
 
-                        data = mapping(data.data, data._id, data.time)
+                        data = mapping(data.data, data._id, data.data.time)
                         stationData.push(data)
                     });
                     var by = function(name){

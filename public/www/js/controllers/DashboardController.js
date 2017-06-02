@@ -137,7 +137,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                             showDxDy(data.stationData, 'glsDxDy');
                             showDxDy(data.stationData, 'dbsDxDy');
                             showDxDy(data.stationData, 'groupDxDy');
-                            //showH(data.stationData, 'H');
+                            showH(data.stationData, 'H');
                             //
                             settingSys(data.stationData[i]);
                             StarMapChart.starMap((data.stationData[i]).satpos);
@@ -166,7 +166,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     //StarMapChart.starMap((chartData.satpos));
                     showChart(chartData);
                     settingSys(chartData);
-                    //updateH(chartData);
+                    updateH(chartData);
                     updateDxDy(chartData)
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
@@ -437,7 +437,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             },
             series: [{
                 name: type,
-                type: 'line',
+                type: 'scatter',
                 data: show_date
             }]
         });
