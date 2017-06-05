@@ -9,18 +9,25 @@
         <div class="page-actions" ng-show="stationShow">
             <div class="btn-group" ng-show="isAdmin">
                 <button type="button" class="btn btn-circle btn-outline red dropdown-toggle" data-toggle="dropdown">
-                    <span ng-bind="baseStation">&nbsp;</span>&nbsp;
+                    <span ng-bind="realTimeStation">&nbsp;</span>&nbsp;
                     <i class="fa fa-angle-down"></i>
                 </button>
                 <ul  class="dropdown-menu" role="menu">
-                    <base-Station-List></base-Station-List>
+                    <realtime-Station-List></realtime-Station-List>
                 </ul>
+            </div>
+
+            <div class="btn-group" ng-show="!isAdmin">
+                <button type="button" class="btn btn-circle btn-outline red dropdown-toggle">
+                    <span ng-bind="realTimeStation">&nbsp;</span>&nbsp;
+                </button>
+
             </div>
         </div>
         <div class="page-actions" ng-show="starShow">
-            <div class="btn-group">
+            <div class="btn-group" ng-show="isAdmin">
                 <button type="button" class="btn btn-circle btn-outline red dropdown-toggle" data-toggle="dropdown">
-                    <span ng-bind="baseStartStation">&nbsp;</span>&nbsp;
+                    <span ng-bind="originStation">&nbsp;</span>&nbsp;
                     <!--baseStartStation原始数据页面-->
                     <i class="fa fa-angle-down"></i>
                 </button>
@@ -28,8 +35,14 @@
                     <star-Data-Station-List></star-Data-Station-List>
                 </ul>
             </div>
-        </div>
-        <div class="page-actions" ng-show="starShow">
+            <div class="btn-group" ng-show="!isAdmin">
+                <button type="button" class="btn btn-circle btn-outline red dropdown-toggle">
+                    <span ng-bind="originStation">&nbsp;</span>&nbsp;
+                    <!--baseStartStation原始数据页面-->
+                    <i class="fa fa-angle-down"></i>
+                </button>
+            </div>
+
             <div class="btn-group">
                 <button type="button" class="btn btn-circle btn-outline blue dropdown-toggle" data-toggle="dropdown">
                     <span ng-bind="signalType">&nbsp;</span>&nbsp;

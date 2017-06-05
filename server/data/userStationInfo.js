@@ -7,7 +7,7 @@ var System = {
 
 module.exports = {
     findStaIdByName: function (username, callback) {
-        UserStationInfo.findOne({userName: username}, function (err, userStationInfo) {
+        UserStationInfo.findOne({username: username}, function (err, userStationInfo) {
             if (err) {
                 return callback(err)
             }

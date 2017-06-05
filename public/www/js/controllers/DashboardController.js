@@ -2,27 +2,44 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                                                                           getStationStatus, Mongodb, DataArray, StarMapChart, StarChart, StarData, Initialise,userStationInfo) {
 
     var stationId;
+    var realTimeSationStatus = false;
 
     userStationInfo.getUserStationInfo(function(userStationInfo){
-        $rootScope.rootUserStationInfo = userStationInfo;
+
         if(userStationInfo.allStations){
-            var  currentStationInfo = getCurrentStationInfo(userStationInfo.allStations)
+            var  currentStationInfo = getCurrentStationInfo(userStationInfo.allStations);
             stationId = currentStationInfo.realTimeStation.staId;
-            get()
+            init();
 
         }else{
-            stationId = userStationInfo.userStationInfo.staId;
-            get()
+            stationId = userStationInfo.userStationInfo.data.staId;
+            getCurrentStationInfo([userStationInfo.userStationInfo.data]);
+            init();
         }
 
+        $rootScope.rootUserStationInfo = userStationInfo;
+
     });
+
+    $rootScope.$watch('RootRealTimeRate',function(realTimeRate){
+        checkRealTimeRate(realTimeRate)
+    });
+
+    function checkRealTimeRate(realTimeRate){
+        if(realTimeSationStatus){
+            $interval.cancel(dashboardPolling);
+            dashboardPolling = $interval(function () {
+                getStationInfo(stationId, 1)
+            }, realTimeRate * 1000)
+        }
+    }
 
 
 
     function getCurrentStationInfo(allStations){
         var defaultInfo =JSON.stringify({realTimeStation:{},originStation:{}});
         var currentStationInfo =  JSON.parse(localStorage.getItem($rootScope.activeUser+'_currentStationInfo')||defaultInfo);
-        if(!currentStationInfo.realTimeStation.stationId){
+        if(!currentStationInfo.realTimeStation.staId){
             currentStationInfo.realTimeStation = allStations[0];
             saveCurrentStationInfo(currentStationInfo)
         }
@@ -34,10 +51,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         localStorage.setItem($rootScope.activeUser+'_currentStationInfo',JSON.stringify(currentStationInfo))
     }
 
-    function get(){
+    function init(){
         initPolling = $interval(function () {
             getStationInfo(stationId, 10);
-        }, 1000)
+        }, $rootScope.RootRealTimeRate*1000)
     }
 
 
@@ -175,6 +192,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 }
                 //实时一条一条动态加载
             } else if (limit == 1 && data.stationData != false) {
+                console.log(data.stationData)
                 data.stationData.forEach(function (chartData) {
                     //if (dataId.indexOf(chartData.dataId) == -1) {
                     //    //settingSys(data.stationData[i].dataInfo)
@@ -283,6 +301,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     }
 
     function startOneStaStatus() {
+
         if (localStorage.getItem('Frequency')) {
             var Frequency = localStorage.getItem('Frequency');
         } else {
@@ -290,6 +309,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         }
         $interval.cancel(dashboardPolling);
         dashboardPolling = $interval(function () {
+            realTimeSationStatus = true;
             getStationInfo(stationId, 1);
         }, Frequency * 1000)
     }

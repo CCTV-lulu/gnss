@@ -97,7 +97,7 @@ module.exports = {
                     if(req.body.type === 'true'){
                       return  res.send(user)
                     }
-                    UserStationInfo.createUserStation(req.user.username, station)
+                    UserStationInfo.createUserStation(req.body.username, station)
                         .then(function(){
                             res.send(user)
                         });

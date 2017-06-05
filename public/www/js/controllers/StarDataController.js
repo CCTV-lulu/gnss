@@ -1,9 +1,53 @@
 angular.module('MetronicApp').controller('StarDataController', function ($scope, settingInfo, $timeout, getStationStatus, $interval, $location, $rootScope, Show, Mongodb,userStationInfo) {
 
+    var originStationStatus = false;
     userStationInfo.getUserStationInfo(function(userStationInfo){
-        $rootScope.rootUserStationInfo = userStationInfo
-        console.log($rootScope.rootUserStationInfo)
-    })
+
+        if(userStationInfo.allStations){
+            var  currentStationInfo = getCurrentStationInfo(userStationInfo.allStations);
+            stationId = currentStationInfo.originStation.staId;
+            init();
+
+        }else{
+            stationId = userStationInfo.userStationInfo.data.staId;
+            getCurrentStationInfo([userStationInfo.userStationInfo.data]);
+            init();
+        }
+
+        $rootScope.rootUserStationInfo = userStationInfo;
+
+    });
+
+    $rootScope.$watch('RootRealTimeRate',function(realTimeRate){
+        checkRealTimeRate(realTimeRate)
+    });
+
+    function checkRealTimeRate(realTimeRate){
+        if(originStationStatus){
+            $interval.cancel(getStartInfo);
+            getStartInfo = $interval(function () {
+                originStationStatus = true;
+                getStationInfo(signalId, stationId, false)
+            }, realTimeRate * 1000)
+        }
+    }
+
+
+
+    function getCurrentStationInfo(allStations){
+        var defaultInfo =JSON.stringify({realTimeStation:{},originStation:{}});
+        var currentStationInfo =  JSON.parse(localStorage.getItem($rootScope.activeUser+'_currentStationInfo')||defaultInfo);
+        if(!currentStationInfo.originStation.staId){
+            currentStationInfo.originStation = allStations[0];
+            saveCurrentStationInfo(currentStationInfo)
+        }
+        return currentStationInfo
+
+    }
+
+    function saveCurrentStationInfo(currentStationInfo){
+        localStorage.setItem($rootScope.activeUser+'_currentStationInfo',JSON.stringify(currentStationInfo))
+    }
 
 
 
@@ -15,30 +59,71 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     var getStartInfo;
     var stationDataStatus = true;
 
-    $scope.$emit('to_allBaseStation', 'data')
-    $scope.$emit('to-app-basestation', 'data');
-    $interval.cancel(getStartInfo);
-    $scope.$on('allStation-to-starData', function(event, data) {
-        var arr=[]
-        for(var i = 0;i<data.allStation.length;i++) {
-            arr.push(JSON.stringify(data.allStation[i].staId))
-        }
-        if(arr.indexOf(localStorage.getItem('startStaId')) == -1) {
-            stationId = data.allStation[0].staId;
-            signalId = data.userStation.signalTypeId;
-        }else {
-            stationId = localStorage.getItem('startStaId');
-            signalId = data.userStation.signalTypeId;
-        }
-        init()
-    })
+    //$scope.$emit('to_allBaseStation', 'data')
+    //$scope.$emit('to-app-basestation', 'data');
+    //$interval.cancel(getStartInfo);
+    //$scope.$on('allStation-to-starData', function(event, data) {
+    //    var arr=[]
+    //    for(var i = 0;i<data.allStation.length;i++) {
+    //        arr.push(JSON.stringify(data.allStation[i].staId))
+    //    }
+    //    if(arr.indexOf(localStorage.getItem('startStaId')) == -1) {
+    //        stationId = data.allStation[0].staId;
+    //        signalId = data.userStation.signalTypeId;
+    //    }else {
+    //        stationId = localStorage.getItem('startStaId');
+    //        signalId = data.userStation.signalTypeId;
+    //    }
+    //    init()
+    //})
+
+    //$scope.$on('$destroy', function(event) {
+    //    $interval.cancel(getStartInfo);
+    //})
+    //
+    //$scope.$on('logout', function (event, url) {
+    //    $interval.cancel(getStartInfo);
+    //    $scope.$emit('logout-connect-app','data')
+    //});
+    //$scope.$on('signalId', function (event, data) {
+    //    Mongodb.setUserStartStaId(localStorage.getItem("staId"), localStorage.getItem("userName"), localStorage.getItem('baseStation'),
+    //        localStorage.getItem('signalType'), data, localStorage.getItem('startBaseStation'), localStorage.getItem("startStaId"))
+    //    $("#startInfo").empty();
+    //    signalId = data;
+    //    $scope.showDataloading = true;
+    //    showStartInfo(signalId)
+    //});
+    //
+    //$scope.$on('StarDataStationChange', function (event, data) {
+    //    $interval.cancel(getStartInfo);
+    //    signalId = localStorage.getItem('signalTypeId')
+    //    Mongodb.setUserStartStaId(localStorage.getItem("staId"), localStorage.getItem("userName"), localStorage.getItem('baseStation'),
+    //        localStorage.getItem('signalType'), localStorage.getItem('signalTypeId'), localStorage.getItem('startBaseStation'), data)
+    //    $("#startInfo").empty();
+    //    localStorage.removeItem('startsInfo');
+    //    stationId = data;
+    //    dataId = "";
+    //    $scope.showDataloading = true;
+    //    init()
+    //});
+    //
+    //$scope.$on('goOutStartdata', function (event, data) {
+    //    //$interval.cancel(getStartInfo);
+    //    $("#startInfo").empty();
+    //    if (data == 'dashboard') {
+    //        return $location.path("/dashboard.html/" + localStorage.getItem("staId"))
+    //    } else {
+    //        return $location.path(data)
+    //    }
+    //});
+
 
 
     function init() {
         getStationInfo(signalId, stationId, true, function () {
             getStartInfo = $interval(function () {
                 getStationInfo(signalId, stationId, false)
-            }, 1000);
+            }, $rootScope.RootRealTimeRate*1000);
         })
     }
 
@@ -56,45 +141,7 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
 
     $scope.showDataloading = true;
 
-    $scope.$on('$destroy', function(event) {
-        $interval.cancel(getStartInfo);
-    })
 
-    $scope.$on('logout', function (event, url) {
-        $interval.cancel(getStartInfo);
-        $scope.$emit('logout-connect-app','data')
-    });
-    $scope.$on('signalId', function (event, data) {
-        Mongodb.setUserStartStaId(localStorage.getItem("staId"), localStorage.getItem("userName"), localStorage.getItem('baseStation'),
-            localStorage.getItem('signalType'), data, localStorage.getItem('startBaseStation'), localStorage.getItem("startStaId"))
-        $("#startInfo").empty();
-        signalId = data;
-        $scope.showDataloading = true;
-        showStartInfo(signalId)
-    });
-
-    $scope.$on('StarDataStationChange', function (event, data) {
-        $interval.cancel(getStartInfo);
-        signalId = localStorage.getItem('signalTypeId')
-        Mongodb.setUserStartStaId(localStorage.getItem("staId"), localStorage.getItem("userName"), localStorage.getItem('baseStation'),
-            localStorage.getItem('signalType'), localStorage.getItem('signalTypeId'), localStorage.getItem('startBaseStation'), data)
-        $("#startInfo").empty();
-        localStorage.removeItem('startsInfo');
-        stationId = data;
-        dataId = "";
-        $scope.showDataloading = true;
-        init()
-    });
-
-    $scope.$on('goOutStartdata', function (event, data) {
-        //$interval.cancel(getStartInfo);
-        $("#startInfo").empty();
-        if (data == 'dashboard') {
-            return $location.path("/dashboard.html/" + localStorage.getItem("staId"))
-        } else {
-            return $location.path(data)
-        }
-    });
 
     function loadStationStatus(signalTypeId, staId, limit, type, callback) {
         stationDataStatus = false;

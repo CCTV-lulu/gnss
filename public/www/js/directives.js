@@ -28,21 +28,21 @@ MetronicApp.directive('ngSpinnerBar', ['$rootScope', '$state',
             }
         };
     }
-]).directive('baseStationList', function () {
+]).directive('realtimeStationList', function () {
     return {
         restrict: 'EA',//属性
-        template: "<li ng-repeat='baseStation in allBaseStation'>" +
-        "<a href='javascript:;' ng-click='changeBaseStation(baseStation.name,baseStation.staId)'>" +
-        "<i class='icon-flag'></i> {{baseStation.name}} </a>" +
+        template: "<li ng-repeat='station in allStations'>" +
+        "<a href='javascript:;' ng-click='changeRealTimeStation(station.name,station.staId)'>" +
+        "<i class='icon-flag'></i> {{station.name}} </a>" +
         "</li>"
     }//<i>标签引入Bootstrap样式图标，后为名字．然后在页面调用
 }).directive('starDataStationList', function () {
     return {
         restrict: 'EA',
         template:
-        "<li ng-repeat='baseStation in allBaseStation'>"+
-        "<a href='javascript:;' ng-click='changeStartDataStation(baseStation.name,baseStation.staId)'>"+
-        "<i class='icon-flag'></i> {{baseStation.name}} </a>"+
+        "<li ng-repeat='station in allStations'>"+
+        "<a href='javascript:;' ng-click='changeStartDataStation(station.name,station.staId)'>"+
+        "<i class='icon-flag'></i> {{station.name}} </a>"+
         "</li>"
 
     }
@@ -59,7 +59,7 @@ MetronicApp.directive('ngSpinnerBar', ['$rootScope', '$state',
         restrict: 'EA',
         template:
         "<li ng-repeat='signalType in allSignalType'>"+
-        "<a href='javascript:;' ng-click='changeSignalType(signalType)'>"+
+        "<a href='javascript:;' ng-click='changeSignalType(signalType,allSignalType[signalType])'>"+
         "<i class='icon-flag'></i> {{signalType}} </a>"+
         "</li>"
     }

@@ -71,7 +71,9 @@ MetronicApp.controller('AppController', ['$rootScope','$scope', '$http', '$locat
                 }
                 $rootScope.rootIsAdmin = data.roles.includes('admin');
                 $('body').removeClass('page-on-load');
-                $scope.$broadcast('login_to_header', 'data');
+
+                $state.go('dashboard')
+                //$scope.$broadcast('login_to_header', 'data');
                 //登录成功后走
             });
             //$broadcast给子控制器传值

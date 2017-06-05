@@ -31,25 +31,27 @@ MetronicApp.controller('SidebarController', ['$state', '$scope', '$location', 'M
     });
 
     $scope.dataConnect = function (url) {
-        $scope.$emit('hideHearerStation', url);
-        var pathUrl = $location.path();
-            if (pathUrl.match('dashboard.html') == 'dashboard.html') {
-                changClass();
-                $("#" + url).attr('class', 'nav-item active')
-                $scope.$emit('disconnect-to-parent', '/' + url);
-            } else if (pathUrl == '/stardata' && url != 'stardata') {
-                changClass();
-                $("#" + url).attr('class', 'nav-item active')
-                $scope.$emit('goOutStartdataPage', '/' + url);
-            }else if(pathUrl == '/blank' && url != 'blank') {
-                changClass();
-                $("#" + url).attr('class', 'nav-item active')
-                $scope.$emit('goOutBlankPage', '/' + url)
-            } else {
-                changClass();
-                $("#" + url).attr('class', 'nav-item active')
-                $location.path('/' + url);
-            }
+
+        $state.go(url)
+        //$scope.$emit('hideHearerStation', url);
+        //var pathUrl = $location.path();
+        //    if (pathUrl.match('dashboard.html') == 'dashboard.html') {
+        //        changClass();
+        //        $("#" + url).attr('class', 'nav-item active')
+        //        $scope.$emit('disconnect-to-parent', '/' + url);
+        //    } else if (pathUrl == '/stardata' && url != 'stardata') {
+        //        changClass();
+        //        $("#" + url).attr('class', 'nav-item active')
+        //        $scope.$emit('goOutStartdataPage', '/' + url);
+        //    }else if(pathUrl == '/blank' && url != 'blank') {
+        //        changClass();
+        //        $("#" + url).attr('class', 'nav-item active')
+        //        $scope.$emit('goOutBlankPage', '/' + url)
+        //    } else {
+        //        changClass();
+        //        $("#" + url).attr('class', 'nav-item active')
+        //        $location.path('/' + url);
+        //    }
     }
 
     function changClass() {
@@ -63,6 +65,7 @@ MetronicApp.controller('SidebarController', ['$state', '$scope', '$location', 'M
     }
 
     function dashboardBar(url) {
+
         var pathUrl = $location.path();
         if (pathUrl == '/stardata') {
             changClass();
