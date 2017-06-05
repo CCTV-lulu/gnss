@@ -338,264 +338,280 @@ function middleSaveAll(sta_id,stationPara) {
 function updateObsNav(sta_data,para,logjson) {
     var i,j;
     var reg=0;
-    if(sta_data.obs.flag==1){
-        para.obs={};
-        obsBySys(para.obs,sta_data.obs.data);
-        reg=1;
-    }
-    if(sta_data.eph.flag==1) {
-        /*if(sta_data.eph.data[0].sys==ca.SYS_GPS)
-         console.log(sta_data.eph.data[0].toe.time,sta_data.time.time);*/
-        var eph=sta_data.eph.data;
-        for(i=0;i<eph.length;i++) {
-            if (!eph[i].svh) {
-                switch (eph[i].sys){
+    try{
+        if(sta_data.obs.flag==1){
+            para.obs={};
+            obsBySys(para.obs,sta_data.obs.data);
+            reg=1;
+        }
+        if(sta_data.eph.flag==1) {
+            var eph=sta_data.eph.data;
+            for(i=0;i<eph.length;i++) {
+                if (!eph[i].svh) {
+                    switch (eph[i].sys){
+                        case ca.SYS_GPS:
+                            if(para.ele.el_gps[eph[i].sat-1]!=undefined){
+                                if(para.ele.el_gps[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GPS]*ca.D2R){
+                                    if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
+                                        ephUpdate(sta_data.time, para.nav.eph, eph[i], logjson.ephs.eph);
+                                    }
+                                }
+                            }
+                            else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600){
+                                ephUpdate(sta_data.time,para.nav.eph,eph[i],logjson.ephs.eph);
+                            }
+                            break;
+                        case ca.SYS_GLO:
+                            if(para.ele.el_glo[eph[i].sat-1]!=undefined){
+                                if(para.ele.el_glo[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GLO]*ca.D2R){
+                                    if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600) {
+                                        ephUpdate(sta_data.time, para.nav.geph, eph[i], logjson.ephs.geph);
+                                    }
+                                }
+                            }
+                            else if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600){
+                                ephUpdate(sta_data.time,para.nav.geph,eph[i],logjson.ephs.geph);
+                            }
+                            para.nav.lam[ca.SYS_GLO][eph[i].sat - 1] = cmn.glolam(eph[i]);
+                            break;
+                        case ca.SYS_CMP:
+                            if(para.ele.el_cmp[eph[i].sat-1]!=undefined){
+                                if(para.ele.el_cmp[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_CMP]*ca.D2R){
+                                    if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
+                                        ephUpdate(sta_data.time, para.nav.ceph, eph[i], logjson.ephs.ceph);
+                                    }
+                                }
+                            }
+                            else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
+                                ephUpdate(sta_data.time,para.nav.ceph, eph[i], logjson.ephs.ceph);
+                            }
+                            break;
+                        default :
+                            break;
+                    }
+                }
+            }
+        }
+        if(sta_data.ion.flag==1){
+            var ions=sta_data.ion.data;
+            for(i=0;i<ions.length;i++) {
+                switch (ions[i].sys){
                     case ca.SYS_GPS:
-                        if(para.ele.el_gps[eph[i].sat-1]!=undefined){
-                            if(para.ele.el_gps[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GPS]*ca.D2R){
-                                if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
-                                    ephUpdate(sta_data.time, para.nav.eph, eph[i], logjson.ephs.eph);
-                                }
-                            }
+                        if(!para.nav.ion_gps.stat ||
+                            cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
+                            para.nav.ion_gps.stat=1;
+                            para.nav.ion_gps = ions[i];
+                            logjson.ions.ion.push(ions[i]);
                         }
-                        else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600){
-                            ephUpdate(sta_data.time,para.nav.eph,eph[i],logjson.ephs.eph);
-                        }
-                        break;
-                    case ca.SYS_GLO:
-                        if(para.ele.el_glo[eph[i].sat-1]!=undefined){
-                            if(para.ele.el_glo[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GLO]*ca.D2R){
-                                if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600) {
-                                    ephUpdate(sta_data.time, para.nav.geph, eph[i], logjson.ephs.geph);
-                                }
-                            }
-                        }
-                        else if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600){
-                            ephUpdate(sta_data.time,para.nav.geph,eph[i],logjson.ephs.geph);
-                        }
-                        para.nav.lam[ca.SYS_GLO][eph[i].sat - 1] = cmn.glolam(eph[i]);
                         break;
                     case ca.SYS_CMP:
-                        if(para.ele.el_cmp[eph[i].sat-1]!=undefined){
-                            if(para.ele.el_cmp[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_CMP]*ca.D2R){
-                                if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
-                                    ephUpdate(sta_data.time, para.nav.ceph, eph[i], logjson.ephs.ceph);
-                                }
+                        if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
+                            para.nav.ion_cmp[ions[i].sat-1]=ions[i];
+                        else{
+                            if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
+                                para.nav.ion_cmp[ions[i].sat-1].stat = 1;
+                                para.nav.ion_cmp[ions[i].sat-1] = ions[i];
+                                logjson.ions.cion.push(ions[i]);
                             }
                         }
-                        else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
-                            ephUpdate(sta_data.time,para.nav.ceph, eph[i], logjson.ephs.ceph);
-                        }
+                        break;
+                    default :
                         break;
                 }
             }
         }
-    }
-    if(sta_data.ion.flag==1){
-        var ions=sta_data.ion.data;
-        for(i=0;i<ions.length;i++) {
-            switch (ions[i].sys){
-                case ca.SYS_GPS:
-                    if(!para.nav.ion_gps.stat ||
-                        cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
-                        para.nav.ion_gps.stat=1;
-                        para.nav.ion_gps = ions[i];
-                        logjson.ions.ion.push(ions[i]);
-                    }
-                    break;
-                case ca.SYS_CMP:
-                    if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
-                        para.nav.ion_cmp[ions[i].sat-1]=ions[i];
-                    else{
-                        if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
-                            para.nav.ion_cmp[ions[i].sat-1].stat = 1;
-                            para.nav.ion_cmp[ions[i].sat-1] = ions[i];
-                            logjson.ions.cion.push(ions[i]);
-                        }
-                    }
-                    break;
+        if(sta_data.alm.flag==1){
+            var alms=sta_data.alm.data;
+            for(i=0;i<alms.length;i++) {
+                switch (alms[i].sys){
+                    case ca.SYS_GPS:
+                        logjson.alms.alm.push(alms[i]);
+                        break;
+                    case ca.SYS_CMP:
+                        logjson.alms.calm.push(alms[i]);
+                        break;
+                }
+            }
+        }
+        if(sta_data.ura.flag==1){
+            var uras=sta_data.ura.data;
+            for(i=0;i<uras.length;i++){
+                if(uras[i].sys==ca.SYS_GPS){
+                    logjson.uras.ura.push(uras[i]);
+                }
+                else if(uras[i].sys==ca.SYS_CMP){
+                    logjson.uras.cura.push(uras[i]);
+                }
+            }
+        }
+        if(sta_data.utc.flag==1){
+            var utcs=sta_data.utc.data;
+            for(i=0;i<utcs.length;i++){
+                if(utcs[i].sys==ca.SYS_GPS){
+                    logjson.utcs.utc.push(utcs[i]);
+                }
+                else if(utcs[i].sys==ca.SYS_CMP){
+                    logjson.utcs.cutc.push(utcs[i]);
+                }
+            }
+        }
+        if(sta_data.udre.flag==1){
+            var udres=sta_data.udre.data;
+            for(i=0;i<udres.length;i++){
+                para.nav.udre[udres[i].sat-1]=udres[i];
+                logjson.udre.push(udres[i])
+            }
+        }
+        if(sta_data.rura.flag==1){
+            var ruras=sta_data.rura.data;
+            for(i=0;i<ruras.length;i++){
+                para.nav.rura[ruras[i].sat-1]=ruras[i];
+                logjson.rura.push(ruras[i]);
             }
         }
     }
-    if(sta_data.alm.flag==1){
-        var alms=sta_data.alm.data;
-        for(i=0;i<alms.length;i++) {
-            switch (alms[i].sys){
-                case ca.SYS_GPS:
-                    logjson.alms.alm.push(alms[i]);
-                    break;
-                case ca.SYS_CMP:
-                    logjson.alms.calm.push(alms[i]);
-                    break;
-            }
-        }
-    }
-    if(sta_data.ura.flag==1){
-        var uras=sta_data.ura.data;
-        for(i=0;i<uras.length;i++){
-            if(uras[i].sys==ca.SYS_GPS){
-                logjson.uras.ura.push(uras[i]);
-            }
-            else if(uras[i].sys==ca.SYS_CMP){
-                logjson.uras.cura.push(uras[i]);
-            }
-        }
-    }
-    if(sta_data.utc.flag==1){
-        var utcs=sta_data.utc.data;
-        for(i=0;i<utcs.length;i++){
-            if(utcs[i].sys==ca.SYS_GPS){
-                logjson.utcs.utc.push(utcs[i]);
-            }
-            else if(utcs[i].sys==ca.SYS_CMP){
-                logjson.utcs.cutc.push(utcs[i]);
-            }
-        }
-    }
-    if(sta_data.udre.flag==1){
-        var udres=sta_data.udre.data;
-        for(i=0;i<udres.length;i++){
-            para.nav.udre[udres[i].sat-1]=udres[i];
-            logjson.udre.push(udres[i])
-        }
-    }
-    if(sta_data.rura.flag==1){
-        var ruras=sta_data.rura.data;
-        for(i=0;i<ruras.length;i++){
-            para.nav.rura[ruras[i].sat-1]=ruras[i];
-            logjson.rura.push(ruras[i]);
-        }
-    }
+   catch (err){
+       console.log(err);
+   }
     return reg;
 };module.exports.updateObsNav=updateObsNav;
 //使用新接收数据更新当前定位处理对象（实时定位处理使用）
 function updateObsNav_show(sta_data,para,logjson) {
     var i,j;
     var reg=0;
-    if(sta_data.obs.flag==1){
-        para.obs={};
-        obsBySys(para.obs,sta_data.obs.data);
-        reg=1;
-    }
-    if(sta_data.eph.flag==1) {
-        var eph=sta_data.eph.data;
-        for(i=0;i<eph.length;i++) {
-            if (!eph[i].svh) {
-                switch (eph[i].sys){
+    try{
+        if(sta_data.obs.flag==1){
+            para.obs={};
+            obsBySys(para.obs,sta_data.obs.data);
+            reg=1;
+        }
+        if(sta_data.eph.flag==1) {
+            var eph=sta_data.eph.data;
+            for(i=0;i<eph.length;i++) {
+                if (!eph[i].svh) {
+                    switch (eph[i].sys){
+                        case ca.SYS_GPS:
+                            if(para.ele.el_gps[eph[i].sat-1]!=undefined){
+                                if(para.ele.el_gps[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GPS]){
+                                    if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
+                                        ephUpdate_show(sta_data.time, para.nav.eph, eph[i]);
+                                    }
+                                }
+                            }
+                            else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600){
+                                ephUpdate_show(sta_data.time,para.nav.eph,eph[i]);
+                            }
+                            break;
+                        case ca.SYS_GLO:
+                            if(para.ele.el_glo[eph[i].sat-1]!=undefined){
+                                if(para.ele.el_glo[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GLO]){
+                                    if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600) {
+                                        ephUpdate_show(sta_data.time, para.nav.geph, eph[i]);
+                                    }
+                                }
+                            }
+                            else if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600){
+                                ephUpdate_show(sta_data.time,para.nav.geph,eph[i]);
+                            }
+                            para.nav.lam[ca.SYS_GLO][eph[i].sat - 1] = cmn.glolam(eph[i]);
+                            break;
+                        case ca.SYS_CMP:
+                            if(para.ele.el_cmp[eph[i].sat-1]!=undefined){
+                                if(para.ele.el_cmp[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_CMP]){
+                                    if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
+                                        ephUpdate_show(sta_data.time, para.nav.ceph, eph[i]);
+                                    }
+                                }
+                            }
+                            else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
+                                ephUpdate_show(sta_data.time,para.nav.ceph, eph[i]);
+                            }
+                            break;
+                        default :
+                            break;
+                    }
+                }
+            }
+        }
+        if(sta_data.ion.flag==1){
+            var ions=sta_data.ion.data;
+            for(i=0;i<ions.length;i++) {
+                switch (ions[i].sys){
                     case ca.SYS_GPS:
-                        if(para.ele.el_gps[eph[i].sat-1]!=undefined){
-                            if(para.ele.el_gps[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GPS]){
-                                if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
-                                    ephUpdate_show(sta_data.time, para.nav.eph, eph[i]);
-                                }
-                            }
+                        if(!para.nav.ion_gps.stat ||
+                            cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
+                            para.nav.ion_gps.stat=1;
+                            para.nav.ion_gps = ions[i];
                         }
-                        else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600){
-                            ephUpdate_show(sta_data.time,para.nav.eph,eph[i]);
-                        }
-                        break;
-                    case ca.SYS_GLO:
-                        if(para.ele.el_glo[eph[i].sat-1]!=undefined){
-                            if(para.ele.el_glo[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GLO]){
-                                if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600) {
-                                    ephUpdate_show(sta_data.time, para.nav.geph, eph[i]);
-                                }
-                            }
-                        }
-                        else if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600){
-                            ephUpdate_show(sta_data.time,para.nav.geph,eph[i]);
-                        }
-                        para.nav.lam[ca.SYS_GLO][eph[i].sat - 1] = cmn.glolam(eph[i]);
                         break;
                     case ca.SYS_CMP:
-                        if(para.ele.el_cmp[eph[i].sat-1]!=undefined){
-                            if(para.ele.el_cmp[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_CMP]){
-                                if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
-                                    ephUpdate_show(sta_data.time, para.nav.ceph, eph[i]);
-                                }
+                        if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
+                            para.nav.ion_cmp[ions[i].sat-1]=ions[i];
+                        else{
+                            if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
+                                para.nav.ion_cmp[ions[i].sat-1].stat = 1;
+                                para.nav.ion_cmp[ions[i].sat-1] = ions[i];
                             }
                         }
-                        else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
-                            ephUpdate_show(sta_data.time,para.nav.ceph, eph[i]);
-                        }
+                        break;
+                    default :
                         break;
                 }
             }
         }
-    }
-    if(sta_data.ion.flag==1){
-        var ions=sta_data.ion.data;
-        for(i=0;i<ions.length;i++) {
-            switch (ions[i].sys){
-                case ca.SYS_GPS:
-                    if(!para.nav.ion_gps.stat ||
-                        cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
-                        para.nav.ion_gps.stat=1;
-                        para.nav.ion_gps = ions[i];
-                    }
-                    break;
-                case ca.SYS_CMP:
-                    if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
-                        para.nav.ion_cmp[ions[i].sat-1]=ions[i];
-                    else{
-                        if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
-                            para.nav.ion_cmp[ions[i].sat-1].stat = 1;
-                            para.nav.ion_cmp[ions[i].sat-1] = ions[i];
-                        }
-                    }
-                    break;
-            }
-        }
-    }
-    if(sta_data.ura.flag==1){
-        var uras=sta_data.ura.data;
-        for(i=0;i<uras.length;i++){
-            if(uras[i].sys==ca.SYS_GPS){
-                if(para.nav.ura_gps[uras[i].sat-1]==undefined){
-                    para.nav.ura_gps[uras[i].sat-1]=uras[i];
-                }
-                else{
-                    if(cmn.timediff(uras[i].time,para.nav.ura_gps[uras[i].sat-1].time)>0){
+        if(sta_data.ura.flag==1){
+            var uras=sta_data.ura.data;
+            for(i=0;i<uras.length;i++){
+                if(uras[i].sys==ca.SYS_GPS){
+                    if(para.nav.ura_gps[uras[i].sat-1]==undefined){
                         para.nav.ura_gps[uras[i].sat-1]=uras[i];
                     }
+                    else{
+                        if(cmn.timediff(uras[i].time,para.nav.ura_gps[uras[i].sat-1].time)>0){
+                            para.nav.ura_gps[uras[i].sat-1]=uras[i];
+                        }
+                    }
                 }
-            }
-            else if(uras[i].sys==ca.SYS_CMP){
-                if(para.nav.ura_cmp[uras[i].sat-1]==undefined){
-                    para.nav.ura_cmp[uras[i].sat-1]=uras[i];
-                }
-                else{
-                    if(cmn.timediff(uras[i].time,para.nav.ura_cmp[uras[i].sat-1].time)>0){
+                else if(uras[i].sys==ca.SYS_CMP){
+                    if(para.nav.ura_cmp[uras[i].sat-1]==undefined){
                         para.nav.ura_cmp[uras[i].sat-1]=uras[i];
+                    }
+                    else{
+                        if(cmn.timediff(uras[i].time,para.nav.ura_cmp[uras[i].sat-1].time)>0){
+                            para.nav.ura_cmp[uras[i].sat-1]=uras[i];
+                        }
                     }
                 }
             }
         }
-    }
-    if(sta_data.utc.flag==1){
-        var utcs=sta_data.utc.data;
-        for(i=0;i<utcs.length;i++){
-            if(utcs[i].sys==ca.SYS_GPS){
-                para.nav.utc_gps=utcs[i];
-                para.nav.utc_gps.stat=1;
+        if(sta_data.utc.flag==1){
+            var utcs=sta_data.utc.data;
+            for(i=0;i<utcs.length;i++){
+                if(utcs[i].sys==ca.SYS_GPS){
+                    para.nav.utc_gps=utcs[i];
+                    para.nav.utc_gps.stat=1;
+                }
+                else if(utcs[i].sys==ca.SYS_CMP){
+                    para.nav.utc_cmp=utcs[i];
+                    para.nav.utc_cmp.stat=1;
+                }
             }
-            else if(utcs[i].sys==ca.SYS_CMP){
-                para.nav.utc_cmp=utcs[i];
-                para.nav.utc_cmp.stat=1;
+        }
+        if(sta_data.udre.flag==1){
+            var udres=sta_data.udre.data;
+            for(i=0;i<udres.length;i++){
+                para.nav.udre[udres[i].sat-1]=udres[i].udre;
+            }
+        }
+        if(sta_data.rura.flag==1){
+            var ruras=sta_data.rura.data;
+            for(i=0;i<ruras.length;i++){
+                para.nav.rura[ruras[i].sat-1]=ruras[i].rura;
             }
         }
     }
-    if(sta_data.udre.flag==1){
-        var udres=sta_data.udre.data;
-        for(i=0;i<udres.length;i++){
-            para.nav.udre[udres[i].sat-1]=udres[i].udre;
-        }
-    }
-    if(sta_data.rura.flag==1){
-        var ruras=sta_data.rura.data;
-        for(i=0;i<ruras.length;i++){
-            para.nav.rura[ruras[i].sat-1]=ruras[i].rura;
-        }
+    catch (err){
+        console.log(err);
     }
     return reg;
 };module.exports.updateObsNav_show=updateObsNav_show;
@@ -614,18 +630,18 @@ function obsMostNumber(obs) {
     var obs_time=[];
     var obs_num={};
 
-    for(var obi in obs){
-        if(!obs_time.contains(obi.time)){
-            obs_time.push(obi.time);
-            obs_num[obi.time]=1;
+    for(var i=0;i<n;i++){
+        if(contains(obs_time,obs[i].time.time)){
+            obs_time.push(obs[i].time.time);
+            obs_num[obs[i].time.time]=1;
         }
         else{
-            obs_num[obi.time]+=1;
+            obs_num[obs[i].time.time]+=1;
         }
     }
     if(obs_time.length>0){
         var ts=obs_num[obs_time[0]];
-        var time;
+        var time=obs_time[0];
         for(var t in obs_num){
             if(obs_num[t]>ts){
                 ts=obs_num[t];
@@ -634,7 +650,7 @@ function obsMostNumber(obs) {
         }
         if(time!=null){
             for(var i=0;i<obs.length;){
-                if(math.abs(cmn.timediff(time,obs[i].time))!=0){
+                if(math.abs(time-obs[i].time.time)!=0){
                     obs.splice(i,1);
                     continue;
                 }
@@ -643,6 +659,13 @@ function obsMostNumber(obs) {
         }
     }
 };module.exports.obsMostNumber=obsMostNumber;
+function contains(arry,u) {
+    for(var i=0;i<arry.length;i++){
+        if(arry[i]==u)
+            return 0;
+    }
+    return 1;
+}
 //广播星历更新前故障检测
 function ephConsistent(epha,ephb) {
     var time;
@@ -863,9 +886,7 @@ function satShowStruct(obs,nav,sol,logjson) {
             if(nav.udre[ob.sat-1]!=undefined){
                 ob.udre=nav.udre[ob.sat-1];
             }
-            time=cmn.timeadd(obs[i].time,-14);
-            //cmn.time2bdt(obs[i].time,ws);
-            cmn.time2bdt(time,ws);
+            cmn.time2bdt(cmn.gpst2bdt(obs[i].time),ws);
             time=time2string(time);
         }
         ob.week=ws[0];
@@ -950,10 +971,10 @@ function  posOutStruct(para,sys,logjson) {
             rt.time=obs[i].time;
             ws=[0,0];
             if(sys==ca.SYS_GPS){
-                cmn.time2gpst(sol.time, ws);
+                cmn.time2gpst(obs[i].time, ws);
             }
             else if(sys==ca.SYS_CMP){
-                cmn.time2bdt(sol.time, ws);
+                cmn.time2bdt(cmn.gpst2bdt(obs[i].time), ws);
             }
             rt.week=ws[0];
             rt.tow=ws[1];

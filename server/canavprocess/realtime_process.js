@@ -76,6 +76,7 @@ module.exports.parser_pos=function(sta_id,data) {
         var results = parse.datatype(rtcm, data);
         results.forEach(function (sta_data) {
             var logjson = new nodepos.showJson();
+
             if (nodepos.updateObsNav_show(sta_data, para, logjson)) {
                 try {
                     if (para.obs.hasOwnProperty(ca.SYS_GPS)) {
@@ -202,5 +203,5 @@ function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //nodepos.eleUpdate(para);
-    //console.log(sys,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].exsats);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum);
 }
