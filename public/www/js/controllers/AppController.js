@@ -1,4 +1,4 @@
-MetronicApp.controller('AppController', ['$scope', '$http', '$location', 'Login', 'Passport','Show','$state', function ($scope, $http, $location, Login, Passport, Show, $state) {
+MetronicApp.controller('AppController', ['$rootScope','$scope', '$http', '$location', 'Login', 'Passport','Show','$state', function ($rootScope,$scope, $http, $location, Login, Passport, Show, $state) {
 
     $scope.$on('hideHearerStation', function (event, data) {
         $scope.$broadcast('to-header', data);
@@ -69,6 +69,7 @@ MetronicApp.controller('AppController', ['$scope', '$http', '$location', 'Login'
                 if(data == false){
                     return $scope.loginWarning = '用户名或密码错误！'
                 }
+                $rootScope.rootIsAdmin = data.roles.includes('admin');
                 $('body').removeClass('page-on-load');
                 $scope.$broadcast('login_to_header', 'data');
                 //登录成功后走
@@ -76,7 +77,7 @@ MetronicApp.controller('AppController', ['$scope', '$http', '$location', 'Login'
             //$broadcast给子控制器传值
             $scope.$broadcast('to-sidebar-class', 'data');
         }else{
-            $('#loginWarning').css('display', 'block')
+            $('#loginWarning').css('display', 'block');
             $scope.loginWarning = '请输入您的用户名或密码！'
         }
     }
@@ -87,7 +88,13 @@ MetronicApp.controller('AppController', ['$scope', '$http', '$location', 'Login'
         }
     });
 
-    var staId = localStorage.getItem('staId')
+    var staId = localStorage.getItem('staId');
     Passport.checkLogin(staId);
+
+
+
+
+
+
 
 }]);

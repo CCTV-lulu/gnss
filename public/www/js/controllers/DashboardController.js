@@ -1,8 +1,55 @@
-angular.module('MetronicApp').controller('dashboardController', function ($interval, $scope, $stateParams, settingInfo, $location, getCommitThreshold,
-                                                                          getStationStatus, Mongodb, DataArray, StarMapChart, StarChart, StarData, Initialise) {
-    var timeArray = []
+angular.module('MetronicApp').controller('dashboardController', function ($rootScope,$interval, $scope, $stateParams, settingInfo, $location, getCommitThreshold,
+                                                                          getStationStatus, Mongodb, DataArray, StarMapChart, StarChart, StarData, Initialise,userStationInfo) {
+
+    var stationId;
+
+    userStationInfo.getUserStationInfo(function(userStationInfo){
+        $rootScope.rootUserStationInfo = userStationInfo;
+        if(userStationInfo.allStations){
+            var  currentStationInfo = getCurrentStationInfo(userStationInfo.allStations)
+            stationId = currentStationInfo.realTimeStation.staId;
+            get()
+
+        }else{
+            stationId = userStationInfo.userStationInfo.staId;
+            get()
+        }
+
+    });
+
+
+
+    function getCurrentStationInfo(allStations){
+        var defaultInfo =JSON.stringify({realTimeStation:{},originStation:{}});
+        var currentStationInfo =  JSON.parse(localStorage.getItem($rootScope.activeUser+'_currentStationInfo')||defaultInfo);
+        if(!currentStationInfo.realTimeStation.stationId){
+            currentStationInfo.realTimeStation = allStations[0];
+            saveCurrentStationInfo(currentStationInfo)
+        }
+        return currentStationInfo
+
+    }
+
+    function saveCurrentStationInfo(currentStationInfo){
+        localStorage.setItem($rootScope.activeUser+'_currentStationInfo',JSON.stringify(currentStationInfo))
+    }
+
+    function get(){
+        initPolling = $interval(function () {
+            getStationInfo(stationId, 10);
+        }, 1000)
+    }
+
+
+
+
+
+
+
+
+    var timeArray = [];
     var dataId = [];
-    var chartWidth = $('#chartBox').css('width')
+    var chartWidth = $('#chartBox').css('width');
     var xAxisTickPixelInterval = Math.round((Number(chartWidth.substring(0, 3)) - 200) / 10);
     var dashboardPolling;
     var initPolling;
@@ -11,89 +58,62 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
     $scope.seriesList = {};
 
 
-    var stationId;
-    $scope.$on('allStation-to-dash', function (event, data) {
-        var arr = []
-        for (var i = 0; i < data.allStation.length; i++) {
-            arr.push(JSON.stringify(data.allStation[i].staId))
-        }
-        if (arr.indexOf(localStorage.getItem('staId')) == -1) {
-            stationId = data.allStation[0].staId;
-        } else {
-            stationId = localStorage.getItem('staId');
-        }
-        init_station_info()
-    })
-    $scope.$emit('to_allBaseStation', 'data');
 
-    $scope.$emit('to_appController', 'data');
+    //$scope.$on('allStation-to-dash', function (event, data) {
+    //    var arr = []
+    //    for (var i = 0; i < data.allStation.length; i++) {
+    //        arr.push(JSON.stringify(data.allStation[i].staId))
+    //    }
+    //    if (arr.indexOf(localStorage.getItem('staId')) == -1) {
+    //        stationId = data.allStation[0].staId;
+    //    } else {
+    //        stationId = localStorage.getItem('staId');
+    //    }
+    //    init_station_info()
+    //});
+    //$scope.$emit('to_allBaseStation', 'data');
+    //
+    //$scope.$emit('to_appController', 'data');
+    //
+    //$scope.$emit('to-app-basestation', 'data');
+    //
+    //$interval.cancel(dashboardPolling)
+    //$interval.cancel(initPolling)
+    //
+    //$scope.$on('$destroy', function (event) {
+    //    $interval.cancel(dashboardPolling);
+    //    $interval.cancel(initPolling);
+    //})
+    //
+    //$scope.$on('endDashRepeat', function (event, staId) {
+    //    $interval.cancel(dashboardPolling);//cancel取消方法的调用
+    //    $interval.cancel(initPolling)
+    //    var signalId = localStorage.getItem('signalTypeId');
+    //    var signalType = localStorage.getItem('signalType');
+    //    var stationId = localStorage.getItem("startStaId");
+    //    var startBaseStation = localStorage.getItem('startBaseStation');
+    //    Mongodb.setUserStaId(staId, localStorage.getItem("userName"), localStorage.getItem('baseStation'),
+    //        signalType, signalId, startBaseStation, stationId)
+    //})
+    //$scope.$on('data_disconnect', function (event, url) {
+    //    $location.path(url)
+    //})
+    //$scope.$on('logout', function (event, url) {
+    //    $interval.cancel(dashboardPolling);
+    //    $interval.cancel(initPolling)
+    //    $scope.$emit('logout-connect-app', 'data')
+    //});
+    //
+    //$scope.$on('frequencyUpdate', function (event, frequency) {
+    //    $interval.cancel(dashboardPolling);
+    //    dashboardPolling = $interval(function () {
+    //        getStationInfo(stationId, 1)
+    //    }, frequency * 1000)
+    //});
 
-    $scope.$emit('to-app-basestation', 'data');
 
-    $interval.cancel(dashboardPolling)
-    $interval.cancel(initPolling)
 
-    $scope.$on('$destroy', function (event) {
-        $interval.cancel(dashboardPolling);
-        $interval.cancel(initPolling);
-    })
 
-    $scope.$on('endDashRepeat', function (event, staId) {
-        $interval.cancel(dashboardPolling);//cancel取消方法的调用
-        $interval.cancel(initPolling)
-        var signalId = localStorage.getItem('signalTypeId');
-        var signalType = localStorage.getItem('signalType');
-        var stationId = localStorage.getItem("startStaId");
-        var startBaseStation = localStorage.getItem('startBaseStation');
-        Mongodb.setUserStaId(staId, localStorage.getItem("userName"), localStorage.getItem('baseStation'),
-            signalType, signalId, startBaseStation, stationId)
-    })
-    $scope.$on('data_disconnect', function (event, url) {
-        $location.path(url)
-    })
-    $scope.$on('logout', function (event, url) {
-        $interval.cancel(dashboardPolling);
-        $interval.cancel(initPolling)
-        $scope.$emit('logout-connect-app', 'data')
-    });
-
-    $scope.$on('frequencyUpdate', function (event, frequency) {
-        $interval.cancel(dashboardPolling);
-        dashboardPolling = $interval(function () {
-            getStationInfo(stationId, 1)
-        }, frequency * 1000)
-    });
-
-    function showTime() {
-        var date = new Date();
-        var now = "";
-        if (date.getHours() < 10) now = "0"
-        now = now + date.getHours() + ":";
-        if (date.getMinutes() < 10) now = now + "0";
-        now = now + date.getMinutes() + ":";
-        if (date.getSeconds() < 10) now = now + "0";
-        $scope.nowTime = now + date.getSeconds()
-        return now + date.getSeconds();
-    }
-
-    function showSatelliteNum(data) {
-        $scope.satelliteData = {
-            "bdsSatellite": data.bdsatnum,
-            "gpsSatellite": data.gpsatnum,
-            "glsSatellite": data.glsatnum
-        }
-    }
-
-    function showSatelliteLon() {
-
-    }
-
-    function init() {
-        showTime()
-        $interval(showTime, 1000)
-    }
-
-    init()
 
     function init_station_info() {
         initPolling = $interval(function () {
@@ -133,10 +153,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
                             showChart(data.stationData[i]);
-                            showDxDy(data.stationData, 'gpsDxDy');
-                            showDxDy(data.stationData, 'glsDxDy');
-                            showDxDy(data.stationData, 'dbsDxDy');
-                            showDxDy(data.stationData, 'groupDxDy');
+                            //showDxDy(data.stationData, 'gpsDxDy');
+                            //showDxDy(data.stationData, 'glsDxDy');
+                            //showDxDy(data.stationData, 'dbsDxDy');
+                            //showDxDy(data.stationData, 'groupDxDy');
                             showH(data.stationData, 'H');
                             //
                             settingSys(data.stationData[i]);
@@ -167,7 +187,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
 
                     settingSys(chartData);
                     updateH(chartData);
-                    updateDxDy(chartData)
+                    //updateDxDy(chartData)
                     updateChart(chartData);
                     //    dataArray.cooacc = chartData.cooacc;//给前端
                     //    updataChart(chartData);
@@ -600,6 +620,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($inter
             ]
         })
     }
+
+
+
+
 
 
 })

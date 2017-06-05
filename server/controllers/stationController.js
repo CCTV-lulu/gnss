@@ -357,114 +357,23 @@ function batchProcessDate(station, filter, userName) {
 
 
 /*========new*/
-function updateUserStationInfo(req, res) {
-    var condition = {
-        userName: req.body.userName
-    };
-    var data = req.body;
 
-
-    UserStationInfo.update(condition, data, function (err, newUserStationInfo) {
-        if (err) {
-            return res.send({status: false, message: 'updateStaId error'})
-        }
-        if (newUserStationInfo.ok == 1) {
-            res.send({status: true});
-        } else {
-            res.send({status: false, message: 'updateStaId false , value is 0'})
-        }
-    })
-}
 
 function getUserStationInfo(req, res) {
-    UserStationInfo.findStaIdByName(req.user.username, function (err, userStationInfo) {
-        if (err) {
-            return res.send({status: false, message: 'getUserStationId error  '})
-        }
-        if (userStationInfo.status === 101) {
-            if (!req.user.roles.includes('admin')) {
-                Station.all().then(function (allStations) {
-                    var userStationInfo ={realTimeStation:{},originalStation:{},originalSystem:{}};
-                    if (!allStations) {
-                        return res.send({userStationInfo: userStationInfo, allStations: allStations})
-                    }
-                    UserStationInfo.createUserStation(req.user.username, allStations[0]).then(function (result) {
-                        if (result.status == 400) {
-                            return res.send({userStationInfo: userStationInfo, allStations: allStations})
-                        }
-                        return res.send({userStationInfo: userStationInfo, allStations: allStations})
-                    })
-                });
 
-            } else {
-                res.send({status: false, message: 'user error'})
+    if (req.user.roles.includes('admin')) {
+        Station.all().then(function (allStations) {
+            return res.send({allStations:  allStations})
+        });
+    }else{
+        UserStationInfo.findStaIdByName(req.user.username, function (err, userStationInfo) {
+            if (err) {
+                return res.send({status: false, message: 'getUserStationId error  '})
             }
-        } else {
-            if (!req.user.roles.includes('admin')) {
-                return res.send({userStationInfo: userStationInfo})
-            }
-            Station.all().then(function (allStations) {
-                return res.send({userStationInfo: userStationInfo, allStations: allStations})
-            });
+            return res.send({userStationInfo:  userStationInfo})
+        })
+    }
 
-        }
-
-
-        //console.log(req.user)
-        //Station.all().then(function (stations) {
-        //    if (stations[0] == null) {
-        //        var station = {
-        //            userStation: {userName: req.user.username},
-        //            allStation: []
-        //        }
-        //        return res.send(station)
-        //    }
-        //    var username, stationid
-        //    for (var i = 0; i < stations.length; i++) {
-        //        if (stations[i].staId == req.user.station) {
-        //            username = stations[i].name;
-        //            stationid = stations[i].staId;
-        //            break;
-        //        }
-        //    }
-        //    var stationInfo = [
-        //        ['staName', username],
-        //        ['staId', stationid]
-        //    ]
-        //    checkUserStationId(userStationId, stationInfo)
-        //        .then(function (userStationId) {
-        //            var startBaseStationInfo = [
-        //                ['startBaseStation', username],
-        //                ['startStaId', stationid]
-        //            ];
-        //            checkUserStationId(userStationId, startBaseStationInfo)
-        //                .then(function (userStationId) {
-        //                    if (req.user.roles.length == 1) {
-        //                        var userStation = JSON.parse(JSON.stringify(userStationId));
-        //                        userStation.name = username
-        //                        //console.log(userStation)
-        //                        var station = {
-        //                            userStation: userStation,//普通用户发一个，管理员都发
-        //                            allStation: []
-        //                        };
-        //                        //console.log('user')
-        //
-        //                        res.send(station)
-        //                    }
-        //                    else {
-        //                        var station = {
-        //                            userStation: userStationId,//普通用户发一个，管理员都发
-        //                            allStation: stations
-        //                        };
-        //                        res.send(station)
-        //                    }
-        //                })
-        //
-        //        })
-        //
-        //
-        //})
-    })
 }
 module.exports = {
     getUserStationId: getUserStationId,
@@ -482,6 +391,6 @@ module.exports = {
     downloadStaData: downloadStaData,
 
 
-    updateUserStationInfo: updateUserStationInfo
+    getUserStationInfo: getUserStationInfo
 };
 

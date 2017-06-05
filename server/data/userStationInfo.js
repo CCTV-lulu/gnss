@@ -54,11 +54,11 @@ module.exports = {
         var defer = Promise.defer();
         var newUserStationInfo = {
             username: username,
-            realTimeStation: station,
-            originalStation: station,
-            originalSystem: {systemId: 0, systemName: 'GPS'}
+            name: station.name,
+            staId: station.staId
         };
         UserStationInfo.create(newUserStationInfo, function (err, userStationInfo) {
+
             if(err){
                 return defer.resolve({status:400})
             }

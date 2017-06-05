@@ -193,6 +193,21 @@ MetronicApp.controller('HeaderController', ['$interval','$rootScope','$scope','S
         }
 
 
+        $rootScope.$watch('rootUserStationInfo',function(rootUserStationInfo){
+            console.log(rootUserStationInfo)
+        });
+
+
+        $scope.isAdmin = $rootScope.rootIsAdmin||false;
+        //$scope.userStationInfo =  $rootScope.rootUserStationInfo;
+
+        $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
+            $scope.isAdmin = $rootScope.rootIsAdmin
+        });
+
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            console.log(toState)
+        });
 
 
 

@@ -60,6 +60,6 @@ module.exports = function(app) {
     });
 
     /*================new*/
-    app.post('/updateUserStationInfo',auth.isInRole('admin'),controllers.station.updateUserStationInfo)
+    app.get('/getUserStationInfo',controllers.station.getUserStationInfo)
 
 };

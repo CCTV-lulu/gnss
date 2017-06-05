@@ -533,10 +533,19 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             });
         }
 
-
+        function getUserStationInfo(cb){
+            var setUserStartStaIdUrl = url + "/getUserStationInfo";
+            httpRequest.httpGet(setUserStartStaIdUrl, function(result) {
+                if(result.status == false){
+                    return Prompt.promptBox("warning", result.message)
+                }
+                cb(result)
+            });
+        }
 
         return {
-            updateUserStationInfo: updateUserStationInfo
+            updateUserStationInfo: updateUserStationInfo,
+            getUserStationInfo: getUserStationInfo
 
         };
 

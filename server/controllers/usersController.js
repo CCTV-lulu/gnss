@@ -107,6 +107,10 @@ module.exports = {
 
     },
 
+    getUserInfo: function(){
+
+    },
+
 
     deleteUser: function (req, res) {
         User.deleteByName(req.body.username, function (err, user) {

@@ -16,7 +16,7 @@ MetronicApp.factory('Show', function ($rootScope) {
 }).factory('Login', function ($http, Mongodb, $rootScope, $location,Prompt, Passport, settingInfo, signalTypeInfo, signalTypObj, Show, httpRequest) {
     var url = "http://" + settingInfo.server + ":" + settingInfo.port;
     var loginGnss = function (userName, passWord, cb) {
-        localStorage.setItem("userName", userName)//存到本地
+
         var loginData = {
             username: userName,
             password: passWord
@@ -24,8 +24,10 @@ MetronicApp.factory('Show', function ($rootScope) {
         var loginGnssUrl = url + "/login"
         httpRequest.post(loginGnssUrl, loginData, function(result) {
             if (result) {
+                localStorage.setItem("userName", userName)//存到本地
+                $rootScope.activeUser = localStorage.getItem("userName");
                 Show.isShowAdmin(result);
-                cb()
+                cb(result)
             }else if(result == false) {
                 $('#loginWarning').css('display', 'block')
                 cb(false)
@@ -38,12 +40,13 @@ MetronicApp.factory('Show', function ($rootScope) {
 }).factory('Passport', function (Show, $http, $location, $rootScope, settingInfo, httpRequest,Prompt) {
     var url = "http://" + settingInfo.server + ":" + settingInfo.port;
     var checkLogin = function (staId) {
-        var checkLoginUrl = url + "/checkLogin"
+        var checkLoginUrl = url + "/checkLogin";
         httpRequest.httpGet(checkLoginUrl, function(data) {
                 Show.isShowLogin(false);
                 Show.isShowAdmin(data);
                 $('body').removeClass('page-on-load');
-            //除掉后加载页面具体内容
+                //除掉后加载页面具体内容
+                $rootScope.rootIsAdmin = data.roles.includes('admin');
                 $rootScope.activeUser = localStorage.getItem("userName");
                 if ($location.path() == "/login") {
                     $location.path('/dashboard.html/' + staId)

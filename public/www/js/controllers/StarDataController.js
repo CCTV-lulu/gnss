@@ -1,4 +1,12 @@
-angular.module('MetronicApp').controller('StarDataController', function ($scope, settingInfo, $timeout, getStationStatus, $interval, $location, $rootScope, Show, Mongodb) {
+angular.module('MetronicApp').controller('StarDataController', function ($scope, settingInfo, $timeout, getStationStatus, $interval, $location, $rootScope, Show, Mongodb,userStationInfo) {
+
+    userStationInfo.getUserStationInfo(function(userStationInfo){
+        $rootScope.rootUserStationInfo = userStationInfo
+        console.log($rootScope.rootUserStationInfo)
+    })
+
+
+
 
     var stationId;
     var signalId;
@@ -156,5 +164,6 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
             "</tr>"
     }
 //原始数据页面
+
 
 })

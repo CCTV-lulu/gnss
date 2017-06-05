@@ -7,12 +7,12 @@
         </div>
         <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
         <div class="page-actions" ng-show="stationShow">
-            <div class="btn-group">
+            <div class="btn-group" ng-show="isAdmin">
                 <button type="button" class="btn btn-circle btn-outline red dropdown-toggle" data-toggle="dropdown">
                     <span ng-bind="baseStation">&nbsp;</span>&nbsp;
                     <i class="fa fa-angle-down"></i>
                 </button>
-                <ul class="dropdown-menu" role="menu">
+                <ul  class="dropdown-menu" role="menu">
                     <base-Station-List></base-Station-List>
                 </ul>
             </div>

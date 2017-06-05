@@ -4,9 +4,8 @@ var mongoose = require('mongoose'),
 module.exports.init = function () {
     var stationSchema = new mongoose.Schema({
         username: String,
-        realTimeStation:Object,
-        originalStation:Object,
-        originalSystem:Object
+        name: String,
+        staId: String
 
     });
 
