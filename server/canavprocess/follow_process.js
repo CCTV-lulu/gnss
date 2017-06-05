@@ -44,9 +44,6 @@ module.exports.parser_pos=function(data) {
         var sta_id = 0;
         var logjson = new nodepos.logOutJson();
         if (nodepos.updateObsNav(sta_data, para, logjson)) {
-            if(sta_data.time.time== 1496555023){
-                var x=10;
-            }
             if(cmn.timediff(sta_data.time,prcopt.bt)<0 || cmn.timediff(sta_data.time,prcopt.et)>0)
                 return false;
             try {
@@ -124,5 +121,5 @@ function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posOutStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //logjson.time=sol.time;
-    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

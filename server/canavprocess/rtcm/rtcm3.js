@@ -1263,11 +1263,11 @@ function decode_rtcm3(buff,rtcm) {
             ret = decode_msm4(buff,rtcm,ca.SYS_CMP);
             break;
         /*case 2006:
-            ret = decode_type2006(buff,rtcm);
-            break;
-        case 2016:
-            ret = decode_type2016(buff,rtcm);
-            break;*/
+         ret = decode_type2006(buff,rtcm);
+         break;
+         case 2016:
+         ret = decode_type2016(buff,rtcm);
+         break;*/
         case 2006:
             ret = decode_type2006(buff,rtcm);
             break;

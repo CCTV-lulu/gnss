@@ -338,18 +338,23 @@ function middleSaveAll(sta_id,stationPara) {
 function updateObsNav(sta_data,para,logjson) {
     var i,j;
     var reg=0;
-    try{
-        if(sta_data.obs.flag==1){
+    if(sta_data.obs.flag==1){
+        try{
             para.obs={};
             obsBySys(para.obs,sta_data.obs.data);
             reg=1;
         }
-        if(sta_data.eph.flag==1) {
-            var eph=sta_data.eph.data;
-            for(i=0;i<eph.length;i++) {
-                if (!eph[i].svh) {
-                    switch (eph[i].sys){
-                        case ca.SYS_GPS:
+        catch (err){
+            console.log('obs data divide group by system error');
+        }
+    }
+    if(sta_data.eph.flag==1) {
+        var eph=sta_data.eph.data;
+        for(i=0;i<eph.length;i++) {
+            if (!eph[i].svh) {
+                switch (eph[i].sys){
+                    case ca.SYS_GPS:
+                        try{
                             if(para.ele.el_gps[eph[i].sat-1]!=undefined){
                                 if(para.ele.el_gps[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GPS]*ca.D2R){
                                     if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
@@ -360,8 +365,13 @@ function updateObsNav(sta_data,para,logjson) {
                             else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600){
                                 ephUpdate(sta_data.time,para.nav.eph,eph[i],logjson.ephs.eph);
                             }
-                            break;
-                        case ca.SYS_GLO:
+                        }
+                        catch (err){
+                            para.nav.eph[eph[i].sat-1]=eph[i];
+                        }
+                        break;
+                    case ca.SYS_GLO:
+                        try{
                             if(para.ele.el_glo[eph[i].sat-1]!=undefined){
                                 if(para.ele.el_glo[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GLO]*ca.D2R){
                                     if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600) {
@@ -373,8 +383,13 @@ function updateObsNav(sta_data,para,logjson) {
                                 ephUpdate(sta_data.time,para.nav.geph,eph[i],logjson.ephs.geph);
                             }
                             para.nav.lam[ca.SYS_GLO][eph[i].sat - 1] = cmn.glolam(eph[i]);
-                            break;
-                        case ca.SYS_CMP:
+                        }
+                        catch (err){
+                            para.nav.geph[eph[i].sat-1]=eph[i];
+                        }
+                        break;
+                    case ca.SYS_CMP:
+                        try{
                             if(para.ele.el_cmp[eph[i].sat-1]!=undefined){
                                 if(para.ele.el_cmp[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_CMP]*ca.D2R){
                                     if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
@@ -385,34 +400,9 @@ function updateObsNav(sta_data,para,logjson) {
                             else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
                                 ephUpdate(sta_data.time,para.nav.ceph, eph[i], logjson.ephs.ceph);
                             }
-                            break;
-                        default :
-                            break;
-                    }
-                }
-            }
-        }
-        if(sta_data.ion.flag==1){
-            var ions=sta_data.ion.data;
-            for(i=0;i<ions.length;i++) {
-                switch (ions[i].sys){
-                    case ca.SYS_GPS:
-                        if(!para.nav.ion_gps.stat ||
-                            cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
-                            para.nav.ion_gps.stat=1;
-                            para.nav.ion_gps = ions[i];
-                            logjson.ions.ion.push(ions[i]);
                         }
-                        break;
-                    case ca.SYS_CMP:
-                        if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
-                            para.nav.ion_cmp[ions[i].sat-1]=ions[i];
-                        else{
-                            if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
-                                para.nav.ion_cmp[ions[i].sat-1].stat = 1;
-                                para.nav.ion_cmp[ions[i].sat-1] = ions[i];
-                                logjson.ions.cion.push(ions[i]);
-                            }
+                        catch (err){
+                            para.nav.ceph[eph[i].sat-1]=eph[i];
                         }
                         break;
                     default :
@@ -420,77 +410,121 @@ function updateObsNav(sta_data,para,logjson) {
                 }
             }
         }
-        if(sta_data.alm.flag==1){
-            var alms=sta_data.alm.data;
-            for(i=0;i<alms.length;i++) {
-                switch (alms[i].sys){
-                    case ca.SYS_GPS:
-                        logjson.alms.alm.push(alms[i]);
-                        break;
-                    case ca.SYS_CMP:
-                        logjson.alms.calm.push(alms[i]);
-                        break;
-                }
-            }
-        }
-        if(sta_data.ura.flag==1){
-            var uras=sta_data.ura.data;
-            for(i=0;i<uras.length;i++){
-                if(uras[i].sys==ca.SYS_GPS){
-                    logjson.uras.ura.push(uras[i]);
-                }
-                else if(uras[i].sys==ca.SYS_CMP){
-                    logjson.uras.cura.push(uras[i]);
-                }
-            }
-        }
-        if(sta_data.utc.flag==1){
-            var utcs=sta_data.utc.data;
-            for(i=0;i<utcs.length;i++){
-                if(utcs[i].sys==ca.SYS_GPS){
-                    logjson.utcs.utc.push(utcs[i]);
-                }
-                else if(utcs[i].sys==ca.SYS_CMP){
-                    logjson.utcs.cutc.push(utcs[i]);
-                }
-            }
-        }
-        if(sta_data.udre.flag==1){
-            var udres=sta_data.udre.data;
-            for(i=0;i<udres.length;i++){
-                para.nav.udre[udres[i].sat-1]=udres[i];
-                logjson.udre.push(udres[i])
-            }
-        }
-        if(sta_data.rura.flag==1){
-            var ruras=sta_data.rura.data;
-            for(i=0;i<ruras.length;i++){
-                para.nav.rura[ruras[i].sat-1]=ruras[i];
-                logjson.rura.push(ruras[i]);
+    }
+    if(sta_data.ion.flag==1){
+        var ions=sta_data.ion.data;
+        for(i=0;i<ions.length;i++) {
+            switch (ions[i].sys){
+                case ca.SYS_GPS:
+                    try{
+                        if(!para.nav.ion_gps.stat ||
+                            cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
+                            para.nav.ion_gps = ions[i];
+                            para.nav.ion_gps.stat=1;
+                            logjson.ions.ion.push(ions[i]);
+                        }
+                    }
+                    catch (err){
+                        para.nav.ion_gps = ions[i];
+                        para.nav.ion_gps.stat=1;
+                        logjson.ions.ion.push(ions[i]);
+                    }
+                    break;
+                case ca.SYS_CMP:
+                    try{
+                        if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
+                            para.nav.ion_cmp[ions[i].sat-1]=ions[i];
+                        else{
+                            if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
+                                para.nav.ion_cmp[ions[i].sat-1] = ions[i];
+                                para.nav.ion_cmp[ions[i].sat-1].stat = 1;
+                                logjson.ions.cion.push(ions[i]);
+                            }
+                        }
+                    }
+                    catch (err){
+                        para.nav.ion_cmp[ions[i].sat-1] = ions[i];
+                        para.nav.ion_cmp[ions[i].sat-1].stat = 1;
+                        logjson.ions.cion.push(ions[i]);
+                    }
+                    break;
+                default :
+                    break;
             }
         }
     }
-   catch (err){
-       console.log(err);
-   }
+    if(sta_data.alm.flag==1){
+        var alms=sta_data.alm.data;
+        for(i=0;i<alms.length;i++) {
+            switch (alms[i].sys){
+                case ca.SYS_GPS:
+                    logjson.alms.alm.push(alms[i]);
+                    break;
+                case ca.SYS_CMP:
+                    logjson.alms.calm.push(alms[i]);
+                    break;
+            }
+        }
+    }
+    if(sta_data.ura.flag==1){
+        var uras=sta_data.ura.data;
+        for(i=0;i<uras.length;i++){
+            if(uras[i].sys==ca.SYS_GPS){
+                logjson.uras.ura.push(uras[i]);
+            }
+            else if(uras[i].sys==ca.SYS_CMP){
+                logjson.uras.cura.push(uras[i]);
+            }
+        }
+    }
+    if(sta_data.utc.flag==1){
+        var utcs=sta_data.utc.data;
+        for(i=0;i<utcs.length;i++){
+            if(utcs[i].sys==ca.SYS_GPS){
+                logjson.utcs.utc.push(utcs[i]);
+            }
+            else if(utcs[i].sys==ca.SYS_CMP){
+                logjson.utcs.cutc.push(utcs[i]);
+            }
+        }
+    }
+    if(sta_data.udre.flag==1){
+        var udres=sta_data.udre.data;
+        for(i=0;i<udres.length;i++){
+            para.nav.udre[udres[i].sat-1]=udres[i];
+            logjson.udre.push(udres[i])
+        }
+    }
+    if(sta_data.rura.flag==1){
+        var ruras=sta_data.rura.data;
+        for(i=0;i<ruras.length;i++){
+            para.nav.rura[ruras[i].sat-1]=ruras[i];
+            logjson.rura.push(ruras[i]);
+        }
+    }
     return reg;
 };module.exports.updateObsNav=updateObsNav;
 //使用新接收数据更新当前定位处理对象（实时定位处理使用）
 function updateObsNav_show(sta_data,para,logjson) {
     var i,j;
     var reg=0;
-    try{
-        if(sta_data.obs.flag==1){
+    if(sta_data.obs.flag==1){
+        try{
             para.obs={};
             obsBySys(para.obs,sta_data.obs.data);
             reg=1;
         }
-        if(sta_data.eph.flag==1) {
-            var eph=sta_data.eph.data;
-            for(i=0;i<eph.length;i++) {
-                if (!eph[i].svh) {
-                    switch (eph[i].sys){
-                        case ca.SYS_GPS:
+        catch (err){
+            console.log('obs data divide group by system error');
+        }
+    }
+    if(sta_data.eph.flag==1) {
+        var eph=sta_data.eph.data;
+        for(i=0;i<eph.length;i++) {
+            if (!eph[i].svh) {
+                switch (eph[i].sys){
+                    case ca.SYS_GPS:
+                        try{
                             if(para.ele.el_gps[eph[i].sat-1]!=undefined){
                                 if(para.ele.el_gps[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GPS]){
                                     if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
@@ -501,8 +535,13 @@ function updateObsNav_show(sta_data,para,logjson) {
                             else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600){
                                 ephUpdate_show(sta_data.time,para.nav.eph,eph[i]);
                             }
-                            break;
-                        case ca.SYS_GLO:
+                        }
+                        catch (err){
+                            para.nav.eph[eph[i].sat-1]=eph[i];
+                        }
+                        break;
+                    case ca.SYS_GLO:
+                        try{
                             if(para.ele.el_glo[eph[i].sat-1]!=undefined){
                                 if(para.ele.el_glo[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_GLO]){
                                     if(math.abs(cmn.timediff(eph[i].toe,eph[i].tof))<3600) {
@@ -514,8 +553,13 @@ function updateObsNav_show(sta_data,para,logjson) {
                                 ephUpdate_show(sta_data.time,para.nav.geph,eph[i]);
                             }
                             para.nav.lam[ca.SYS_GLO][eph[i].sat - 1] = cmn.glolam(eph[i]);
-                            break;
-                        case ca.SYS_CMP:
+                        }
+                        catch (err){
+                            para.nav.geph[eph[i].sat-1]=eph[i];
+                        }
+                        break;
+                    case ca.SYS_CMP:
+                        try{
                             if(para.ele.el_cmp[eph[i].sat-1]!=undefined){
                                 if(para.ele.el_cmp[eph[i].sat-1]>=para.prcopt.elmin[ca.SYS_CMP]){
                                     if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
@@ -526,32 +570,9 @@ function updateObsNav_show(sta_data,para,logjson) {
                             else if(math.abs(cmn.timediff(eph[i].toe,eph[i].toc))<3600) {
                                 ephUpdate_show(sta_data.time,para.nav.ceph, eph[i]);
                             }
-                            break;
-                        default :
-                            break;
-                    }
-                }
-            }
-        }
-        if(sta_data.ion.flag==1){
-            var ions=sta_data.ion.data;
-            for(i=0;i<ions.length;i++) {
-                switch (ions[i].sys){
-                    case ca.SYS_GPS:
-                        if(!para.nav.ion_gps.stat ||
-                            cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
-                            para.nav.ion_gps.stat=1;
-                            para.nav.ion_gps = ions[i];
                         }
-                        break;
-                    case ca.SYS_CMP:
-                        if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
-                            para.nav.ion_cmp[ions[i].sat-1]=ions[i];
-                        else{
-                            if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
-                                para.nav.ion_cmp[ions[i].sat-1].stat = 1;
-                                para.nav.ion_cmp[ions[i].sat-1] = ions[i];
-                            }
+                        catch (err){
+                            para.nav.ceph[eph[i].sat-1]=eph[i];
                         }
                         break;
                     default :
@@ -559,10 +580,50 @@ function updateObsNav_show(sta_data,para,logjson) {
                 }
             }
         }
-        if(sta_data.ura.flag==1){
-            var uras=sta_data.ura.data;
-            for(i=0;i<uras.length;i++){
-                if(uras[i].sys==ca.SYS_GPS){
+    }
+    if(sta_data.ion.flag==1){
+        var ions=sta_data.ion.data;
+        for(i=0;i<ions.length;i++) {
+            switch (ions[i].sys){
+                case ca.SYS_GPS:
+                    try{
+                        if(!para.nav.ion_gps.stat ||
+                            cmn.timediff(ions[i].time, para.nav.ion_gps.time) > 1){
+                            para.nav.ion_gps = ions[i];
+                            para.nav.ion_gps.stat=1;
+                        }
+                    }
+                    catch (err){
+                        para.nav.ion_gps = ions[i];
+                        para.nav.ion_gps.stat=1;
+                    }
+                    break;
+                case ca.SYS_CMP:
+                    try{
+                        if(para.nav.ion_cmp[ions[i].sat-1]==undefined)
+                            para.nav.ion_cmp[ions[i].sat-1]=ions[i];
+                        else{
+                            if(cmn.timediff(ions[i].time, para.nav.ion_cmp[ions[i].sat-1].time) > 1){
+                                para.nav.ion_cmp[ions[i].sat-1] = ions[i];
+                                para.nav.ion_cmp[ions[i].sat-1].stat = 1;
+                            }
+                        }
+                    }
+                    catch (err){
+                        para.nav.ion_cmp[ions[i].sat-1] = ions[i];
+                        para.nav.ion_cmp[ions[i].sat-1].stat = 1;
+                    }
+                    break;
+                default :
+                    break;
+            }
+        }
+    }
+    if(sta_data.ura.flag==1){
+        var uras=sta_data.ura.data;
+        for(i=0;i<uras.length;i++){
+            if(uras[i].sys==ca.SYS_GPS){
+                try{
                     if(para.nav.ura_gps[uras[i].sat-1]==undefined){
                         para.nav.ura_gps[uras[i].sat-1]=uras[i];
                     }
@@ -572,7 +633,12 @@ function updateObsNav_show(sta_data,para,logjson) {
                         }
                     }
                 }
-                else if(uras[i].sys==ca.SYS_CMP){
+                catch (err){
+                    para.nav.ura_gps[uras[i].sat-1]=uras[i];
+                }
+            }
+            else if(uras[i].sys==ca.SYS_CMP){
+                try{
                     if(para.nav.ura_cmp[uras[i].sat-1]==undefined){
                         para.nav.ura_cmp[uras[i].sat-1]=uras[i];
                     }
@@ -582,10 +648,15 @@ function updateObsNav_show(sta_data,para,logjson) {
                         }
                     }
                 }
+                catch (err){
+                    para.nav.ura_cmp[uras[i].sat-1]=uras[i];
+                }
             }
         }
-        if(sta_data.utc.flag==1){
-            var utcs=sta_data.utc.data;
+    }
+    if(sta_data.utc.flag==1){
+        var utcs=sta_data.utc.data;
+        try{
             for(i=0;i<utcs.length;i++){
                 if(utcs[i].sys==ca.SYS_GPS){
                     para.nav.utc_gps=utcs[i];
@@ -597,21 +668,31 @@ function updateObsNav_show(sta_data,para,logjson) {
                 }
             }
         }
-        if(sta_data.udre.flag==1){
-            var udres=sta_data.udre.data;
+        catch (err){
+            console.log(err);
+        }
+    }
+    if(sta_data.udre.flag==1){
+        var udres=sta_data.udre.data;
+        try{
             for(i=0;i<udres.length;i++){
                 para.nav.udre[udres[i].sat-1]=udres[i].udre;
             }
         }
-        if(sta_data.rura.flag==1){
-            var ruras=sta_data.rura.data;
+        catch (err){
+            console.log(err);
+        }
+    }
+    if(sta_data.rura.flag==1){
+        var ruras=sta_data.rura.data;
+        try{
             for(i=0;i<ruras.length;i++){
                 para.nav.rura[ruras[i].sat-1]=ruras[i].rura;
             }
         }
-    }
-    catch (err){
-        console.log(err);
+        catch (err){
+            console.log(err);
+        }
     }
     return reg;
 };module.exports.updateObsNav_show=updateObsNav_show;
@@ -997,15 +1078,23 @@ function  posOutStruct(para,sys,logjson) {
 //更新最新卫星仰角数据
 function eleUpdate(sol,obs,ele) {
     var i;
-    if(sol.stat) {
-        for(i=0;i<obs.length;i++){
-            if(obs[i].sys==ca.SYS_GPS && sol.resp[i]!=0)
-                ele.el_gps[obs[i].sat-1]=sol.azel[1 + i * 2];
-            else if(obs[i].sys==ca.SYS_CMP&& sol.resp[i]!=0)
-                ele.el_cmp[obs[i].sat-1]=sol.azel[1 + i * 2];
-            else if(obs[i].sys==ca.SYS_GLO&& sol.resp[i]!=0)
-                ele.el_glo[obs[i].sat-1]=sol.azel[1 + i * 2];
+    try{
+        if(sol.stat) {
+            for(i=0;i<obs.length;i++){
+                if(obs[i].sys==ca.SYS_GPS && sol.resp[i]!=0)
+                    ele.el_gps[obs[i].sat-1]=sol.azel[1 + i * 2];
+                else if(obs[i].sys==ca.SYS_CMP&& sol.resp[i]!=0)
+                    ele.el_cmp[obs[i].sat-1]=sol.azel[1 + i * 2];
+                else if(obs[i].sys==ca.SYS_GLO&& sol.resp[i]!=0)
+                    ele.el_glo[obs[i].sat-1]=sol.azel[1 + i * 2];
+            }
         }
+    }
+    catch (err){
+        ele.el_gps=[];
+        ele.el_glo=[];
+        ele.el_cmp=[];
+        console.log('elevation data update error, and reset');
     }
 };module.exports.eleUpdate=eleUpdate;
 //计算定位结果均值方差
