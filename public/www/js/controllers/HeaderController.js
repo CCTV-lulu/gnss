@@ -44,6 +44,19 @@ MetronicApp.controller('HeaderController',
                 $scope.signalType = name;
                 saveSingalType($rootScope.rootSingalType)
             };
+            $scope.menuClosed = false;
+            $scope.changeSideBar = function(){
+                $scope.menuClosed = !$scope.menuClosed;
+                if($scope.menuClosed ){
+                    $('body').addClass('page-sidebar-closed');
+                    $('ul.page-sidebar-menu').addClass('page-sidebar-menu-closed');
+                }else{
+                    $('body').removeClass('page-sidebar-closed');
+                    $('ul.page-sidebar-menu').removeClass('page-sidebar-menu-closed');
+                }
+
+
+            };
 
 
 
