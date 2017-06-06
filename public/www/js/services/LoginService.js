@@ -25,7 +25,7 @@ MetronicApp.factory('Show', function ($rootScope) {
         httpRequest.post(loginGnssUrl, loginData, function(result) {
             if (result) {
                 localStorage.setItem("userName", userName)//存到本地
-                $rootScope.activeUser = localStorage.getItem("userName");
+                $rootScope.activeUser = $rootScope.activeUser = result.username
                 Show.isShowAdmin(result);
                 cb(result)
             }else if(result == false) {
@@ -42,12 +42,13 @@ MetronicApp.factory('Show', function ($rootScope) {
     var checkLogin = function (staId) {
         var checkLoginUrl = url + "/checkLogin";
         httpRequest.httpGet(checkLoginUrl, function(data) {
+
                 Show.isShowLogin(false);
                 Show.isShowAdmin(data);
                 $('body').removeClass('page-on-load');
                 //除掉后加载页面具体内容
                 $rootScope.rootIsAdmin = data.roles.includes('admin');
-                $rootScope.activeUser = localStorage.getItem("userName");
+                $rootScope.activeUser = data.user.username
                 if ($location.path() == "/login") {
                     $location.path('/dashboard.html/' + staId)
                 } else {

@@ -43,7 +43,7 @@ MetronicApp.config(['$stateProvider', '$httpProvider', '$urlRouterProvider', fun
     $stateProvider
 
         .state('dashboard', {
-            url: "/dashboard.html",
+            url: "/dashboard",
             templateUrl: "views/dashboard.html",
             data: {pageTitle: 'Admin Dashboard Template'},
             controller: "dashboardController",

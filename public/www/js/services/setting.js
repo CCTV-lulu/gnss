@@ -8,9 +8,11 @@ MetronicApp.factory('settingInfo', function () {
 
 }).factory('signalTypeInfo', function () {
     return [
-        'BDS',
         'GPS',
-        'GLS'
+        'GLS',
+        'BDS'
+
+
 
     ]
 }).factory('signalTypObj', function () {

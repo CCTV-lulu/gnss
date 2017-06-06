@@ -27,6 +27,18 @@
                     </thead>
 
                     <tbody id="startInfo">
+                        <tr ng-repeat="star in starInfo" ng-model="stationsInfo">
+                            <td>{{ star.sat }}</td>
+                            <td>{{ star.svh }}</td>
+                            <td>{{ star.Ele }}</td>
+                            <td>{{ star.Azi }}</td>
+                            <td>{{ star.ura }}</td>
+                            <td>{{ star.rura }}</td>
+                            <td>{{ star.udre }}</td>
+                            <td>{{ star.week }}</td>
+                            <td>{{ star.tow }}</td>
+                            <td>{{star.time}}</td>
+                        </tr>
 
                     </tbody>
                 </table>

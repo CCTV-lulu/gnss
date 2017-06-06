@@ -37,7 +37,7 @@ module.exports = {
         if (!req.isAuthenticated()) {
             return res.send({bool: false})
         }else{
-            return res.send({roles: req.user.roles, bool: true})
+            return res.send({roles: req.user.roles, bool: true, user: req.user})
         }
     },
     isInRole: function (role) {

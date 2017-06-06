@@ -1,170 +1,68 @@
 angular.module('MetronicApp').controller('dashboardController', function ($rootScope,$interval, $scope, $stateParams, settingInfo, $location, getCommitThreshold,
-                                                                          getStationStatus, Mongodb, DataArray, StarMapChart, StarChart, StarData, Initialise,userStationInfo) {
+                                                                          getStationStatus, Mongodb, DataArray, StarMapChart, StarChart, StarData, Initialise,userStationInfo,$state) {
 
-    var stationId;
-    var realTimeSationStatus = false;
-
-    userStationInfo.getUserStationInfo(function(userStationInfo){
-
-        if(userStationInfo.allStations){
-            var  currentStationInfo = getCurrentStationInfo(userStationInfo.allStations);
-            stationId = currentStationInfo.realTimeStation.staId;
-            init();
-
-        }else{
-            stationId = userStationInfo.userStationInfo.data.staId;
-            getCurrentStationInfo([userStationInfo.userStationInfo.data]);
-            init();
-        }
-
-        $rootScope.rootUserStationInfo = userStationInfo;
-
-    });
-
-    $rootScope.$watch('RootRealTimeRate',function(realTimeRate){
-        checkRealTimeRate(realTimeRate)
-    });
-
-    function checkRealTimeRate(realTimeRate){
-        if(realTimeSationStatus){
-            $interval.cancel(dashboardPolling);
-            dashboardPolling = $interval(function () {
-                getStationInfo(stationId, 1)
-            }, realTimeRate * 1000)
-        }
-    }
-
-
-
-    function getCurrentStationInfo(allStations){
-        var defaultInfo =JSON.stringify({realTimeStation:{},originStation:{}});
-        var currentStationInfo =  JSON.parse(localStorage.getItem($rootScope.activeUser+'_currentStationInfo')||defaultInfo);
-        if(!currentStationInfo.realTimeStation.staId){
-            currentStationInfo.realTimeStation = allStations[0];
-            saveCurrentStationInfo(currentStationInfo)
-        }
-        return currentStationInfo
-
-    }
-
-    function saveCurrentStationInfo(currentStationInfo){
-        localStorage.setItem($rootScope.activeUser+'_currentStationInfo',JSON.stringify(currentStationInfo))
-    }
-
-    function init(){
-        initPolling = $interval(function () {
-            getStationInfo(stationId, 10);
-        }, $rootScope.RootRealTimeRate*1000)
-    }
-
-
-
-
-
-
-
-
-    var timeArray = [];
+    var stationId = $rootScope.stationId;
+    var listenRootCurrentStationStatus;
     var dataId = [];
     var chartWidth = $('#chartBox').css('width');
-    var xAxisTickPixelInterval = Math.round((Number(chartWidth.substring(0, 3)) - 200) / 10);
-    var dashboardPolling;
-    var initPolling;
-    var stationDataStatus = true;
+
 
     $scope.seriesList = {};
+    init(stationId);
 
 
+    $rootScope.$watch('stationId',function(newStationId){
 
-    //$scope.$on('allStation-to-dash', function (event, data) {
-    //    var arr = []
-    //    for (var i = 0; i < data.allStation.length; i++) {
-    //        arr.push(JSON.stringify(data.allStation[i].staId))
-    //    }
-    //    if (arr.indexOf(localStorage.getItem('staId')) == -1) {
-    //        stationId = data.allStation[0].staId;
-    //    } else {
-    //        stationId = localStorage.getItem('staId');
-    //    }
-    //    init_station_info()
-    //});
-    //$scope.$emit('to_allBaseStation', 'data');
-    //
-    //$scope.$emit('to_appController', 'data');
-    //
-    //$scope.$emit('to-app-basestation', 'data');
-    //
-    //$interval.cancel(dashboardPolling)
-    //$interval.cancel(initPolling)
-    //
-    //$scope.$on('$destroy', function (event) {
-    //    $interval.cancel(dashboardPolling);
-    //    $interval.cancel(initPolling);
-    //})
-    //
-    //$scope.$on('endDashRepeat', function (event, staId) {
-    //    $interval.cancel(dashboardPolling);//cancel取消方法的调用
-    //    $interval.cancel(initPolling)
-    //    var signalId = localStorage.getItem('signalTypeId');
-    //    var signalType = localStorage.getItem('signalType');
-    //    var stationId = localStorage.getItem("startStaId");
-    //    var startBaseStation = localStorage.getItem('startBaseStation');
-    //    Mongodb.setUserStaId(staId, localStorage.getItem("userName"), localStorage.getItem('baseStation'),
-    //        signalType, signalId, startBaseStation, stationId)
-    //})
-    //$scope.$on('data_disconnect', function (event, url) {
-    //    $location.path(url)
-    //})
-    //$scope.$on('logout', function (event, url) {
-    //    $interval.cancel(dashboardPolling);
-    //    $interval.cancel(initPolling)
-    //    $scope.$emit('logout-connect-app', 'data')
-    //});
-    //
-    //$scope.$on('frequencyUpdate', function (event, frequency) {
-    //    $interval.cancel(dashboardPolling);
-    //    dashboardPolling = $interval(function () {
-    //        getStationInfo(stationId, 1)
-    //    }, frequency * 1000)
-    //});
+        if (!newStationId||stationId == newStationId) return;
+        stationId = newStationId;
+        if(listenRootCurrentStationStatus){
+            listenRootCurrentStationStatus()
+        }
+
+        init(newStationId)
+    });
 
 
+    $scope.$on('$destroy', function (event) {
+        if(listenRootCurrentStationStatus){
+            listenRootCurrentStationStatus()
+        }
+    });
 
 
-
-    function init_station_info() {
-        initPolling = $interval(function () {
-            getStationInfo(stationId, 10);
-        }, 1000)
-    }
-
-    function getStationInfo(staId, limit) {
-        if (stationDataStatus == false) return;
-        try {
-            loadStationStatus(staId, limit)
-        } catch (err) {
-            stationDataStatus = true;
+    function init(newStationId){
+        if(newStationId !=undefined ){
+            $('.table-responsive tbody').hide();
+            $('.portlet-body>div:last-child').hide();
+            $('.portlet-body>div:first-child').show();
+            getStationInfo(newStationId, 10);
         }
     }
 
-//MongoDB中读取指定数量的数据记录,大小为读取的记录条数
-    function loadStationStatus(staId, limit) {
-        stationDataStatus = false;
-        getStationStatus.getStationStatus(staId, limit, function (data) {
-            //console.log(data)
-            stationDataStatus = true;
-            if (data.StationSocketStatus == true) {
-                $scope.$emit('socketStatus_to_app', '实时数据接收中');
-            } else {
-                $scope.$emit('socketStatus_to_app', '实时数据未连接');
-            }
-            //10条是以前的
 
+
+
+
+
+
+    function getStationInfo(staId, limit) {
+
+        try {
+            loadStationStatus(staId, limit,function(){
+                getStationInfo(staId, limit)
+            })
+        } catch (err) {
+
+        }
+    }
+
+    function loadStationStatus(staId, limit, cb) {
+
+        getStationStatus.getStationStatus(staId, limit, function (data) {
             if (limit == 10 && data.stationData != false) {
                 if (data.stationData.length < 300) {
-                    return
+                    return cb()
                 }
-                $interval.cancel(initPolling);
 
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
@@ -180,46 +78,22 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             StarMapChart.starMap((data.stationData[i]).satpos);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
-                            startOneStaStatus();
-                            //showSatelliteNum(data.stationData[i].satnum)
-                        } else {
-                            //DataArray.arrange(dataId, data.stationData[i].dataId)
-                            //handleData(data.stationData[i])
-                        }
 
+                            startOneStaStatus();
+                            $('.table-responsive tbody').show();
+
+                            //showSatelliteNum(data.stationData[i].satnum)
+                        }
 
                     }
                 }
                 //实时一条一条动态加载
-            } else if (limit == 1 && data.stationData != false) {
-                console.log(data.stationData)
-                data.stationData.forEach(function (chartData) {
-                    //if (dataId.indexOf(chartData.dataId) == -1) {
-                    //    //settingSys(data.stationData[i].dataInfo)
-                    //    DataArray.arrange(dataId, chartData.dataId);
-                    //if(!isNaN(chartData.satpos.gpsatpos[0].y)){
-
-                    StarMapChart.starMap(chartData.satpos);
-                    //}
-                    //StarMapChart.starMap((chartData.satpos));
-
-                    settingSys(chartData);
-                    updateH(chartData);
-                    //updateDxDy(chartData)
-                    updateChart(chartData);
-                    //    dataArray.cooacc = chartData.cooacc;//给前端
-                    //    updataChart(chartData);
-                    //    showSatelliteNum(chartData.satnum)
-                    //
-                    //}
-                })
             }
         })
     }
     function updateDxDy(staInfo){
 
         if (staInfo.posR[0]&&getDxDy(staInfo.posR[0])) {
-            console.log($scope.seriesList.gpsDxDy.points.length)
             $scope.seriesList.gpsDxDy.addPoint(getDxDy(staInfo.posR[0]), true, true);
 
         }
@@ -279,7 +153,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         getCommitThreshold.threshold(localStorage.getItem('baseStation'), function (data) {
             var Threshold = data.staThreshold;
             $scope.cooacc = chartData.cooacc;
-            //console.log(chartData.cooacc)
             $scope.latestData.push(StarData.getSatelliteNumber('satnum', chartData.timestamp, chartData.satnum, dataArray, Threshold.staNumThresholdMax, Threshold.staNumThresholdMin, "卫星数量"));
             $scope.latestData.push(StarData.getSatelliteNumber('DopValue', chartData.timestamp, chartData.dopinfo, dataArray, Threshold.pdopThresholdMax, Threshold.pdopThresholdMin, "DOP值"));
             $scope.latestData.push(StarData.getSatelliteNumber('absoluteError', chartData.timestamp, chartData.abserror, dataArray, Threshold.absoluteThresholdMax, Threshold.absoluteThresholdMin, "绝对误差"));
@@ -300,18 +173,22 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         updateSNR(chartData.SNY, 'bdsSNY')
     }
 
-    function startOneStaStatus() {
+    function startOneStaStatus(data) {
 
-        if (localStorage.getItem('Frequency')) {
-            var Frequency = localStorage.getItem('Frequency');
-        } else {
-            var Frequency = 1;
-        }
-        $interval.cancel(dashboardPolling);
-        dashboardPolling = $interval(function () {
-            realTimeSationStatus = true;
-            getStationInfo(stationId, 1);
-        }, Frequency * 1000)
+        listenRootCurrentStationStatus =  $rootScope.$watch('RootCurrentStationStatus', function(data){
+
+
+            if(!data) return;
+            data.stationData.forEach(function (chartData) {
+
+                StarMapChart.starMap(chartData.satpos);
+                settingSys(chartData);
+                updateH(chartData);
+                //updateDxDy(chartData)
+                updateChart(chartData);
+            })
+        })
+
     }
 
 
@@ -384,7 +261,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
     function updateSNR(staInfo,type){
             var showData = staInfo[type];
-            console.log($scope.seriesList)
             $scope.seriesList[type][0].setData(showData[0].slice(0,15))
             $scope.seriesList[type][1].setData(showData[1].slice(0,15))
 

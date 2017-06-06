@@ -63,11 +63,11 @@
                             <span ng-bind="StationSocketStatus"></span>
                         </a>
                     </li>
-                    <li class="dropdown dropdown-user" ng-show="stationShow">
+                    <li class="dropdown dropdown-user" ng-show="socketStatusShow">
                         <a href="javascript:;" style="float: right" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"
                            data-close-others="true">
                             <span> 刷新频度 : </span>
-                            <span id="frequency" ng-bind="Frequency"> </span>
+                            <span id="frequency" ng-bind="updateRate"></span>s
                             <i class="fa fa-angle-down"></i>
                         </a>
 
