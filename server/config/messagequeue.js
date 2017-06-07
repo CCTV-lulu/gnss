@@ -63,13 +63,13 @@ function saveStaInfo(data) {
             if (stat.isDirectory()) {
                 fs.readdir("../station" + data.station_id, function (err, files) {
                     if (err) return console.log(err);
-                    if (files.length > 5) {
-                        for (var n = 0; n < files.length - 5; n++) {
-                            fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
-                                if (err) throw err;
-                            })
-                        }
-                    }
+                    //if (files.length > 5) {
+                    //    for (var n = 0; n < files.length - 5; n++) {
+                    //        fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
+                    //            if (err) throw err;
+                    //        })
+                    //    }
+                    //}
                     //console.log(staInfo)
                     writeFileSync(data, staInfo);
                 })
