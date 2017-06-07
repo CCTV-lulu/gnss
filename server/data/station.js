@@ -3,26 +3,25 @@ var Station = require('mongoose').model('Station');
 module.exports = {
     create: function (station) {
         var defer = Promise.defer();
-        Station.findOne({name: station.name}).exec(function (err, name) {
-            if (err) {
-                return defer.reject('add station error')
-            }
-            Station.findOne({staId: station.staId}).exec(function (err, staId) {
-                if (name || staId) {
-                    return defer.resolve({
-                        status: false,
-                        message: 'station name had exist'
-                    })
-                } else {
-                    Station.create(station, function (err, data) {
+        var newStation = {
+            name: station.name,
+            staId:station.staId
+        }
+        Station.where({ $or : [ {name: station.name}, {staId: station.staId} ] }).exec()
+            .then(function(result){
+                if(result.length ===0){
+                    Station.create(newStation, function (err, data) {
                         if (err) {
                             return defer.reject('创建失败')
                         }
                         defer.resolve({status: true, station: data})
                     });
+                }else{
+                    defer.resolve({status: false, message: '基站已存在'})
                 }
-            })
-        });
+
+            });
+
         return defer.promise;
     },
     deleteByName: function (name) {
@@ -66,8 +65,15 @@ module.exports = {
         });
         return defer.promise;
     },
-    find: function (condition) {
-        return Station.findOne(condition).exec()
+    findOne: function (condition) {
+        var defer = Promise.defer();
+        Station.findOne(condition).exec(function(err, station){
+             if (err) {
+                 return defer.reject('find all station error')
+             }
+             defer.resolve(station)
+        });
+        return defer.promise;
     }
 
 };

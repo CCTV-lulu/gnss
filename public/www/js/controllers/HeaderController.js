@@ -65,8 +65,8 @@ MetronicApp.controller('HeaderController',
 
 
             function showOption(rootUserStationInfo) {
-                $scope.realTimeStation = getCurrentStationInfo(rootUserStationInfo.allStations[0]).realTimeStation.name;
-                $scope.originStation = getCurrentStationInfo(rootUserStationInfo.allStations[0]).originStation.name;
+                $scope.realTimeStation = checkCurrentStationInfo(rootUserStationInfo.allStations).realTimeStation.name;
+                $scope.originStation = checkCurrentStationInfo(rootUserStationInfo.allStations).originStation.name;
 
                 if ($scope.isAdmin) {
 
@@ -113,16 +113,17 @@ MetronicApp.controller('HeaderController',
                 init(activeUser)
             });
 
+
+
             function init(activeUser){
                 if(!activeUser) return ;
                 userStationInfo.getUserStationInfo(function(userStationInfo){
                     $scope.updateRate = getRate();
                     $scope.isAdmin = $rootScope.rootIsAdmin || false;
                     if($scope.isAdmin){
-                        var currentStationInfo = getCurrentStationInfo(userStationInfo.allStations[0]);
+                        var currentStationInfo = checkCurrentStationInfo(userStationInfo.allStations);
                         if($location.path() ==  '/dashboard') {
                             $rootScope.stationId = currentStationInfo.realTimeStation.staId
-                            console.log($rootScope.stationId)
                         }
                         if($location.path()  ==  '/stardata'){
                              $rootScope.stationId = currentStationInfo.originStation.staId
@@ -189,6 +190,57 @@ MetronicApp.controller('HeaderController',
                 return getCurrentStationInfoStorage()
             }
 
+
+            function checkCurrentStationInfo(stations){
+                var currentInfo = getCurrentStationInfoStorage();
+
+                if(!currentInfo){
+                    currentInfo ={
+                        realTimeStation:{
+                            name:stations[0].name,
+                            staId:stations[0].staId
+                        },
+                        originStation:{
+                            name:stations[0].name,
+                            staId:stations[0].staId
+                        }
+                    };
+                }
+
+                var realTimeStationStatus  = false;
+                var originStationStatus  = false;
+
+                for(var i = 0; i<stations.length; i++){
+                    if(stations[i].staId == currentInfo.realTimeStation.staId &&
+                        stations[i].name == currentInfo.realTimeStation.name){
+                        realTimeStationStatus = true;
+                    }
+                    if(stations[i].staId == currentInfo.originStation.staId &&
+                        stations[i].name == currentInfo.originStation.name){
+                        originStationStatus = true;
+                    }
+
+                }
+
+                if(!realTimeStationStatus){
+                    currentInfo.realTimeStation = {
+                        name:stations[0].name,
+                        staId:stations[0].staId
+                    }
+                }
+
+                if(!originStationStatus){
+                    currentInfo.originStation = {
+                        name:stations[0].name,
+                        staId:stations[0].staId
+                    }
+                }
+
+                saveCurrentStationInfoStorage(currentInfo);
+
+                return getCurrentStationInfoStorage()
+            }
+
             function getCurrentStationInfoStorage() {
                 return JSON.parse(localStorage.getItem($rootScope.activeUser + '_currentStationInfo')||"false");
             }
@@ -206,30 +258,45 @@ MetronicApp.controller('HeaderController',
             $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
 
                 if (toState.name == 'dashboard') {
+                    clearInterval();
+                    $rootScope.stationId = undefined;
+                    init($rootScope.activeUser);
                     $scope.stationShow = true;
                     $scope.starShow = false;
                     $scope.socketStatusShow =  true;
-                    init($rootScope.activeUser);
+
                 } else if (toState.name == 'stardata') {
+                    clearInterval();
+                    $rootScope.stationId = undefined;
+                    init($rootScope.activeUser);
                     $scope.stationShow = false;
                     $scope.starShow = true;
-                    $scope.socketStatusShow =  true
-                    init($rootScope.activeUser)
+                    $scope.socketStatusShow =  true;
+
                 } else {
+                    clearInterval();
                     $scope.stationShow = false;
                     $scope.starShow = false;
                     $scope.socketStatusShow =  false;
 
                 }
 
-                if(toState.name == 'login'){
-                    if(intervalGetCurrentStationStatus){
-                        console.log(intervalGetCurrentStationStatus)
-                        intervalGetCurrentStationStatus()
-                    }
-                }
+                //if(toState.name == 'login'){
+                //    if(intervalGetCurrentStationStatus){
+                //        $interval.cancel(intervalGetCurrentStationStatus)
+                //        $rootScope.stationId = undefined;
+                //        $rootScope.rootIsAdmin = undefined;
+                //    }
+                //}
 
             });
+
+            function clearInterval(){
+                if(intervalGetCurrentStationStatus){
+                    $interval.cancel(intervalGetCurrentStationStatus)
+                }
+
+            }
 
 
 
@@ -245,7 +312,7 @@ MetronicApp.controller('HeaderController',
                 currentStationInfo.realTimeStation.name = name;
                 currentStationInfo.realTimeStation.staId = staId;
                 saveCurrentStationInfoStorage(currentStationInfo);
-                $scope.realTimeStation = getCurrentStationInfo().realTimeStation.name;
+                $scope.realTimeStation = currentStationInfo.realTimeStation.name;
 
 
 
@@ -266,7 +333,7 @@ MetronicApp.controller('HeaderController',
                 currentStationInfo.originStation.staId = staId;
                 saveCurrentStationInfoStorage(currentStationInfo);
 
-                $scope.originStation = getCurrentStationInfo().originStation.name;
+                $scope.originStation = currentStationInfo.originStation.name;
 
             };
 

@@ -29,26 +29,22 @@ module.exports = {
     },
     deleteUserStation: function (query) {
         var defer = Promise.defer();//定义回调函数，与cd()一样
-        UserStationId.find({staName: query}).exec(function (err, userStation) {
-            if (err) {
-                return defer.reject('delete station error')
-            }
-            if (!userStation) {
-                return defer.resolve({
-                    status: false,
-                    message: 'station not exist'
-                })
-                //基站不存在，数据库错误
-            } else {
-                UserStationId.remove({staName: query}).exec(function (err) {
-                    //console.log(222)
-                    defer.resolve({status: true})
-                })
-            }
+
+        UserStationInfo.remove({username: query}).exec(function (err,result) {
+            defer.resolve({status: true})
         });
+
         return defer.promise;
     },
+    deleteByStationName: function(name){
+        var defer = Promise.defer();//定义回调函数，与cd()一样
 
+        UserStationInfo.remove({name: name}).exec(function (err,result) {
+            defer.resolve({status: true})
+        });
+
+        return defer.promise;
+    },
 
     createUserStation: function (username, station) {
         var defer = Promise.defer();

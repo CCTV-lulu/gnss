@@ -23,36 +23,6 @@ module.exports = {
         })
 
     },
-    createAdmin: function (user, callback) {
-        User.findOne({username: user.username}, function (err, users) {
-            if (err) {
-                return callback(err)
-            }
-            if (users) {
-                return callback(null, "用户名已存在！")
-            } else {
-                if (user.roles.length > 1) {
-                    User.create(user, function (err, user) {
-                        if (err) {
-                            return callback(err)
-                        } else {
-                            return callback(null, user)
-                        }
-                    })
-                } else {
-                    User.create(user, function (err, user) {
-                        if (err) {
-                            return callback(err)
-                        } else {
-                            return callback(null, user)
-                        }
-                    })
-                }
-
-            }
-        })
-
-    },
     updateUser: function (query, user, callback) {
         User.update(query, user, callback);
     },
@@ -76,28 +46,20 @@ module.exports = {
             if (err) {
                 return callback(err)
             } else {
-                return callback(null, '成功删除用户！！')
+                return callback(null, {status:true, message:'成功删除用户！！'})
             }
         });
     },
 
     deleteUserStationList: function (query) {
         var defer = Promise.defer();
-        User.find({station: query}).exec(function (err, UserStationList) {
-            if (err) {
-                return defer.reject('delete station error')
-            }
-            if (!UserStationList) {
-                return defer.resolve({
-                    status: false,
-                    message: 'station not exist'
-                })
-            } else {
-                User.remove({station: query}).exec(function (err) {
-                    defer.resolve({status: true})
-                })
-            }
-        });
+        User.remove({station: query}).exec(function (err) {
+            defer.resolve({status: true})
+        })
         return defer.promise;
+    },
+    findByName:function(username){
+        return User.findOne({username: username}).exec()
     }
+
 };

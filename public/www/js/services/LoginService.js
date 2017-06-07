@@ -26,6 +26,7 @@ MetronicApp.factory('Show', function ($rootScope) {
             if (result) {
                 localStorage.setItem("userName", userName)//存到本地
                 $rootScope.activeUser = $rootScope.activeUser = result.username
+                $rootScope.rootUserInfo =  result
                 Show.isShowAdmin(result);
                 cb(result)
             }else if(result == false) {
@@ -48,6 +49,7 @@ MetronicApp.factory('Show', function ($rootScope) {
                 $('body').removeClass('page-on-load');
                 //除掉后加载页面具体内容
                 $rootScope.rootIsAdmin = data.roles.includes('admin');
+                $rootScope.rootUserInfo =  data.user;
                 $rootScope.activeUser = data.user.username
                 if ($location.path() == "/login") {
                     $location.path('/dashboard.html/' + staId)

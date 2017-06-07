@@ -20,7 +20,7 @@ module.exports = function(app) {
 //    app.post('/staThreshold', controllers.station.saveThreshold);
 
     //todo check admin
-    app.post('/changePassword',controllers.users.changePassword);
+
     app.get('/findAllUsers',  auth.isInRole('admin'), controllers.users.getAllUser);
 
 
@@ -61,5 +61,7 @@ module.exports = function(app) {
 
     /*================new*/
     app.get('/getUserStationInfo',controllers.station.getUserStationInfo)
+
+    app.post('/changePassword',auth.isInRole('user'),controllers.users.changePassword);
 
 };

@@ -19,16 +19,16 @@
                 <span class="title">数据分析</span>
             </a>
         </li>
-        <li id="threshold" class="nav-item">
+        <li id="threshold" class="nav-item" data-ng-show="adminShow">
             <a ng-click="dataConnect('threshold')">
                 <i class="icon-bulb"></i>
                 <span class="title">阈值报警设置</span>
             </a>
         </li>
-        <li id="administrator" class="nav-item" data-ng-show="adminShow">
+        <li id="administrator" class="nav-item" >
             <a ng-click="dataConnect('administrator')">
                 <i class="icon-user"></i>
-                <span class="title">管理员管理</span>
+                <span class="title">用户设置</span>
             </a>
         </li>
     </ul>

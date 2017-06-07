@@ -83,9 +83,7 @@ MetronicApp.directive('ngSpinnerBar', ['$rootScope', '$state',
         "<td>{{user.roles[0]}}</td>"+
         "<td>{{user.station}}</td>"+
         "<td><button class='btn btn-sm red btn-outline' ng-click='deleteUser(user._id,user.username)'><i class='fa fa-trash-o fa-lg'></i> 删除 </button> </td>"+
-        //"<td><button class='btn btn-sm blue btn-outline' ng-click='updateUser(user._id,user.username)'><i class='icon-pencil'></i> 编辑 </button></td>"+
-        //"<td><button class='btn btn-primary btn-lg' data-toggle='modal' data-target='#myModal'><i class='icon-pencil'></i> 编辑</button></td>"+
-        "<td><a href='javascript:void(0);' ng-click='changePassword(user._id,user.username)'> <i class='ace-icon fa fa-cog'></i>修改密码 </a>" + "</td>"+
+        "<td><a href='javascript:void(0);' ng-click='showChangePassword(user._id,user.username)'> <i class='ace-icon fa fa-cog'></i>修改密码 </a>" + "</td>"+
         "</tr>"+
         "</tbody>"+
         "</table>"
@@ -126,7 +124,7 @@ MetronicApp.directive('ngSpinnerBar', ['$rootScope', '$state',
         "</tr>"+
         "</thead>"+
         "<tbody>"+
-        "<tr id='{{baseStation._id}}' ng-repeat='baseStation in allStation'>"+
+        "<tr id='{{baseStation._id}}' ng-repeat='baseStation in allStations'>"+
         "<td>{{baseStation.name}}</td>"+
         "<td>{{baseStation.staId}}</td>"+
         //"<td>{{baseStation.stationName}}</td>"+

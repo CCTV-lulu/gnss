@@ -8,8 +8,9 @@ var encryption = require('../utilities/cripto'),
     StaThreshold = require('../data/staThreshold'),
     Station = require('../data/station'),
     BatchProcess = require('../data/batchProcess'),
-    UserStationInfo = require('../data/userStationInfo');
-UsersData = require('../data/usersData');
+    StationConfig = require('../data/stationConfig'),
+    UserStationInfo = require('../data/userStationInfo'),
+    UsersData = require('../data/usersData');
 
 
 function checkUserStationId(userStationId, userStationInfo) {
@@ -178,11 +179,11 @@ function createStation(req, res) {
 }
 function deleteStation(req, res) {
     Station.deleteByName(req.body.name).then(function (result) {
-        UserStationId.deleteUserStation(req.body.name).then(function (results) {
-            UsersData.deleteUserStationList(req.body.staId).then(function (results) {
-                StaThreshold.deleteUserStaThreshold(req.body.name).then(function (allResult) {
-                    res.send(allResult)
-                })
+        UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
+            UsersData.deleteUserStationList(req.body.name).then(function (results) {
+                StationConfig.deleteByStaName(req.body.name).then(function(){
+                    res.send({status:true})
+                });
             })
         })
     }, function (error) {
@@ -193,11 +194,21 @@ function deleteStation(req, res) {
     })
 }
 function addStation(req, res) {
-    Station.create(req.body).then(function (station) {
-        res.send(station)
+    var newStation = {name:req.body.name,staId:req.body.staId};
+    Station.create(newStation).then(function (result) {
+        if(result.status){
+            StationConfig.create(newStation).then(function(){
+                Station.all().then(function(allStation){
+                    res.send({status:true, allStations:allStation})
+                })
+            })
+        }else{
+            res.send(result)
+        }
+
     }, function (error) {
         res.send({
-            status: 400,
+            status: false,
             message: error
         });
     })

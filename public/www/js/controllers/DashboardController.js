@@ -11,7 +11,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     init(stationId);
 
 
-    $rootScope.$watch('stationId',function(newStationId){
+    var listenStationId = $rootScope.$watch('stationId',function(newStationId){
 
         if (!newStationId||stationId == newStationId) return;
         stationId = newStationId;
@@ -26,6 +26,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     $scope.$on('$destroy', function (event) {
         if(listenRootCurrentStationStatus){
             listenRootCurrentStationStatus()
+        }
+        listenRootCurrentStationStatus = true;
+        if(listenStationId){
+            listenStationId()
         }
     });
 
@@ -69,9 +73,9 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                         if (i == (data.stationData.length - 1)) {
                             showChart(data.stationData[i]);
                             showDxDy(data.stationData, 'gpsDxDy');
-                            //showDxDy(data.stationData, 'glsDxDy');
-                            //showDxDy(data.stationData, 'dbsDxDy');
-                            //showDxDy(data.stationData, 'groupDxDy');
+                            showDxDy(data.stationData, 'glsDxDy');
+                            showDxDy(data.stationData, 'dbsDxDy');
+                            showDxDy(data.stationData, 'groupDxDy');
                             showH(data.stationData, 'H');
                             //
                             settingSys(data.stationData[i]);
@@ -174,9 +178,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     }
 
     function startOneStaStatus(data) {
-
+        if(listenRootCurrentStationStatus === true) return;
         listenRootCurrentStationStatus =  $rootScope.$watch('RootCurrentStationStatus', function(data){
-
 
             if(!data) return;
             data.stationData.forEach(function (chartData) {

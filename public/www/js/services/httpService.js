@@ -65,52 +65,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             }
         })
     }
-    var changePassword = function () {
-        $("#navbar_edit").on("show.bs.modal", function() {
-            //$("#navbar_edit #navbar_pwd_reset").formClear();
 
-        });
-        $("#navbar_edit").on("hidden.bs.modal", function() {
-            $(this).removeData("bs.modal");
-
-        });
-        $(document).on("click", "#navbar_save_btn", function(e) {
-            var old_psd = $("#navbar_pwd_reset #old_password").val();
-            var new_psd = $("#navbar_pwd_reset #new_password").val();
-            var con_psd = $("#navbar_pwd_reset #confirm_password").val();
-            //alert(old_psd);
-            //alert(new_psd);
-            //alert(con_psd);
-            if (old_psd == "" || new_psd == "" || con_psd == "") {
-                alert("相关字段不为空,请输入!");
-                return false;
-            };
-            if (old_psd == new_psd) {
-                alert("旧密码和新密码相同,请重新输入!")
-                return false;
-            };
-            if (new_psd != con_psd) {
-                alert("两次输入新密码不相同,请重新输入!");
-                return false;
-            };
-            var params = $("#navbar_pwd_reset").serialize();
-            //alert(params);
-            //var changePasswordUrl = url + "/changePassword"
-            $.ajax({
-                cache : true,
-                type : "POST",
-                url : "changePassword",
-                data : params,
-                async : false,
-                error : function(request) {
-                    alert("服务器连接错误,请稍后再试");
-                },
-                success : function(data) {
-
-                }
-            });
-        });
-    }
 
     var addUsers = function (username, password,station, admin, callback) {
         var data = {
@@ -142,20 +97,13 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         })
     }
     var addStation = function(name,staId, cb) {
-        cb = cb || function () {}
         var data = {
             name: name,
-            staId: staId,
-            //stationName: stationName
-        }
-        //console.log(data)
-        var addStationUrl = url + "/addStation"
+            staId: staId
+        };
+        var addStationUrl = url + "/addStation";
         httpRequest.post(addStationUrl, data, function(data) {
-            if(data.status == 400){
-                Prompt.promptBox("warning", data.message)
-            }else{
-                cb(data);
-            }
+           cb(data)
         })
     }
     var getConfig = function(name,staId, cb) {
@@ -228,7 +176,7 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         setUserStaId: setUserStaId,setUserStartStaId:setUserStartStaId,
         getUserStaId: getUserStaId, findAllUsers: findAllUsers, addUsers: addUsers, deleteUser: deleteUser,
         findSatData: findSatData, addStation: addStation, getStation: getStation, deleteStation: deleteStation,
-        getUserFindStaData:getUserFindStaData,downloadSatData:downloadSatData,changePassword:changePassword,
+        getUserFindStaData:getUserFindStaData,downloadSatData:downloadSatData,
         getConfig:getConfig
 
     };
@@ -575,10 +523,31 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
 
 
             })
+        };
+        function changePassword(userId, password,cb){
+            var data = {
+                userId: userId,
+                password: password
+            };
+            var addUsersUrl = url + "/changePassword";
+            httpRequest.post(addUsersUrl, data, function(data) {
+                cb(data)
+            })
+        }
+        function deleteUser(username, cb){
+                var data = {
+                    username: username
+                };
+                var deleteUserUrl = url + "/deleteUser";
+                httpRequest.post(deleteUserUrl, data, function(data) {
+                    cb(data)
+                })
         }
         return {
             addUser: addUser,
-            getAllUsers: getAllUsers
+            getAllUsers: getAllUsers,
+            changePassword: changePassword,
+            deleteUser: deleteUser
         }
     });
 

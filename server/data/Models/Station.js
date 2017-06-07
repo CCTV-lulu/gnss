@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 module.exports.init = function () {
     var stationSchema = new mongoose.Schema({
         staId: String,
-        name: String,
+        name: String
         //stationName: String
     });
 
