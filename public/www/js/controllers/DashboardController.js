@@ -68,7 +68,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
                             showChart(data.stationData[i]);
-                            //showDxDy(data.stationData, 'gpsDxDy');
+                            showDxDy(data.stationData, 'gpsDxDy');
                             //showDxDy(data.stationData, 'glsDxDy');
                             //showDxDy(data.stationData, 'dbsDxDy');
                             //showDxDy(data.stationData, 'groupDxDy');
@@ -344,27 +344,41 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 endAngle: 360
             },
             xAxis: {
-                tickInterval: 30,
+                tickInterval: 90,
                 min: 0,
                 max: 360,
                 labels: {
                     formatter: function () {
+                        var txt = "";
 
-                        return ''
+                        if(this.value == 0 ){
+                            txt = 'N'
+                        }
+                        if(this.value == 90 ){
+                            txt = 'E(20m)'
+                        }
+                        if(this.value == 180 ){
+                            txt = 'S'
+                        }
+                        if(this.value == 270){
+                            txt = 'W'
+                        }
+                        return txt
                     }
                 }
             },
             yAxis: {
-                tickInterval: 10,
+                tickInterval: 22.5,
                 min: 0,
                 max: 90,
                 reversed: false,
                 labels: {
                     formatter: function () {
 
-                            return ''
+                        return ''
                     }
                 }
+
             },
             plotOptions: {
                 series: {

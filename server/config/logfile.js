@@ -58,7 +58,7 @@ module.exports = function (app) {
 };
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
 
-//getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-04","./logs/beijing-thu.log-2017-06-04")
+//getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-07","./logs/beijing-thu.log-2017-06-07")
 
 function getStaData(cwd,logResolvePath,log_path) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');

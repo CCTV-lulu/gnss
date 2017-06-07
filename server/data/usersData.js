@@ -66,7 +66,7 @@ module.exports = {
             if (err) {
                 defer.reject('do not find all users')
             } else {
-                defer.resolve(data)
+                defer.resolve({status:true, data: data})
             }
         });
         return defer.promise;

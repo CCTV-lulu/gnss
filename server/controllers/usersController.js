@@ -47,7 +47,7 @@ module.exports = {
             res.send(users)
         }, function (error) {
             res.send({
-                status: 400,
+                status: false,
                 message: error
             })
         })

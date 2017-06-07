@@ -1,4 +1,4 @@
-angular.module('MetronicApp').controller('AdministratorController', function ($rootScope, $scope, $http, settingInfo, Mongodb, Prompt) {
+angular.module('MetronicApp').controller('AdministratorController', function ($rootScope, $scope, $http, settingInfo, Mongodb, Prompt, UserService) {
     Mongodb.findAllUsers(function (data) {
         $scope.allUsers = data[0];
         if (data[1].allStation != undefined) {
@@ -61,20 +61,24 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
     $scope.addUser = function(){
         var station = $scope.station;
         var isAdmin = document.getElementById('isAdmin').checked;
-        if ($scope.username && $scope.password && station) {
-            Mongodb.addUsers($scope.username, $scope.password, station, isAdmin, function (data) {
-                if (data == "用户名已存在！") {
-                    Prompt.promptBox('warning', data)
-                } else {
-                    $scope.config($scope.name, $scope.staId);
-                    Mongodb.findAllUsers(function (data) {
-                        $scope.allUsers = data[0];
-                    });
-                    var message = "添加用户成功！";
-                    Prompt.promptBox('success', message);
-                    $scope.allUsers.push(data);
-                    clearInput()
-                }
+
+        if(!station&&!isAdmin){
+            return Prompt.promptBox('warning', '普通用户需要绑定基站！')
+        }
+        if ($scope.username && $scope.password ) {
+            UserService.addUser($scope.username, $scope.password, isAdmin, station, function (data) {
+
+               if(!data.status){
+                   return Prompt.promptBox('warning', data.message)
+               }
+
+                Mongodb.findAllUsers(function (data) {
+                    $scope.allUsers = data[0];
+                });
+                Prompt.promptBox('success', "添加用户成功！");
+                //$scope.allUsers.push(data);
+                clearInput()
+
             })
         } else {
             Prompt.promptBox('warning', '请输入用户名或密码！')
@@ -89,7 +93,6 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
         $("#pass-info").val('')
     }
 
-    function a(){}
 
 
 

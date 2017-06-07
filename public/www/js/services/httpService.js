@@ -550,4 +550,38 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         };
 
     })
+    .factory('UserService',function($http, $location, settingInfo, Prompt, Passport, httpRequest){
+        var url = "http://" + settingInfo.server + ":" + settingInfo.port;
+        var addUser = function (username, password,station, admin, callback) {
+
+            var data = {
+                username: username,
+                password: password,
+                type: JSON.stringify(admin[0].checked),
+                station: station
+            };
+            var addUsersUrl = url + "/addUser";
+            httpRequest.post(addUsersUrl, data, function(data) {
+                callback(data)
+            })
+        };
+        var getAllUsers = function(){
+            var findAllUsersUrl = url + "/findAllUsers"
+            httpRequest.httpGet(findAllUsersUrl, function(data) {
+                if(!data.status){
+                    return Prompt.promptBox("warning", data.message)
+                }
+                    getUserStaId(function(result) {
+                        var test = []
+                        test.push(data);
+                        test.push(result)
+                        callback(test)
+
+                })
+            })
+        }
+        return {
+            addUser: addUser
+        }
+    });
 
