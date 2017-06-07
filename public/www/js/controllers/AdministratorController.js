@@ -1,10 +1,63 @@
 angular.module('MetronicApp').controller('AdministratorController', function ($rootScope, $scope, $http, settingInfo, Mongodb, Prompt, UserService) {
-    Mongodb.findAllUsers(function (data) {
-        $scope.allUsers = data[0];
-        if (data[1].allStation != undefined) {
-            $scope.allStation = data[1].allStation;
-        }
+    init()
+    function init(){
+        $scope.isAdmin = false;
+        initUsers()
+    }
+    function initUsers(){
+        UserService.getAllUsers(function(user){
+            $scope.allUsers = user
+        });
+    }
+    $scope.allStations = $rootScope.allStations;
+    $rootScope.$watch('allStations',function(allStations){
+        if(allStations==undefined) return;
+        $scope.allStations = allStations
+
     });
+    $scope.$watch('isAdmin',function(isAdmin){
+        if(isAdmin){
+            $scope.station = ''
+        }
+    })
+    $scope.$watch('station',function(station){
+        if(station){
+            $scope.isAdmin = false
+        }
+    })
+
+    $scope.addUser = function(){
+        var station = $scope.station;
+        var isAdmin = $scope.isAdmin
+        if(!station&&!isAdmin){
+            return Prompt.promptBox('warning', '普通用户需要绑定基站！')
+        }
+        if(station&&isAdmin){
+            return Prompt.promptBox('warning', '管理员不能绑定基站！')
+        }
+        if ($scope.username && $scope.password ) {
+            UserService.addUser($scope.username, $scope.password, station,isAdmin, function (data) {
+
+                if(!data.status){
+                    return Prompt.promptBox('warning', data.message)
+                }
+
+                initUsers()
+                Prompt.promptBox('success', "添加用户成功！");
+                //$scope.allUsers.push(data);
+                clearInput()
+
+            })
+        } else {
+            Prompt.promptBox('warning', '请输入用户名或密码！')
+
+        }
+
+    };
+
+
+
+
     $scope.$on('logout', function (event, url) {
         $scope.$emit('logout-connect-app', 'data')
         //$('body').addClass('page-on-load');
@@ -58,34 +111,7 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
         }
     };
 
-    $scope.addUser = function(){
-        var station = $scope.station;
-        var isAdmin = document.getElementById('isAdmin').checked;
 
-        if(!station&&!isAdmin){
-            return Prompt.promptBox('warning', '普通用户需要绑定基站！')
-        }
-        if ($scope.username && $scope.password ) {
-            UserService.addUser($scope.username, $scope.password, isAdmin, station, function (data) {
-
-               if(!data.status){
-                   return Prompt.promptBox('warning', data.message)
-               }
-
-                Mongodb.findAllUsers(function (data) {
-                    $scope.allUsers = data[0];
-                });
-                Prompt.promptBox('success', "添加用户成功！");
-                //$scope.allUsers.push(data);
-                clearInput()
-
-            })
-        } else {
-            Prompt.promptBox('warning', '请输入用户名或密码！')
-
-        }
-
-    };
 
 
     function clearInput(){

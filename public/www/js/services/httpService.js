@@ -552,12 +552,12 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
     })
     .factory('UserService',function($http, $location, settingInfo, Prompt, Passport, httpRequest){
         var url = "http://" + settingInfo.server + ":" + settingInfo.port;
-        var addUser = function (username, password,station, admin, callback) {
+        var addUser = function (username, password,station, isadmin, callback) {
 
             var data = {
                 username: username,
                 password: password,
-                type: JSON.stringify(admin[0].checked),
+                type: JSON.stringify(isadmin),
                 station: station
             };
             var addUsersUrl = url + "/addUser";
@@ -565,23 +565,20 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 callback(data)
             })
         };
-        var getAllUsers = function(){
-            var findAllUsersUrl = url + "/findAllUsers"
+        var getAllUsers = function(cb){
+            var findAllUsersUrl = url + "/findAllUsers";
             httpRequest.httpGet(findAllUsersUrl, function(data) {
                 if(!data.status){
                     return Prompt.promptBox("warning", data.message)
                 }
-                    getUserStaId(function(result) {
-                        var test = []
-                        test.push(data);
-                        test.push(result)
-                        callback(test)
+                cb(data.users)
 
-                })
+
             })
         }
         return {
-            addUser: addUser
+            addUser: addUser,
+            getAllUsers: getAllUsers
         }
     });
 

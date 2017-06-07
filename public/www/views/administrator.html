@@ -8,7 +8,7 @@
         <div class="portlet-body col-md-12">
             <div class="row">
                 <button class="btn green col-md-1 col-sm-1" style="margin-left: 20px" id="clear-info"
-                        ng-click="addUsers()"
+                        ng-click="addUser()"
                         style="margin-bottom: 10px">添加用户
                 </button>
                 <div class="col-md-offset-0 col-md-2 col-sm-3">
@@ -21,14 +21,14 @@
                     <div class="col-md-2">
                         <select id='{{baseStation._id}}' class='form-control select2' ng-model="station">
                             <option ng-show=false disabled value=''>请选择基站</option>
-                            <option ng-repeat='baseStation in allStation' value={{baseStation.staId}}>
+                            <option ng-repeat='baseStation in allStations' value={{baseStation.staId}}>
                                 {{baseStation.staId}}
                             </option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-2 col-sm-3">
-                    <label id="adminAuthority" class="col-md-offset-1"><input id="isAdmin"  name='admin' type="checkbox"
+                    <label id="adminAuthority" class="col-md-offset-1"><input id="isAdmin" ng-model="isAdmin" name='admin' type="checkbox"
                             >admin</label></div>
 
 

@@ -75,7 +75,8 @@ module.exports = {
         //console.log(req.body.station)
         var user = {
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            station: req.body.station
 
         };
 
@@ -95,11 +96,11 @@ module.exports = {
                         return res.send({status: false, message: '添加用户失败'})
                     }
                     if(req.body.type === 'true'){
-                      return  res.send(user)
+                      return  res.send({status:true})
                     }
                     UserStationInfo.createUserStation(req.body.username, station)
                         .then(function(){
-                            res.send(user)
+                            res.send({status:true})
                         });
                 })
             })

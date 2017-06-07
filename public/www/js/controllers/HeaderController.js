@@ -69,7 +69,9 @@ MetronicApp.controller('HeaderController',
                 $scope.originStation = getCurrentStationInfo(rootUserStationInfo.allStations[0]).originStation.name;
 
                 if ($scope.isAdmin) {
+
                     $scope.allStations = rootUserStationInfo.allStations
+                    $rootScope.allStations = $scope.allStations
                 }
             }
 
@@ -127,6 +129,7 @@ MetronicApp.controller('HeaderController',
                         }
                         $scope.realTimeStation = currentStationInfo.realTimeStation.name;
                         $scope.originStation = currentStationInfo.originStation.name;
+
                         showOption(userStationInfo);
                     }else{
                         $rootScope.stationId = userStationInfo.userStationInfo.data.staId;
