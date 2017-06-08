@@ -69,13 +69,13 @@ function saveStaInfo(data) {
             if (stat.isDirectory()) {
                 fs.readdir("../station" + data.station_id, function (err, files) {
                     if (err) return console.log(err);
-                    if (files.length > 5) {
-                        for (var n = 0; n < files.length - 5; n++) {
-                            fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
-                                if (err) throw err;
-                            })
-                        }
-                    }
+                    //if (files.length > 5) {
+                    //    for (var n = 0; n < files.length - 5; n++) {
+                    //        fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
+                    //            if (err) throw err;
+                    //        })
+                    //    }
+                    //}
                     //console.log(staInfo)
                     writeFileSync(data, staInfo);
                 })
@@ -155,7 +155,7 @@ function onMessage(data) {
     var buffLength = cacheBuffers.buffLength;
     var buffers = cacheBuffers.buffers;
     var bigBuff = Buffer.concat(buffers);
-    var results = parse.parser_pos(data.station, bigBuff);
+    var results = parse.parser_pos(data.station, bigBuff,AllStationsConfig[data.station_id]);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
@@ -188,9 +188,9 @@ io.on('connection', function (socket) {
     });
 });
 
-setInterval(function(){
-    onMessage({station_id:2})
-},10)
+//setInterval(function(){
+//    onMessage({station_id:2})
+//},10)
 
 
 function getstatINFO(number,id){
