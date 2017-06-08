@@ -63,8 +63,6 @@ function saveStaInfo(data) {
     if(statINFO[data.station_id].length>300){
         statINFO[data.station_id].shift()
     }
-    console.log(data.station_id)
-    console.log(statINFO[data.station_id].length)
 
     fs.stat("../station" + data.station_id, function (err, stat) {
         if (err == null) {
@@ -199,7 +197,8 @@ function getstatINFO(number,id){
     if(number>1){
         return statINFO[id]
     }else{
-        return [statINFO[id][statINFO[id].length-1]]
+        var result = statINFO[id][statINFO[id].length-1] ? [statINFO[id][statINFO[id].length-1]] :[]
+        return result
     }
 
 }
