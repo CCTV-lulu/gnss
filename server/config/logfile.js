@@ -3,13 +3,16 @@ var config = require('./config')[env];
 
 var multer = require('multer'); // v1.0.5
 var path = require('path');
-var cwd = config.cwd
+var cwd = config.cwd;
 
 var upload = multer({dest:cwd+ '/uploads/'}); // for parsing multipart/form-data，
+var StationConfig = require('../data/stationConfig.js');
 
-
-const fs = require('fs');
+var fs = require('fs');
 var readLine = require('linebyline');
+
+var parse=require('../canavprocess/follow_process.js');
+var os=require('os');
 
 module.exports = function (app) {
     app.post('/logs', upload.single('log_file'), function (req, res, next) {
@@ -62,8 +65,6 @@ module.exports = function (app) {
 
 function getStaData(cwd,logResolvePath,log_path) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');
-    var testStation = log_path.replace("./logs/", "").replace(".log-2017-04-28", "")
-    //console.log(testPath)
     var allData = [];
     var rl = readLine(logResolvePath);
     rl.on('line', function (line, idx) {
@@ -112,3 +113,63 @@ function GetDateDiff(startTime, endTime, diffType) {
     }
     return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum));
 }
+
+
+
+function followProcess(cwd, dataPath, stationId){
+    var stream;
+    var len=300;
+    var maxLen=400;
+    var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
+    var fileName = followDataPath.split('/').pop();
+    var timeInfo = fileName.replace("data-",'');
+    var startTime;
+    var endTime;
+    var now = new Date(timeInfo);
+    startTime = [
+            now.getYear() + 1900,
+            now.getMonth(),
+            now.getDate(),
+            now.getHours(),
+            now.getMinutes(),
+            now.getSeconds()
+    ];
+    endTime =  JSON.parse(JSON.stringify(startTime));
+    endTime[2] += 1;
+
+    //
+    //
+    StationConfig.findByStaId(stationId).then(function(result){
+        if(result.status){
+            stream = fs.createReadStream(dataPath);
+            parse.procinit(stationId, startTime, endTime,maxLen, result.stationConfig.config);
+            var fwrite=fs.createWriteStream(followDataPath);
+            stream.on('readable',function () {
+                var data;
+                while (null != (data = stream.read(len))) {
+                    var logpos=parse.parser_pos(data);
+                    logpos.forEach(function (log) {
+                        var obj={"time":log.time,"data":log.posR};
+                        fwrite.write(JSON.stringify(obj)+os.EOL);
+                    });
+                }
+            });
+            stream.on("end",function () {
+                console.log('the file process end');
+            });
+            stream.on("close", function () {
+                console.log('the file process close');
+                fwrite.close();
+                process.emit(1);
+            });
+        }
+    });
+
+
+    /*stream.on('data',function (data) {
+     //console.log('data event is strigger');
+     parse.datatype(sta_id,data);
+     });*/
+
+}
+followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-07",2)

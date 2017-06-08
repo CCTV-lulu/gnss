@@ -75,12 +75,12 @@ module.exports = {
 
     findByStaId: function (staId) {
         var defer = Promise.defer();
-        StationConfig.findOne({staId: staId}).exec(function (err, station) {
+        StationConfig.findOne({staId: staId}).exec(function (err, stationConfig) {
             if (err) {
                 return defer.reject('find all station error')
             }
-            if (station && station.threshold) {
-                return defer.resolve({status: true, threshold: station.threshold})
+            if (stationConfig) {
+                return defer.resolve({status: true, stationConfig: stationConfig})
             }
             defer.resolve({status: false})
         });

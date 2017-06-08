@@ -11,6 +11,7 @@ var nodepos = require('./pvtpos/nodepos.js');
 var pnt = require('./pvtpos/pntpos.js');
 var math=require('mathjs');
 var cwd=__dirname;
+var http =  require('http');
 
 var rtcmParse={};
 var stationPara = {};
@@ -33,7 +34,37 @@ function rtcm_init(sta_id) {
     rtcm=rtcmParse[sta_id];
     return rtcm;
 }
+
+
+function postHttp(){
+    var http = require("http");
+
+    var options = {
+        "method": "POST",
+        "hostname": "localhost",
+        "port": "3000",
+        "path": "/getStationConfig"
+    };
+
+    var req = http.request(options, function (res) {
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+            chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+            var body = Buffer.concat(chunks);
+            console.log(body.toString());
+        });
+    });
+
+    req.write("{\n  staId: 1\n}");
+    req.end();
+}
 function getProopt(sta_id) {
+
+
     var staopt = path.join(cwd, '/config/opt' + sta_id + '.json');
     if (fs.existsSync(staopt)) {
         try {
@@ -51,10 +82,13 @@ function getProopt(sta_id) {
     }
     return 0;
 }
-function pos_config(sta_id) {
+function pos_config(sta_id,prcopt) {
     var para={};
     if (!stationPara.hasOwnProperty(sta_id)) {
-        var prcopt = getProopt(sta_id);
+        if(!prcopt){
+            prcopt = getProopt(sta_id);
+        }
+        //var prcopt = getProopt(sta_id);
         if(prcopt!=0){
             stationPara[sta_id] = new nodepos.posPara_create(prcopt);
             nodepos.posParainit(sta_id, stationPara[sta_id]);
@@ -68,9 +102,9 @@ function pos_config(sta_id) {
     return para;
 }
 
-module.exports.parser_pos=function(sta_id,data) {
+module.exports.parser_pos=function(sta_id,data,prcopt) {
     var rtcm=rtcm_init(sta_id);
-    var para=pos_config(sta_id);
+    var para=pos_config(sta_id,prcopt);
     var pos_list = [];
     if(para!=0){
         var results=[];

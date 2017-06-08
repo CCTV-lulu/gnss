@@ -5,7 +5,7 @@ var cmn=require('../routes/comn');
 var opt=require('../config/optcomm.json');
 var readline=require('readline');
 var statis=require('../statistics_process');
-var test_file='D:/nodejs/data/rover_20170528_log.txt';
+var test_file='/Users/chen/2016work/new_gnss/followData/beijing-thu.data-2017-06-07';
 
 var stream=fs.createReadStream(test_file);
 var readfile=new create_filestream(test_file);
@@ -16,6 +16,7 @@ function statis_create() {
     this.hist={};    //new hist_create();
     this.option={};//new statis_option_create();
 }
+
 function statis_option_create() {
     this.sat_hist=0;
     this.err_hist=0;
@@ -97,7 +98,7 @@ function option_init(option) {
     option.up_slice.hpl_num.up_len=30;
     option.up_slice.vpl_num.flag=1;
     option.up_slice.vpl_num.up_min=50;
-    option.up_slice.vpl_num.up_len=30;
+        option.up_slice.vpl_num.up_len=30;
 }
 function satis_init(para) {
     para.id=0;
@@ -117,6 +118,8 @@ function satis_init(para) {
     option_init(para.option[ca.SYS_ALL]);
 }
 var para=new statis_create();
+
+
 satis_init(para);
 statis.option_set(para);
 function create_filestream(file) {

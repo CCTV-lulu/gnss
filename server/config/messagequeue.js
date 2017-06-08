@@ -11,10 +11,13 @@ var app = express();
 var server = require('http').Server(app);
 
 var io = require('socket.io')(server);
-var statINFO ={2:[]}
+var statINFO ={2:[]};
 var amqp = require('amqp-connection-manager');
 //var parser = require('../parser');
 var parse=require('../canavprocess/realtime_process.js');
+var StationConfig = require('../data/stationConfig.js');
+
+var AllStationsConfig = {}
 
 Date.prototype.Format = function (fmt) { //author: meizz
     var o = {
@@ -53,9 +56,12 @@ function saveStaInfo(data) {
         updated_at: updated_at,
         data: data
     };
-    statINFO[2].push(staInfo);
-    if(statINFO[2].length>300){
-        statINFO[2].shift()
+    if(!statINFO[data.station_id]){
+        statINFO[data.station_id] = []
+    }
+    statINFO[data.station_id].push(staInfo);
+    if(statINFO[data.station_id].length>300){
+        statINFO[data.station_id].shift()
     }
 
     fs.stat("../station" + data.station_id, function (err, stat) {
@@ -127,16 +133,29 @@ function getStationId(station, station_id) {
     };
     return (stationIds[station] === undefined) ? (station_id || 0) : stationIds[station];
 }
+function getStationConfig(staId){
+    StationConfig.findByStaId(staId).then(function(result){
+        if(result.status){
+            AllStationsConfig[staId] = result.stationConfig.config
+        }
+
+    })
+}
+function changeStationConfig(staId, config){
+    AllStationsConfig[staId] = config;
+}
 
 // Handle an incomming message.
 function onMessage(data) {
+    if(!AllStationsConfig[data.station_id]) return getStationConfig(data.station_id);
+
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    var cacheBuffers = getCacheBuffer(message.station, buf);
+    var cacheBuffers = getCacheBuffer(message.station_id, buf);
     var buffLength = cacheBuffers.buffLength;
     var buffers = cacheBuffers.buffers;
     var bigBuff = Buffer.concat(buffers);
-    var results = parse.parser_pos(0, bigBuff);
+    var results = parse.parser_pos(data.station, bigBuff);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
@@ -151,7 +170,7 @@ function onMessage(data) {
 
 var StationSocketStatus = {};
 io.on('connection', function (socket) {
-    var stationName = socket.handshake.query.station
+    var stationName = socket.handshake.query.station;
     socket.on('disconnect', function () {
         StationSocketStatus[stationName] = false
     });
@@ -162,12 +181,16 @@ io.on('connection', function (socket) {
             StationSocketStatus[stationName] = true;
         }
 
-        onMessage(data)
+        onMessage(data);
         //console.log('receive')
     }, function (error) {
         console.log(error)
     });
 });
+
+setInterval(function(){
+    onMessage({station_id:2})
+},10)
 
 
 function getstatINFO(number,id){

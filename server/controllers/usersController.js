@@ -6,18 +6,6 @@ var encryption = require('../utilities/cripto'),
 
 module.exports = {
 
-    getStationConfig: function (req, res) {
-        var files = fs.readdirSync('./server/parser/pvtpos/config');
-        var stations = {
-            'beijing': 'opt0.json',
-            'shanghai': 'opt1.json',
-            'hefei': 'opt2.json',
-            'station_3': 'opt3.json'
-        }
-        var station_setting_path = stations[req.body.station] || stations['beijing'];
-        var station_setting = fs.readFileSync('./server/parser/pvtpos/config/' + station_setting_path, 'utf8')
-        res.send(station_setting)
-    },
 
     changePassword: function (req, res) {
 

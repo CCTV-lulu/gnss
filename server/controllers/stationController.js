@@ -386,6 +386,20 @@ function getUserStationInfo(req, res) {
     }
 
 }
+
+
+function  getStationConfig (req, res){
+
+    StationConfig.findByStaId(req.body.StaId,function(stationConfig){
+        if(stationConfig.status){
+            return res.send({status: true, config: stationConfig.config})
+        }
+        res.send({status: false})
+    });
+
+
+
+}
 module.exports = {
     getUserStationId: getUserStationId,
     updateStaId: updateStaId,
@@ -400,7 +414,7 @@ module.exports = {
     getUserFindStaData: getUserFindStaData,
     killChild: killChild,
     downloadStaData: downloadStaData,
-
+    getStationConfig: getStationConfig,
 
     getUserStationInfo: getUserStationInfo
 };

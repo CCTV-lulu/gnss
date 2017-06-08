@@ -37,7 +37,7 @@ module.exports = function(app) {
     app.get('/userStaId', auth.isInRole('user'),controllers.station.getUserStationId);
     app.get('/getStationStatus', auth.isInRole('user'),controllers.station.getStationStatus);
 
-    app.post('/StationConfig', controllers.users.getStationConfig);
+    app.post('/getStationConfig', controllers.station.getStationConfig);
 
 
 

@@ -88,7 +88,7 @@ module.exports.parser_pos=function(data) {
     });
     return pos_list;
 };
-module.exports.procinit=function (sta_id,bt,et,len) {
+module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
     if(bt.length<6 || et.length<6){
         return 1;
     }
@@ -101,7 +101,10 @@ module.exports.procinit=function (sta_id,bt,et,len) {
     rtcm.buff=new Buffer(len*5);
     rtcm.time=prcopt.bt;
     rtcm.realtime=1;
-    var opt_init = getProopt(sta_id);
+    if(!opt_init){
+        opt_init = getProopt(sta_id);
+    }
+    //var opt_init = getProopt(sta_id);
     if(opt_init!=0){
         para = new nodepos.posPara_create(opt_init);
         nodepos.posParainit(sta_id, para);
