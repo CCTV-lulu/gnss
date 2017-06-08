@@ -126,7 +126,7 @@ function getStationStatus(req, res, next) {
         var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
         stationData.StationSocketStatus = socketStatus;
     }
-    stationData.stationData = StationSocketStatus.getstatINFO(limit,2);
+    stationData.stationData = StationSocketStatus.getstatINFO(limit,req.query.staId);
 
     res.send(stationData);
 
