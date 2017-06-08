@@ -149,6 +149,8 @@ function changeStationConfig(staId, config){
 
 // Handle an incomming message.
 function onMessage(data) {
+    console.log(data.station_id)
+    console.log(AllStationsConfig[data.station_id])
     if(!AllStationsConfig[data.station_id]) return getStationConfig(data.station_id);
 
     var message = data;
