@@ -151,7 +151,7 @@ function onMessage(data) {
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    var cacheBuffers = getCacheBuffer(message.station_id, buf);
+    var cacheBuffers = getCacheBuffer(message.station_id, buf,AllStationsConfig[data.station_id]);
     var buffLength = cacheBuffers.buffLength;
     var buffers = cacheBuffers.buffers;
     var bigBuff = Buffer.concat(buffers);
