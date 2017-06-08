@@ -197,8 +197,10 @@ function getstatINFO(number,id){
     if(number>1){
         return statINFO[id]
     }else{
-        var result = statINFO[id][statINFO[id].length-1] ? [statINFO[id][statINFO[id].length-1]] :[]
-        return result
+        if(statINFO[id] == undefined){
+            return []
+        }
+        return statINFO[id][statINFO[id].length-1] ? [statINFO[id][statINFO[id].length-1]] :[];
     }
 
 }
