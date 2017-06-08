@@ -73,7 +73,15 @@ module.exports.parser_pos=function(sta_id,data) {
     var para=pos_config(sta_id);
     var pos_list = [];
     if(para!=0){
-        var results = parse.datatype(rtcm, data);
+        var results=[];
+        try{
+            results = parse.datatype(rtcm, data);
+        }
+        catch (err){
+            rtcmParse[sta_id]=new parse.rtcm_create();
+            rtcm=rtcmParse[sta_id];
+            console.log('rtcm data decode error, and rtcm buff is reinitialize');
+        }
         results.forEach(function (sta_data) {
             var logjson = new nodepos.showJson();
             if (nodepos.updateObsNav_show(sta_data, para, logjson)) {
@@ -202,5 +210,5 @@ function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //nodepos.eleUpdate(para);
-    //console.log(sys,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].exsats);
+    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

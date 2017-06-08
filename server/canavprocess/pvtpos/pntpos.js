@@ -122,7 +122,7 @@ function rescode(iter, obs, rs,dts, vars, svh,nav, x,NX, opt,v, H, vare,azel,vsa
         }*/
 
         if(opt.navsys.indexOf(sys)==-1)continue;
-        if (r<=0.0|| el<opt.elmin) continue;
+        if (r<=0.0|| el<opt.elmin[sys]) continue;
 
         /* psudorange with code bias correction */
         if ((P=prange(obs[i],nav,azt,iter,opt,vmeas))==0.0)
@@ -488,29 +488,6 @@ module.exports.pntpos_RAIM=function(obs, nav, opt, sol){
                 stat=1;
         }
     }
-    /*else{
-        var svh_e=[];
-        for(var i=0;i<obs.length;i++){
-            for(var j=0;j<obs.length;j++){
-                if(j==i)
-                    svh_e[j]=1;
-                else
-                    svh_e[j]=svh[j];
-            }
-            vsat=new Array();
-            vare=new Array();
-            azel=new Array();
-            v=new Array();
-            H=new Array(NX);
-            sst=new Array();
-            if(!estpos(obs,rs,dts,vars,svh_e,nav,opt,NX,sol,vsat,azel,vare,H,v,sst)){
-                if(sol.ns>sol.navsys.length+3){
-                    if(!raim_fde( obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst))
-                        stat=1;
-                }
-            }
-        }
-    }*/
     sol.stat=stat;
     return stat;
 };
