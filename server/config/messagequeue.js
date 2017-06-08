@@ -149,17 +149,15 @@ function changeStationConfig(staId, config){
 
 // Handle an incomming message.
 function onMessage(data) {
-    console.log(data)
-    console.log(AllStationsConfig[data.station_id])
-    if(!AllStationsConfig[data.station_id]) return getStationConfig(data.station_id);
+    if(!AllStationsConfig[data.station]) return getStationConfig(data.station);
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    var cacheBuffers = getCacheBuffer(message.station_id, buf,AllStationsConfig[data.station_id]);
+    var cacheBuffers = getCacheBuffer(message.station, buf,AllStationsConfig[data.station]);
     var buffLength = cacheBuffers.buffLength;
     var buffers = cacheBuffers.buffers;
     var bigBuff = Buffer.concat(buffers);
-    var results = parse.parser_pos(data.station, bigBuff,AllStationsConfig[data.station_id]);
+    var results = parse.parser_pos(data.station, bigBuff,AllStationsConfig[data.station]);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
