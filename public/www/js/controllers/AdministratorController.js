@@ -1,6 +1,6 @@
 angular.module('MetronicApp').controller('AdministratorController', function ($rootScope, $scope, $http, settingInfo, Mongodb, Prompt, UserService,userStationInfo) {
 
-    $scope.isAdmin = false;
+    $scope.currentUserisAdmin = false;
     init();
     function init(){
         initUsers()
@@ -38,8 +38,8 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
 
 
     $rootScope.$watch('rootIsAdmin',function(isAdmin){
-        if(isAdmin==undefined ||$scope.isAdmin == isAdmin) return ;
-        $scope.isAdmin = isAdmin
+        if(isAdmin==undefined ||$scope.currentUserisAdmin == isAdmin) return ;
+        $scope.currentUserisAdmin = isAdmin
 
     });
 
