@@ -40,10 +40,10 @@ function getUserStationId(req, res) {
                 var station = {
                     userStation: {userName: req.user.username},
                     allStation: []
-                }
+                };
                 return res.send(station)
             }
-            var username, stationid
+            var username, stationid;
             for (var i = 0; i < stations.length; i++) {
                 if (stations[i].staId == req.user.station) {
                     username = stations[i].name;
@@ -119,42 +119,42 @@ function getStationStatus(req, res, next) {
     var limit = parseInt(req.query.limit);
 
     StationSocketStatus.StationSocketStatus[req.query.staId] = true
-    //var stationData = {};
-    //if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
-    //    stationData.StationSocketStatus = false;
-    //} else {
-    //    var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
-    //    stationData.StationSocketStatus = socketStatus;
-    //}
-    //stationData.stationData = StationSocketStatus.getstatINFO(limit,req.query.staId);
+    var stationData = {};
+    if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
+        stationData.StationSocketStatus = false;
+    } else {
+        var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId]
+        stationData.StationSocketStatus = socketStatus;
+    }
+    stationData.stationData = StationSocketStatus.getStatInfo(limit,req.query.staId);
+
+    res.send(stationData);
+
+
+    //StationStatus.where(data, limit)
     //
-    //res.send(stationData);
-
-
-    StationStatus.where(data, limit)
-
-        .then(function (success_data) {
-            StationSocketStatus.StationSocketStatus[req.query.staId] = true;
-            var stationData = {};
-            if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
-                stationData.StationSocketStatus = false;
-            } else {
-                var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId];
-                stationData.StationSocketStatus = socketStatus;
-            }
-            var result = [];
-
-            success_data.forEach(function (data) {
-                result.push(JSON.parse(data))
-            })
-            stationData.stationData = result;
-            res.send(stationData);
-        }, function (error) {
-            res.send({
-                status: 400,
-                message: error
-            });
-        })
+    //    .then(function (success_data) {
+    //        StationSocketStatus.StationSocketStatus[req.query.staId] = true;
+    //        var stationData = {};
+    //        if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
+    //            stationData.StationSocketStatus = false;
+    //        } else {
+    //            var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId];
+    //            stationData.StationSocketStatus = socketStatus;
+    //        }
+    //        var result = [];
+    //
+    //        success_data.forEach(function (data) {
+    //            result.push(JSON.parse(data))
+    //        })
+    //        stationData.stationData = result;
+    //        res.send(stationData);
+    //    }, function (error) {
+    //        res.send({
+    //            status: 400,
+    //            message: error
+    //        });
+    //    })
 }
 function getStations(req, res) {
     Station.all().then(function (stations) {

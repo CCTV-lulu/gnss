@@ -11,57 +11,57 @@ var app = express();
 var server = require('http').Server(app);
 
 var io = require('socket.io')(server);
-var statINFO ={2:[]};
+var statInfo ={};
 var amqp = require('amqp-connection-manager');
 //var parser = require('../parser');
 var parse=require('../canavprocess/realtime_process.js');
 var StationConfig = require('../data/stationConfig.js');
 
-var AllStationsConfig = {}
+var AllStationsConfig = {};
 
-Date.prototype.Format = function (fmt) { //author: meizz
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-}
-
-function changeTimestamp(data) {
-
-
-    var receiveTime = data.time.replace(new RegExp('-', 'gm'), ',')
-        .replace(new RegExp(' ', 'gm'), ',')
-        .replace(new RegExp(':', 'gm'), ',');
-    var dateArr = receiveTime.split(',')
-    return Date.UTC(parseInt(dateArr[0]), parseInt(dateArr[1]) - 1, parseInt(dateArr[2]), parseInt(dateArr[3]), parseInt(dateArr[4]), parseInt(dateArr[5])) - 18000;
-}
+//Date.prototype.Format = function (fmt) { //author: meizz
+//    var o = {
+//        "M+": this.getMonth() + 1, //月份
+//        "d+": this.getDate(), //日
+//        "h+": this.getHours(), //小时
+//        "m+": this.getMinutes(), //分
+//        "s+": this.getSeconds(), //秒
+//        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+//        "S": this.getMilliseconds() //毫秒
+//    };
+//    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+//    for (var k in o)
+//        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+//    return fmt;
+//}
+//
+//function changeTimestamp(data) {
+//
+//
+//    var receiveTime = data.time.replace(new RegExp('-', 'gm'), ',')
+//        .replace(new RegExp(' ', 'gm'), ',')
+//        .replace(new RegExp(':', 'gm'), ',');
+//    var dateArr = receiveTime.split(',')
+//    return Date.UTC(parseInt(dateArr[0]), parseInt(dateArr[1]) - 1, parseInt(dateArr[2]), parseInt(dateArr[3]), parseInt(dateArr[4]), parseInt(dateArr[5])) - 18000;
+//}
 
 function saveStaInfo(data) {
     if (data.posR && data.posR.Lat == 0 && data.posR.Lon == 0) return 0;
-    var updated_at = changeTimestamp(data);
+    //var updated_at = changeTimestamp(data);
     var staInfoId = Math.random().toString(36).substr(2) + Date.parse(new Date());
     var staInfo = {
         _id: staInfoId,
         station_id: data.station_id,
         signal_type: data.signal_type || 0,
-        updated_at: updated_at,
+        //updated_at: updated_at,
         data: data
     };
-    if(!statINFO[data.station_id]){
-        statINFO[data.station_id] = []
+    if(!statInfo[data.station_id]){
+        statInfo[data.station_id] = []
     }
-    statINFO[data.station_id].push(staInfo);
-    if(statINFO[data.station_id].length>300){
-        statINFO[data.station_id].shift()
+    statInfo[data.station_id].push(staInfo);
+    if(statInfo[data.station_id].length>300){
+        statInfo[data.station_id].shift()
     }
 
     fs.stat("../station" + data.station_id, function (err, stat) {
@@ -123,39 +123,36 @@ function releaseCacheBuffer(station) {
 var allBuffers = {};
 
 
-function getStationId(station, station_id) {
-    var stationIds = {
-        'beijing-test': 3,
-        'beijing-thu': 2,
-        'guangzhou-dev': 0,
-        'shanghai-dev': 4,
-        'hangkeyuan-04':5
-    };
-    return (stationIds[station] === undefined) ? (station_id || 0) : stationIds[station];
+
+
+function changeStationConfig(staId, config){
+    AllStationsConfig[staId] = config;
 }
+
 function getStationConfig(staId){
+    if(AllStationsConfig[staId] !== undefined){
+       return AllStationsConfig[staId]
+    }
     StationConfig.findByStaId(staId).then(function(result){
         if(result.status){
             AllStationsConfig[staId] = result.stationConfig.config
         }
 
-    })
-}
-function changeStationConfig(staId, config){
-    AllStationsConfig[staId] = config;
+    });
+    return 0
+
 }
 
 // Handle an incomming message.
 function onMessage(data) {
-    if(!AllStationsConfig[data.station]) return getStationConfig(data.station);
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    var cacheBuffers = getCacheBuffer(message.station, buf,AllStationsConfig[data.station]);
-    var buffLength = cacheBuffers.buffLength;
-    var buffers = cacheBuffers.buffers;
-    var bigBuff = Buffer.concat(buffers);
-    var results = parse.parser_pos(data.station, bigBuff,AllStationsConfig[data.station]);
+    //var cacheBuffers = getCacheBuffer(message.station, buf, getStationConfig[data.station]);
+    //var buffLength = cacheBuffers.buffLength;
+    //var buffers = cacheBuffers.buffers;
+    //var bigBuff = Buffer.concat(buffers);
+    var results = parse.parser_pos(data.station, buf, getStationConfig[data.station]);
     releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
@@ -180,33 +177,28 @@ io.on('connection', function (socket) {
         if (!StationSocketStatus[stationName]) {
             StationSocketStatus[stationName] = true;
         }
-
         onMessage(data);
-        //console.log('receive')
     }, function (error) {
         console.log(error)
     });
 });
 
-//setInterval(function(){
-//    onMessage({station_id:2})
-//},10)
 
 
-function getstatINFO(number,id){
+function getStatInfo(number,id){
     if(number>1){
-        return statINFO[id]
+        return statInfo[id]
     }else{
-        if(statINFO[id] == undefined){
+        if(statInfo[id] == undefined){
             return []
         }
-        return statINFO[id][statINFO[id].length-1] ? [statINFO[id][statINFO[id].length-1]] :[];
+        return statInfo[id][statInfo[id].length-1] ? [statInfo[id][statInfo[id].length-1]] :[];
     }
 
 }
 module.exports = {
     StationSocketStatus: StationSocketStatus,
-    getstatINFO: getstatINFO
+    getStatInfo: getStatInfo
 };
 
 
