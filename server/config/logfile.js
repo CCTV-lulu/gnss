@@ -172,4 +172,4 @@ function followProcess(cwd, dataPath, stationId){
      });*/
 
 }
-followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-07",2)
+//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-07",2)

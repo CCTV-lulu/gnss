@@ -89,7 +89,6 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
         if(!$scope.newPassword||!$scope.rePassword||($scope.rePassword!=$scope.newPassword)){
             return alert('请检查密码')
         }
-        console.log($scope.changeUserId)
         UserService.changePassword($scope.changeUserId, $scope.newPassword,function(result){
             if(result.status){
                 $("#navbar_edit").modal('hide');
@@ -146,8 +145,6 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
 
 
     $scope.addStation = function () {
-        console.log($scope.name)
-        console.log($scope.staId)
         if ($scope.name && $scope.staId) {
             Mongodb.addStation($scope.name, $scope.staId, function (result) {
                 if (result.status == false) {
