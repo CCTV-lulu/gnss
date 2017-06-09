@@ -153,7 +153,7 @@ function onMessage(data) {
     //var buffers = cacheBuffers.buffers;
     //var bigBuff = Buffer.concat(buffers);
     var results = parse.parser_pos(data.station, buf, getStationConfig[data.station]);
-    releaseCacheBuffer(message.station);
+    //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
             sta_data.station_id =  message.station;
