@@ -1,5 +1,6 @@
 var auth = require('./auth'),
     controllers = require('../controllers');
+
 module.exports = function(app) {
     app.post('/login', auth.login);
     app.get('/logout', auth.logout);
@@ -9,7 +10,7 @@ module.exports = function(app) {
         res.redirect('/www/index.html');
     });
 
-    //todo check login
+
 
 
 
@@ -19,7 +20,7 @@ module.exports = function(app) {
 
 //    app.post('/staThreshold', controllers.station.saveThreshold);
 
-    //todo check admin
+
 
     app.get('/findAllUsers',  auth.isInRole('admin'), controllers.users.getAllUser);
 
@@ -53,15 +54,16 @@ module.exports = function(app) {
 
     app.post('/deleteUser', auth.isInRole('admin'),controllers.users.deleteUser);
     app.post('/deleteStation', auth.isInRole('admin'),controllers.station.deleteStation);
-    app.post('/addStation', auth.isInRole('admin'),controllers.station.addStation)
+    app.post('/addStation', auth.isInRole('admin'),controllers.station.addStation);
 
     app.get('/getStartInfo',function (req,res) {
         res.send(true)
     });
 
     /*================new*/
-    app.get('/getUserStationInfo',controllers.station.getUserStationInfo)
+    app.get('/getUserStationInfo',controllers.station.getUserStationInfo);
 
     app.post('/changePassword',auth.isInRole('user'),controllers.users.changePassword);
+
 
 };

@@ -20,7 +20,6 @@ module.exports = function (app) {
         var logResolvePath = cwd+logPath;
         var name = fs.rename(req.file.path, logResolvePath);
         getStaData(cwd,logResolvePath,logPath);
-        // TODO verify the file received is right
         fs.readdir(cwd+"/logs", function (err, files) {
             if (err) {
                 return
@@ -53,7 +52,7 @@ module.exports = function (app) {
             })
 
         })
-        // TODO convert to binary data log
+
         console.log(req.file.path);
 
         res.send("ok");
@@ -129,20 +128,20 @@ function followProcess(cwd, dataPath, stationId){
     startTime = [
             now.getYear() + 1900,
             now.getMonth(),
-            now.getDate(),
-            now.getHours(),
-            now.getMinutes(),
-            now.getSeconds()
+            now.getDate(), 0, 0, 0
     ];
-    endTime =  JSON.parse(JSON.stringify(startTime));
-    endTime[2] += 1;
+    endTime =  [
+        now.getYear() + 1900,
+        now.getMonth(),
+        now.getDate(), 23, 59, 59
+    ];
 
     //
-    //
     StationConfig.findByStaId(stationId).then(function(result){
+
         if(result.status){
             stream = fs.createReadStream(dataPath);
-            parse.procinit(stationId, startTime, endTime,maxLen, result.stationConfig.config);
+            parse.procinit(0, startTime, endTime ,maxLen, result.stationConfig.config);
             var fwrite=fs.createWriteStream(followDataPath);
             stream.on('readable',function () {
                 var data;
@@ -172,4 +171,4 @@ function followProcess(cwd, dataPath, stationId){
      });*/
 
 }
-//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-07",2)
+followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-07",2);

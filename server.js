@@ -23,6 +23,7 @@ app.listen(config.port);
 
 
 
+
 console.log("Server running on port: " + config.port);
 //forever start server启动程序时，想看打印－>vi /home/wang/.forever/L1Wj.log进入文件查看
 //终端改文件：vi filename进入文件，i 编辑，编辑完后Esc输入:wq保存退出,q退出,q!强制退出

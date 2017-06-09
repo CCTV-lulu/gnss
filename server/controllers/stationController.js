@@ -1,13 +1,16 @@
 var fs = require('fs');
 var path = require('path');
-var StationSocketStatus = require('../config/messagequeue')
-var batchProcessData = require('../batch_process_data/batch_process_data');
+var StationSocketStatus = require('../config/messagequeue');
+
+//var batchProcessData = require('../batch_process_data/batch_process_data');
+
+
 var encryption = require('../utilities/cripto'),
     UserStationId = require('../data/userStationId'),
     StationStatus = require('../data/stationStatus'),
     StaThreshold = require('../data/staThreshold'),
     Station = require('../data/station'),
-    BatchProcess = require('../data/batchProcess'),
+
     StationConfig = require('../data/stationConfig'),
     UserStationInfo = require('../data/userStationInfo'),
     UsersData = require('../data/usersData');
@@ -114,6 +117,253 @@ function updateStaId(req, res) {
         }
     })
 }
+
+function getStations(req, res) {
+    Station.all().then(function (stations) {
+        res.send(stations)
+    }, function (error) {
+        res.send({
+            status: 400,
+            message: error
+        });
+    })
+}
+function createStation(req, res) {
+    var station = req.query;
+    Station.create(station).then(function (data) {
+        res.send(data)
+    }, function () {
+        res.send({
+            status: 400,
+            message: 'creat station error'
+        });
+    })
+}
+
+function getUserStaThreshold(req, res) {
+    StaThreshold.findStaThresholdByName(req.body.userName, req.body.staName).then(function (staThreshold) {
+        var resStaThreshold = {
+            userName: staThreshold.userName,
+            staName: staThreshold.staName,
+            staThreshold: staThreshold.staThreshold || {}
+        };
+        res.send(resStaThreshold)
+    }, function (error) {
+        res.send({
+            status: 400,
+            message: error
+        });
+    })
+}
+function setStaThreshold(req, res) {
+    var userStaThreshold = {
+        userName: req.body.username,
+        staName: req.body.staName,
+        staThreshold: req.body.Threshold
+    };
+    StaThreshold.setStaThreshold(userStaThreshold).then(function (data) {
+        if (data['ok'] == 0) {
+            res.send({
+                status: false,
+                message: 'creat station threshold false'
+            })
+        } else {
+            res.send({
+                status: true
+            })
+        }
+    }, function (error) {
+        res.send({
+            status: 400,
+            message: error
+        });
+    })
+}
+
+
+//function getBatchProcessStatus(userBatchProcesStatus) {
+//    var currentTime = new Date();
+//    if (!userBatchProcesStatus || !(userBatchProcesStatus.status)) {
+//        return {status: false}
+//    }
+//
+//    return {
+//        status: true,
+//        waitTime: (userBatchProcesStatus.effectiveTime * 1000) - (currentTime - userBatchProcesStatus.createTime)
+//    }
+//}
+//function setUserFindTime(req, res) {
+//    var postBody = req.body;
+//    BatchProcess.findBatchProcess(req.user.username).then(function (userBatchProcessStatus) {
+//        var userBatchProcessStatus = getBatchProcessStatus(userBatchProcessStatus)
+//        if (userBatchProcessStatus.status) {
+//            return res.send({
+//                status: 202,
+//                waitTime: parseInt(Number(userBatchProcessStatus.waitTime) / 1000) * 0.6,
+//                message: 'Continue wait'
+//            })
+//        }
+//        Station.findByStaId(postBody.sta_id)
+//            .then(function (station) {
+//                var effectiveTime = batchProcessData.getBatchProcessTime(station.stationName, postBody.allDate)
+//                if (effectiveTime == 0) {
+//                    return res.send({status: 201, message: 'not have file'})
+//                }
+//                var usersTime = Object.keys(childInfo).length
+//                var waitTime = (parseInt(Number(effectiveTime) * (1 + usersTime * 0.3)) * 0.7);
+//                console.log(waitTime)
+//                saveUserFindStaData(effectiveTime, req.user.username).then(function () {
+//                    batchProcessDate(station.stationName, postBody, req.user.username)
+//                    res.send({status: 200, waitTime: waitTime, message: 'start wait'});
+//                });
+//            })
+//    })
+//}
+
+//function downloadStaData(req, res) {
+//    BatchProcess.findBatchProcess(req.user.username).then(function (batchProcesStatus) {
+//        if (!batchProcesStatus.status) {
+//
+//            return res.download("./server/" + req.user.username + ".json")
+//        }
+//        console.log('----------------------------------------waitingDownload');
+//        return res.send({status: 202, message: 'wait'})
+//    })
+//}
+//function saveUserFindStaData(time, username) {
+//    var defer = Promise.defer();
+//    var condition = {
+//        effectiveTime: time,
+//        status: true,
+//        userName: username,
+//        createTime: new Date(),
+//        data: {}
+//    };
+//    BatchProcess.setBatchProcess(condition).then(function () {
+//        defer.resolve()
+//    });
+//    return defer.promise
+//}
+//function getUserFindStaData(req, res) {
+//    BatchProcess.findBatchProcess(req.user.username).then(function (batchProcesStatus) {
+//        if (!batchProcesStatus.status) {
+//            var integrity = batchProcesStatus.data.data.integrity;
+//            var a = {
+//                userName: batchProcesStatus.data.userName,
+//                data: {
+//                    availability: batchProcesStatus.data.data.availability,
+//                    continuity: batchProcesStatus.data.data.continuity,
+//                    integrity: integrity.slice(0, 10),
+//                    accuracy_95: batchProcesStatus.data.data.accuracy_95,
+//                    accuracy: batchProcesStatus.data.data.accuracy
+//                }
+//
+//            }
+//            fs.writeFileSync("./server/" + req.user.username + ".json", JSON.stringify(batchProcesStatus.data.data.integrity));
+//            return res.send({status: 200, result: a})
+//        }
+//
+//        return res.send({status: 202, message: 'wait'})
+//    })
+//}
+//var childInfo = {}
+//
+//function killChild(username) {
+//    if (childInfo[username] != undefined) {
+//        childInfo[username].kill()
+//    }
+//}
+//function batchProcessDate(station, filter, userName) {
+//    var child_process = require('child_process');
+//    var child = child_process.fork('./server/batch_process_data/batch_process_data.js');
+//    childInfo[userName] = child;
+//    child.on('message', function (batchProcessResult) {
+//        BatchProcess.findBatchProcess(batchProcessResult.userName).then(function (userBatchProcessStatus) {
+//            console.log(batchProcessResult)
+//            userBatchProcessStatus.data = batchProcessResult;
+//            userBatchProcessStatus.status = false;
+//            userBatchProcessStatus.save(function (err, result) {
+//                child.send({message: 'close'})
+//            });
+//        })
+//    });
+//    child.on('close', function () {
+//        console.log('closing code: ');
+//    });
+//    child.send({station: station, filter: filter, userName: userName});
+//}
+
+
+/*========new*/
+
+
+function getUserStationInfo(req, res) {
+
+    if (req.user.roles.includes('admin')) {
+        Station.all().then(function (allStations) {
+            return res.send({allStations:  allStations})
+        });
+    }else{
+        UserStationInfo.findStaIdByName(req.user.username, function (err, userStationInfo) {
+            if (err) {
+                return res.send({status: false, message: '拉取信息失败'})
+            }
+            return res.send({userStationInfo:  userStationInfo})
+        })
+    }
+
+}
+
+
+function  getStationConfig (req, res){
+
+    StationConfig.findByStaId(req.body.StaId,function(stationConfig){
+        if(stationConfig.status){
+            return res.send({status: true, config: stationConfig.config})
+        }
+        res.send({status: false})
+    });
+
+
+
+}
+
+function deleteStation(req, res) {
+    Station.deleteByName(req.body.name).then(function (result) {
+        UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
+            UsersData.deleteUserStationList(req.body.name).then(function (results) {
+                StationConfig.deleteByStaName(req.body.name).then(function(){
+                    res.send({status:true})
+                });
+            })
+        })
+    }, function (error) {
+        res.send({
+            status: 400,
+            message: error
+        });
+    })
+}
+function addStation(req, res) {
+    var newStation = {name:req.body.name,staId:req.body.staId};
+    Station.create(newStation).then(function (result) {
+        if(result.status){
+            StationConfig.create(newStation).then(function(){
+                Station.all().then(function(allStation){
+                    res.send({status:true, allStations:allStation})
+                })
+            })
+        }else{
+            res.send(result)
+        }
+
+    }, function (error) {
+        res.send({
+            status: false,
+            message: error
+        });
+    })
+}
 function getStationStatus(req, res, next) {
     var data = {station_id: parseInt(req.query.staId)};
     var limit = parseInt(req.query.limit);
@@ -156,250 +406,20 @@ function getStationStatus(req, res, next) {
     //        });
     //    })
 }
-function getStations(req, res) {
-    Station.all().then(function (stations) {
-        res.send(stations)
-    }, function (error) {
-        res.send({
-            status: 400,
-            message: error
-        });
-    })
-}
-function createStation(req, res) {
-    var station = req.query;
-    Station.create(station).then(function (data) {
-        res.send(data)
-    }, function () {
-        res.send({
-            status: 400,
-            message: 'creat station error'
-        });
-    })
-}
-function deleteStation(req, res) {
-    Station.deleteByName(req.body.name).then(function (result) {
-        UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
-            UsersData.deleteUserStationList(req.body.name).then(function (results) {
-                StationConfig.deleteByStaName(req.body.name).then(function(){
-                    res.send({status:true})
-                });
-            })
-        })
-    }, function (error) {
-        res.send({
-            status: 400,
-            message: error
-        });
-    })
-}
-function addStation(req, res) {
-    var newStation = {name:req.body.name,staId:req.body.staId};
-    Station.create(newStation).then(function (result) {
-        if(result.status){
-            StationConfig.create(newStation).then(function(){
-                Station.all().then(function(allStation){
-                    res.send({status:true, allStations:allStation})
-                })
-            })
-        }else{
-            res.send(result)
-        }
-
-    }, function (error) {
-        res.send({
-            status: false,
-            message: error
-        });
-    })
-}
-function getUserStaThreshold(req, res) {
-    StaThreshold.findStaThresholdByName(req.body.userName, req.body.staName).then(function (staThreshold) {
-        var resStaThreshold = {
-            userName: staThreshold.userName,
-            staName: staThreshold.staName,
-            staThreshold: staThreshold.staThreshold || {}
-        };
-        res.send(resStaThreshold)
-    }, function (error) {
-        res.send({
-            status: 400,
-            message: error
-        });
-    })
-}
-function setStaThreshold(req, res) {
-    var userStaThreshold = {
-        userName: req.body.username,
-        staName: req.body.staName,
-        staThreshold: req.body.Threshold
-    };
-    StaThreshold.setStaThreshold(userStaThreshold).then(function (data) {
-        if (data['ok'] == 0) {
-            res.send({
-                status: false,
-                message: 'creat station threshold false'
-            })
-        } else {
-            res.send({
-                status: true
-            })
-        }
-    }, function (error) {
-        res.send({
-            status: 400,
-            message: error
-        });
-    })
-}
 
 
-function getBatchProcessStatus(userBatchProcesStatus) {
-    var currentTime = new Date();
-    if (!userBatchProcesStatus || !(userBatchProcesStatus.status)) {
-        return {status: false}
-    }
-
-    return {
-        status: true,
-        waitTime: (userBatchProcesStatus.effectiveTime * 1000) - (currentTime - userBatchProcesStatus.createTime)
-    }
-}
-function setUserFindTime(req, res) {
-    var postBody = req.body;
-    BatchProcess.findBatchProcess(req.user.username).then(function (userBatchProcessStatus) {
-        var userBatchProcessStatus = getBatchProcessStatus(userBatchProcessStatus)
-        if (userBatchProcessStatus.status) {
-            return res.send({
-                status: 202,
-                waitTime: parseInt(Number(userBatchProcessStatus.waitTime) / 1000) * 0.6,
-                message: 'Continue wait'
-            })
-        }
-        Station.findByStaId(postBody.sta_id)
-            .then(function (station) {
-                var effectiveTime = batchProcessData.getBatchProcessTime(station.stationName, postBody.allDate)
-                if (effectiveTime == 0) {
-                    return res.send({status: 201, message: 'not have file'})
-                }
-                var usersTime = Object.keys(childInfo).length
-                var waitTime = (parseInt(Number(effectiveTime) * (1 + usersTime * 0.3)) * 0.7);
-                console.log(waitTime)
-                saveUserFindStaData(effectiveTime, req.user.username).then(function () {
-                    batchProcessDate(station.stationName, postBody, req.user.username)
-                    res.send({status: 200, waitTime: waitTime, message: 'start wait'});
-                });
-            })
-    })
-}
-
-function downloadStaData(req, res) {
-    BatchProcess.findBatchProcess(req.user.username).then(function (batchProcesStatus) {
-        if (!batchProcesStatus.status) {
-
-            return res.download("./server/" + req.user.username + ".json")
-        }
-        console.log('----------------------------------------waitingDownload');
-        return res.send({status: 202, message: 'wait'})
-    })
-}
-function saveUserFindStaData(time, username) {
-    var defer = Promise.defer();
-    var condition = {
-        effectiveTime: time,
-        status: true,
-        userName: username,
-        createTime: new Date(),
-        data: {}
-    };
-    BatchProcess.setBatchProcess(condition).then(function () {
-        defer.resolve()
-    });
-    return defer.promise
-}
-function getUserFindStaData(req, res) {
-    BatchProcess.findBatchProcess(req.user.username).then(function (batchProcesStatus) {
-        if (!batchProcesStatus.status) {
-            var integrity = batchProcesStatus.data.data.integrity;
-            var a = {
-                userName: batchProcesStatus.data.userName,
-                data: {
-                    availability: batchProcesStatus.data.data.availability,
-                    continuity: batchProcesStatus.data.data.continuity,
-                    integrity: integrity.slice(0, 10),
-                    accuracy_95: batchProcesStatus.data.data.accuracy_95,
-                    accuracy: batchProcesStatus.data.data.accuracy
-                }
-
-            }
-            fs.writeFileSync("./server/" + req.user.username + ".json", JSON.stringify(batchProcesStatus.data.data.integrity));
-            return res.send({status: 200, result: a})
-        }
-
-        return res.send({status: 202, message: 'wait'})
-    })
-}
-var childInfo = {}
-
-function killChild(username) {
-    if (childInfo[username] != undefined) {
-        childInfo[username].kill()
-    }
-}
-function batchProcessDate(station, filter, userName) {
-    var child_process = require('child_process');
-    var child = child_process.fork('./server/batch_process_data/batch_process_data.js');
-    childInfo[userName] = child;
-    child.on('message', function (batchProcessResult) {
-        BatchProcess.findBatchProcess(batchProcessResult.userName).then(function (userBatchProcessStatus) {
-            console.log(batchProcessResult)
-            userBatchProcessStatus.data = batchProcessResult;
-            userBatchProcessStatus.status = false;
-            userBatchProcessStatus.save(function (err, result) {
-                child.send({message: 'close'})
-            });
-        })
-    });
-    child.on('close', function () {
-        console.log('closing code: ');
-    });
-    child.send({station: station, filter: filter, userName: userName});
-}
-
-
-/*========new*/
-
-
-function getUserStationInfo(req, res) {
-
-    if (req.user.roles.includes('admin')) {
-        Station.all().then(function (allStations) {
-            return res.send({allStations:  allStations})
-        });
-    }else{
-        UserStationInfo.findStaIdByName(req.user.username, function (err, userStationInfo) {
-            if (err) {
-                return res.send({status: false, message: 'getUserStationId error  '})
-            }
-            return res.send({userStationInfo:  userStationInfo})
-        })
-    }
-
-}
-
-
-function  getStationConfig (req, res){
-
-    StationConfig.findByStaId(req.body.StaId,function(stationConfig){
-        if(stationConfig.status){
-            return res.send({status: true, config: stationConfig.config})
-        }
-        res.send({status: false})
-    });
+/*==========================new*/
 
 
 
-}
+
+
+
+
+
+
+
+
 module.exports = {
     getUserStationId: getUserStationId,
     updateStaId: updateStaId,
@@ -410,10 +430,10 @@ module.exports = {
     deleteStation: deleteStation,
     addStation: addStation,
     setStaThreshold: setStaThreshold,
-    setUserFindTime: setUserFindTime,
-    getUserFindStaData: getUserFindStaData,
-    killChild: killChild,
-    downloadStaData: downloadStaData,
+    //setUserFindTime: setUserFindTime,
+    //getUserFindStaData: getUserFindStaData,
+    //killChild: killChild,
+    //downloadStaData: downloadStaData,
     getStationConfig: getStationConfig,
 
     getUserStationInfo: getUserStationInfo

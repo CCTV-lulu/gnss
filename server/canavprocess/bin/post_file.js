@@ -98,7 +98,7 @@ function option_init(option) {
     option.up_slice.hpl_num.up_len=30;
     option.up_slice.vpl_num.flag=1;
     option.up_slice.vpl_num.up_min=50;
-        option.up_slice.vpl_num.up_len=30;
+    option.up_slice.vpl_num.up_len=30;
 }
 function satis_init(para) {
     para.id=0;
