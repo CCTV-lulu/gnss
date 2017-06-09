@@ -130,11 +130,14 @@ function changeStationConfig(staId, config){
 }
 
 function getStationConfig(staId){
+    console.log(staId)
+    console.log(AllStationsConfig[staId] )
     if(AllStationsConfig[staId] !== undefined){
        return AllStationsConfig[staId]
     }
     StationConfig.findByStaId(staId).then(function(result){
         if(result.status){
+            console.log(AllStationsConfig[staId])
             AllStationsConfig[staId] = result.stationConfig.config
         }
 
