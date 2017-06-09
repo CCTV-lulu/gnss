@@ -2,7 +2,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                                                                           getStationStatus, Mongodb, DataArray, StarMapChart, StarChart, StarData, Initialise,userStationInfo,$state) {
 
     var stationId = $rootScope.stationId;
-    var listenRootCurrentStationStatus;
+    var listenRootCurrentStationStatus = false;
     var dataId = [];
     var chartWidth = $('#chartBox').css('width');
 
@@ -53,7 +53,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
         try {
             loadStationStatus(staId, limit,function(){
-                if(listenRootCurrentStationStatus === true){
+                if(listenRootCurrentStationStatus !== true){
                     getStationInfo(staId, limit)
                 }
 
