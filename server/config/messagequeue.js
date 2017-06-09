@@ -155,7 +155,8 @@ function onMessage(data) {
     //var buffLength = cacheBuffers.buffLength;
     //var buffers = cacheBuffers.buffers;
     //var bigBuff = Buffer.concat(buffers);
-    var results = parse.parser_pos(data.station, buf, getStationConfig[data.station]);
+    var optJson = getStationConfig([data.station])
+    var results = parse.parser_pos(data.station, buf, optJson);
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
