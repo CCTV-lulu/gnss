@@ -967,7 +967,8 @@ function satShowStruct(obs,nav,sol,logjson) {
             if(nav.udre[ob.sat-1]!=undefined){
                 ob.udre=nav.udre[ob.sat-1];
             }
-            cmn.time2bdt(cmn.gpst2bdt(obs[i].time),ws);
+            time=cmn.gpst2bdt(obs[i].time);
+            cmn.time2bdt(time,ws);
             time=time2string(time);
         }
         ob.week=ws[0];
