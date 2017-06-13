@@ -138,7 +138,7 @@ MetronicApp.directive('ngSpinnerBar', ['$rootScope', '$state',
         restrict: 'EA',
         template:
         "<select id='single' class='form-control select2'>"+
-        "<option value='{{blankStation.staId}}' ng-repeat='blankStation in allBlankStation'>{{blankStation.name}}</option>"+
+        "<option value='{{blankStation.staId}}' ng-repeat='blankStation in $parent.allStations'>{{blankStation.name}}</option>"+
         "</select>"
     }
 })

@@ -5,7 +5,7 @@
 <div class="page-bar">
     <div class="row">
         <div class="col-md-5" style="margin: 10px 10px 20px 10px;">
-            <di>时间选择：</di>
+            <div>时间选择：</div>
             <div class="controls">
                 <div id="reportrange" class="pull-left dateRange" style="width:350px">
                     <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
@@ -31,116 +31,227 @@
         <div class="row">
             <div class="col-md-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
-                    <div class="portlet-title">
+                    <div class="portlet-title" >
                         <div class="caption">
-                            <i class="icon-settings font-dark"></i>
-                            <span class="caption-subject font-dark sbold uppercase">精确数据</span>
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">误差</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="accuracy_Hori_loading">
+                        <div id="StaNum_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="accuracy_Hori_content" class="display-none">
-                            <div id="accuracy_Hori" class="chart" style="min-width:400px;height:500px"></div>
+                        <div id="StaNum_content" class="display-none">
+                            <div id="StaNum" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
-                    <div class="portlet-title">
+                    <div class="portlet-title" id="_width">
                         <div class="caption">
-                            <i class="icon-settings font-dark"></i>
-                            <span class="caption-subject font-dark sbold uppercase">精确数据</span>
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">误差</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="accuracy_Vert_loading">
+                        <div id="ErrHist_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="accuracy_Vert_content" class="display-none">
-                            <div id="accuracy_Vert" class="chart" style="min-width:400px;height:500px"></div>
+                        <div id="ErrHist_content" class="display-none">
+                            <div id="ErrHist" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
-                    <div class="portlet-title">
+                    <div class="portlet-title" >
                         <div class="caption">
-                            <i class="icon-settings font-dark"></i>
-                            <span class="caption-subject font-dark sbold uppercase">普通数据</span>
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HDOP/VDOP</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="accuracy_95_Hori_loading">
+                        <div id="Hdop_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="accuracy_95_Hori_content" class="display-none">
-                            <div id="accuracy_95_Hori" class="chart" style="min-width:400px;height:500px"></div>
+                        <div id="Hdop_content" class="display-none">
+                            <div id="Hdop" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
-                    <div class="portlet-title">
+                    <div class="portlet-title" >
                         <div class="caption">
-                            <i class="icon-settings font-dark"></i>
-                            <span class="caption-subject font-dark sbold uppercase">普通数据</span>
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="accuracy_95_Vert_loading">
+                        <div id="VPL_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="accuracy_95_Vert_content" class="display-none">
-                            <div id="accuracy_95_Vert" class="chart" style="min-width:400px;height:500px"></div>
+                        <div id="VPL_content" class="display-none">
+                            <div id="VPL" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12 col-xs-12 col-sm-12">
                 <div class="portlet light ">
-                    <div class="portlet-title">
+                    <div class="portlet-title" >
                         <div class="caption">
-                            <i class="fa fa-book fa-fw font-dark"></i>
-                            <span class="caption-subject font-dark sbold uppercase"> 事件 </span>
-                            <button class="col-md-8 btn btn-circle green" ng-click="downloadData()"> 下 载</button>
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div class="table-responsive">
-                            <integrity-List></integrity-List>
+                        <div id="content_loading" class="display-none">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="content_content" >
+                            <table class="table table-striped table-bordered table-hover" id="sample_1">
+                                <thead>
+                                <tr>
+                                    <td></td>
+                                    <th> 水平精度</th>
+                                    <th> 垂直精度</th>
+                                    <th> 连续性</th>
+                                    <th> 可用性</th>
+                                    <th> 完好性</th>
+
+                                </tr>
+                                </thead>
+
+                                <tbody id="startInfo">
+                                <tr ng-repeat="(key, value) in processResult" ng-model="processResult">
+                                    <td>{{ key}}</td>
+                                    <td>{{value.acc95_h.mean}} </td>
+                                    <td>{{value.acc95_v.mean}} </td>
+                                    <td>{{value.continuity}} </td>
+                                    <td>{{value.availability}} </td>
+                                    <td>{{value.integrity}} </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-10 col-lg-offset-1 col-md-offset-1">
-                    <div class="dashboard-stat dashboard-stat-v2 blue">
-                        <div class="details">
-                            <div class="number">
-                                <span data-counter="counterup" data-ng-bind="continuity"></span>
-                            </div>
-                            <div class="desc"> 连续性</div>
-                        </div>
-                        <div class="visual">
-                            <i class="fa fa-bar-chart-o"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-10">
-                    <div class="dashboard-stat dashboard-stat-v2 blue">
-                        <div class="details">
-                            <div class="number">
-                                <span data-counter="counterup" data-ng-bind="availability"></span>
-                            </div>
-                            <div class="desc"> 可用性</div>
-                        </div>
-                        <div class="visual">
-                            <i class="fa fa-bar-chart-o"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+
+
+            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
+                <!--<div class="portlet light ">-->
+                    <!--<div class="portlet-title">-->
+                        <!--<div class="caption">-->
+                            <!--<i class="icon-settings font-dark"></i>-->
+                            <!--<span class="caption-subject font-dark sbold uppercase">精确数据</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="portlet-body">-->
+                        <!--<div id="accuracy_Hori_loading">-->
+                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
+                        <!--<div id="accuracy_Hori_content" class="display-none">-->
+                            <!--<div id="accuracy_Hori" class="chart" style="min-width:400px;height:500px"></div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
+                <!--<div class="portlet light ">-->
+                    <!--<div class="portlet-title">-->
+                        <!--<div class="caption">-->
+                            <!--<i class="icon-settings font-dark"></i>-->
+                            <!--<span class="caption-subject font-dark sbold uppercase">精确数据</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="portlet-body">-->
+                        <!--<div id="accuracy_Vert_loading">-->
+                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
+                        <!--<div id="accuracy_Vert_content" class="display-none">-->
+                            <!--<div id="accuracy_Vert" class="chart" style="min-width:400px;height:500px"></div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
+                <!--<div class="portlet light ">-->
+                    <!--<div class="portlet-title">-->
+                        <!--<div class="caption">-->
+                            <!--<i class="icon-settings font-dark"></i>-->
+                            <!--<span class="caption-subject font-dark sbold uppercase">普通数据</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="portlet-body">-->
+                        <!--<div id="accuracy_95_Hori_loading">-->
+                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
+                        <!--<div id="accuracy_95_Hori_content" class="display-none">-->
+                            <!--<div id="accuracy_95_Hori" class="chart" style="min-width:400px;height:500px"></div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
+                <!--<div class="portlet light ">-->
+                    <!--<div class="portlet-title">-->
+                        <!--<div class="caption">-->
+                            <!--<i class="icon-settings font-dark"></i>-->
+                            <!--<span class="caption-subject font-dark sbold uppercase">普通数据</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="portlet-body">-->
+                        <!--<div id="accuracy_95_Vert_loading">-->
+                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
+                        <!--<div id="accuracy_95_Vert_content" class="display-none">-->
+                            <!--<div id="accuracy_95_Vert" class="chart" style="min-width:400px;height:500px"></div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
+                <!--<div class="portlet light ">-->
+                    <!--<div class="portlet-title">-->
+                        <!--<div class="caption">-->
+                            <!--<i class="fa fa-book fa-fw font-dark"></i>-->
+                            <!--<span class="caption-subject font-dark sbold uppercase"> 事件 </span>-->
+                            <!--<button class="col-md-8 btn btn-circle green" ng-click="downloadData()"> 下 载</button>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="portlet-body">-->
+                        <!--<div class="table-responsive">-->
+                            <!--<integrity-List></integrity-List>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row">-->
+                <!--<div class="col-lg-5 col-md-5 col-sm-5 col-xs-10 col-lg-offset-1 col-md-offset-1">-->
+                    <!--<div class="dashboard-stat dashboard-stat-v2 blue">-->
+                        <!--<div class="details">-->
+                            <!--<div class="number">-->
+                                <!--<span data-counter="counterup" data-ng-bind="continuity"></span>-->
+                            <!--</div>-->
+                            <!--<div class="desc"> 连续性</div>-->
+                        <!--</div>-->
+                        <!--<div class="visual">-->
+                            <!--<i class="fa fa-bar-chart-o"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-lg-5 col-md-5 col-sm-5 col-xs-10">-->
+                    <!--<div class="dashboard-stat dashboard-stat-v2 blue">-->
+                        <!--<div class="details">-->
+                            <!--<div class="number">-->
+                                <!--<span data-counter="counterup" data-ng-bind="availability"></span>-->
+                            <!--</div>-->
+                            <!--<div class="desc"> 可用性</div>-->
+                        <!--</div>-->
+                        <!--<div class="visual">-->
+                            <!--<i class="fa fa-bar-chart-o"></i>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
     </div>
 </div>

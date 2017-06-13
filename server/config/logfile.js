@@ -60,7 +60,7 @@ module.exports = function (app) {
 };
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
 
-//getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-07","./logs/beijing-thu.log-2017-06-07")
+//getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-12","./logs/beijing-thu.log-2017-06-12")
 
 function getStaData(cwd,logResolvePath,log_path) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');
@@ -141,7 +141,7 @@ function followProcess(cwd, dataPath, stationId){
 
         if(result.status){
             stream = fs.createReadStream(dataPath);
-            parse.procinit(0, startTime, endTime ,maxLen, result.stationConfig.config);
+            parse.procinit(stationId, startTime, endTime ,maxLen, result.stationConfig.config);
             var fwrite=fs.createWriteStream(followDataPath);
             stream.on('readable',function () {
                 var data;
@@ -171,4 +171,4 @@ function followProcess(cwd, dataPath, stationId){
      });*/
 
 }
-followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-07",2);
+//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-11",2);

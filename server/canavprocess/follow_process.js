@@ -101,10 +101,10 @@ module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
     rtcm.buff=new Buffer(len*5);
     rtcm.time=prcopt.bt;
     rtcm.realtime=1;
-    if(!opt_init){
-        opt_init = getProopt(sta_id);
-    }
-    //var opt_init = getProopt(sta_id);
+    //if(!opt_init){
+    //    opt_init = getProopt(sta_id);
+    //}
+    var opt_init = getProopt(sta_id);
     if(opt_init!=0){
         para = new nodepos.posPara_create(opt_init);
         nodepos.posParainit(sta_id, para);

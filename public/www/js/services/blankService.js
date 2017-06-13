@@ -88,6 +88,8 @@ MetronicApp.factory('DateTable',  function() {
 })
     .factory('DataAnalyseChart', function() {
     function lineChart(data,key1,key2,id) {
+        console.log(data)
+        console.log(data[key1])
         var xAxis = [];
         data[key1][key2].X.forEach(function(data_x) {
             if(typeof data_x === 'number' && isFinite(data_x)) {
