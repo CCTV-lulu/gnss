@@ -169,6 +169,7 @@ function onMessage(data) {
 var StationSocketStatus = {};
 io.on('connection', function (socket) {
     var stationName = socket.handshake.query.station;
+    console.log(socket.handshake.query.station)
     socket.on('disconnect', function () {
         StationSocketStatus[stationName] = false
     });
