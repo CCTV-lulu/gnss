@@ -25,20 +25,20 @@
         </div>
         <div class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
             <label>定位系统: </label>
-            <input type="checkbox" name="sys" value= 0 checked> GPS
-            <input type="checkbox" name="sys" value= 1 > GLS
-            <input type="checkbox" name="sys" value= 2 > BDS
-            <input type="checkbox" name="sys" value= 3 > 组合
+            <input type="checkbox" name="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
+            <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
+            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
+            <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
         </div>
 
         <div id='options' class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
             <label>统计选项: </label>
-            <input type="checkbox" name="sat_hist" checked> 卫星数
-            <input type="checkbox" name="err_hist" > 定位误差
-            <input type="checkbox" name="dop_hist" > DOP值
-            <input type="checkbox" name="PL_hist" > 保护水平
-            <input type="checkbox" name="hpl_num" > HPL超限时间
-            <input type="checkbox" name="vpl_num" checked> VPL超限时间
+            <input type="checkbox" name="sat_hist" ng-checked="{{filter.option['sat_hist']}}"> 卫星数
+            <input type="checkbox" name="err_hist"  ng-checked="{{filter.option['err_hist']}}"> 定位误差
+            <input type="checkbox" name="dop_hist" ng-checked="{{filter.option['dop_hist']}}"> DOP值
+            <input type="checkbox" name="PL_hist" ng-checked="{{filter.option['PL_hist']}}"> 保护水平
+            <input type="checkbox" name="hpl_num" ng-checked="{{filter.option['hpl_num']}}"> HPL超限时间
+            <input type="checkbox" name="vpl_num" ng-checked="{{filter.option['vpl_num']}}"> VPL超限时间
 
         </div>
 
@@ -124,7 +124,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">GPS VPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -141,7 +141,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">GPS HPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -158,7 +158,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">GLS VPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -175,7 +175,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">GLS HPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -192,7 +192,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">BDS VPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -209,7 +209,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">BDS HPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -226,7 +226,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">组合 VPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -243,7 +243,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">组合 HPL超限时间</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -267,7 +267,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">定位统计</span>
                         </div>
                     </div>
                     <div class="portlet-body">

@@ -7,20 +7,31 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     function init() {
         $(".loading").animate({"width": "0%"}, 0);
         DateTable.dateTable();
-        $scope.sysNav = ['GPS','GLS','BDS','组合']
+        $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
+        $scope.filter = {
+            sys: [true, true, true, true],
+            option: {
+                sat_hist: true,
+                err_hist: true,
+                dop_hist: true,
+                PL_hist: true,
+                hpl_num: false,
+                vpl_num: false
+            }
+        }
     }
 
 
-    function getFilter(){
-        var  sys = [];
-        var options ={}
-        $('input[name=sys]').each(function(){
-            if(this.checked){
+    function getFilter() {
+        var sys = [];
+        var options = {}
+        $('input[name=sys]').each(function () {
+            if (this.checked) {
                 sys.push(Number(this.value))
             }
         });
-        $('#options input').each(function(){
-            if(this.checked){
+        $('#options input').each(function () {
+            if (this.checked) {
                 options[this.name] = 1;
             }
         });
@@ -62,9 +73,6 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     };
 
 
-
-
-
     function startBatchProcess(data) {
         //if (data.status == 201) {
         //    waiting(data);
@@ -80,7 +88,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 //进度条
 
     function waiting(data) {
-        var waitTime = 60;
+        var waitTime = parseInt(data.effectiveTime)
         if (!show_wait(waitTime)) return;
         getResult();
 
@@ -90,6 +98,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         var $loading = $('.loading');
         if (!$loading.is(":hidden")) return false;
         $('#dataStatisticsChart .col-xs-12').hide();
+        $loading.stop();
         $loading.animate({"width": "0%"}, 0);
         $loading.show();
         $loading.animate({"width": "100%"}, 1000 * waitTime);
@@ -97,7 +106,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     }
 
     function getResult() {
-        if($location.path() != '/blank') return;
+        if ($location.path() != '/blank') return;
         BatchProcess.getBatchProcessResult(function (data) {
             if (data.status == 400) {
                 return batchProcessErr()
@@ -132,7 +141,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         showVPL('VPL', data);
         showTime(data)
         showStaNum('StaNum', data);
-         showAvailability('content',data);
+        showAvailability('content', data);
         $('#dataStatisticsChartLoding').hide();
         $("#dataStatisticsChart").css("opacity", 1);
         //$scope.integritys = EventData.table(data.result.data);
@@ -153,15 +162,15 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if(!data[key].sat_hist) return;
+            if (!data[key].sat_hist) return;
             data[key].herr_hist.Y.forEach(function (y, index) {
                 info.data.push([data[key].herr_hist.X[index], y])
             });
-            if(info.data.length > 0){
+            if (info.data.length > 0) {
                 series.push(info)
             }
         });
-        if(series.length == 0) return ;
+        if (series.length == 0) return;
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -236,7 +245,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             newResult[key].integrity = value.integrity
         });
 
-        $scope.processResult =  newResult;
+        $scope.processResult = newResult;
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
         $('#' + type + '_container').show();
@@ -252,16 +261,16 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if(!data[key].hdop_hist) return;
+            if (!data[key].hdop_hist) return;
             data[key].hdop_hist.X.forEach(function (x, index) {
                 info.data.push([x, data[key].hdop_hist.Y[index]])
             });
-            if(info.data.length > 0){
+            if (info.data.length > 0) {
                 series.push(info)
             }
 
         });
-        if(series.length == 0) return ;
+        if (series.length == 0) return;
         $('#' + type + '_container').show();
         Highcharts.setOptions({
             lang: {
@@ -329,15 +338,15 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if(!data[key].hpl_hist) return;
+            if (!data[key].hpl_hist) return;
             data[key].hpl_hist.X.forEach(function (x, index) {
                 info.data.push([x, data[key].hpl_hist.Y[index]])
             });
-            if(info.data.length > 0){
+            if (info.data.length > 0) {
                 series.push(info)
             }
         });
-        if(series.length == 0) return ;
+        if (series.length == 0) return;
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -400,36 +409,47 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         })
     }
 
-    function showTime( data) {
-        chartTimeLine( 'GPSVPLTime',data, 0, 'vpl_num')
-        chartTimeLine( 'GPSHPLTime',data, 0, 'hpl_num')
-        chartTimeLine( 'GLSVPLTime',data, 1, 'vpl_num')
-        chartTimeLine( 'GLSHPLTime',data, 1, 'hpl_num')
-        chartTimeLine( 'BDSVPLTime',data, 2, 'vpl_num')
-        chartTimeLine( 'BDSHPLTime',data, 2, 'hpl_num')
-        chartTimeLine( 'GroupVPLTime',data, 3, 'vpl_num')
-        chartTimeLine( 'GroupHPLTime',data, 3, 'hpl_num')
+    function showTime(data) {
+        chartTimeLine('GPSVPLTime', data, 0, 'vpl_num');
+        chartTimeLine('GPSHPLTime', data, 0, 'hpl_num');
+        chartTimeLine('GLSVPLTime', data, 1, 'vpl_num');
+        chartTimeLine('GLSHPLTime', data, 1, 'hpl_num');
+        chartTimeLine('BDSVPLTime', data, 2, 'vpl_num');
+        chartTimeLine('BDSHPLTime', data, 2, 'hpl_num');
+        chartTimeLine('GroupVPLTime', data, 3, 'vpl_num');
+        chartTimeLine('GroupHPLTime', data, 3, 'hpl_num')
     }
 
-    function chartTimeLine(id,data, sys, type){
+    function chartTimeLine(id, data, sys, type) {
 
         //var showData = data[type];
         var series = [];
-        var name = id.replace('Time','');
+        var name = id.replace('Time', '');
         var info = {name: name, data: []};
+        var startTime;
         sys = sys.toString();
-        if(!data[sys]) return;
+        if (!data[sys]) return;
         var up_slice = data[sys].up_slice;
         up_slice[type].X.forEach(function (x, index) {
-            info.data.push([index, up_slice[type].Y[index]])
+            var time = new Date(x).getTime();
+            if (index == 0) {
+
+                startTime = new Date(x).getTime();
+                console.log(startTime)
+            }
+            if (time - startTime <= 24 * 60 * 60 * 1000) {
+                info.data.push([time, up_slice[type].Y[index]])
+            } else {
+                console.log(time)
+            }
+
 
         });
-        if(info.data.length > 0){
+        if (info.data.length > 0) {
             series.push(info)
         }
 
-        if(series.length == 0) return;
-        console.log(id)
+        if (series.length == 0) return;
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
@@ -473,13 +493,18 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
 
             },
-            //线类型
-            title: {
-                text: ''
-            },
-            //标题
-            subtitle: {
-                text: ''
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats: {
+                    second: '%H:%M:%S',
+                    minute: '%e. %m %H:%M',
+                    hour: '%m/%e %H:%M',
+                    day: '%m/%e %H:%M',
+                    week: '%e. %m',
+                    month: '%b %y',
+                    year: '%Y'
+                }
+
             },
             plotOptions: {
                 series: {
@@ -503,15 +528,15 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if(!data[key].sat_hist) return;
+            if (!data[key].sat_hist) return;
             data[key].sat_hist.X.forEach(function (x, index) {
                 info.data.push([x, data[key].sat_hist.Y[index]])
             });
-            if(info.data.length > 0){
+            if (info.data.length > 0) {
                 series.push(info)
             }
         });
-        if(series.length == 0) return ;
+        if (series.length == 0) return;
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
         $('#' + type + '_container').show();
@@ -553,7 +578,6 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
         });
     }
-
 
 
 });

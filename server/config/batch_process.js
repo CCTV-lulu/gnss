@@ -67,9 +67,14 @@ function option_init(option,myOption) {
     option.up_slice.vpl_num.up_len=30;
 }
 function satis_init(para,filter) {
+
+    var startTimeInfo = filter.allDate[0].split('-');
+    var startTime = [startTimeInfo[0], Number(startTimeInfo[1])-1,startTimeInfo[2],0,0,0]
+    var endTimeInfo = filter.allDate[filter.allDate.length-1].split('-')
+    var endTime = [endTimeInfo[0], Number(endTimeInfo[1])-1,endTimeInfo[2],23,59,59]
     para.id=0;
-    para.bt=cmn.epoch2time([2017,5,11,0,0,0]);
-    para.et=cmn.epoch2time([2017,5,12,23,59,59]);
+    para.bt=cmn.epoch2time(startTime);
+    para.et=cmn.epoch2time(endTime);
 
     //para.hist[ca.SYS_GPS]=new hist_create();
     //para.hist[ca.SYS_GLO]=new hist_create();
@@ -137,7 +142,6 @@ function batch_process(batchProcessFiler){
     var para=new statis_create();
     satis_init(para, batchProcessFiler);
     statis.option_set(para);
-    console.log(para)
 
     processOneDay(files.allFilesData, 0,function(data){
         fs.writeFile('./public/json/'+ batchProcessFiler.username  +'.json',JSON.stringify(data),function(err){

@@ -368,7 +368,6 @@ function getStationStatus(req, res, next) {
     var data = {station_id: parseInt(req.query.staId)};
     var limit = parseInt(req.query.limit);
 
-    StationSocketStatus.StationSocketStatus[req.query.staId] = true;
     var stationData = {};
     if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
         stationData.StationSocketStatus = false;
