@@ -19,9 +19,29 @@
                 <blank-Station-List></blank-Station-List>
             </div>
         </div>
+
         <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
             <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>
         </div>
+        <div class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
+            <label>定位系统: </label>
+            <input type="checkbox" name="sys" value= 0 checked> GPS
+            <input type="checkbox" name="sys" value= 1 > GLS
+            <input type="checkbox" name="sys" value= 2 > BDS
+            <input type="checkbox" name="sys" value= 3 > 组合
+        </div>
+
+        <div id='options' class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
+            <label>统计选项: </label>
+            <input type="checkbox" name="sat_hist" checked> 卫星数
+            <input type="checkbox" name="err_hist" > 定位误差
+            <input type="checkbox" name="dop_hist" > DOP值
+            <input type="checkbox" name="PL_hist" > 保护水平
+            <input type="checkbox" name="hpl_num" > HPL超限时间
+            <input type="checkbox" name="vpl_num" checked> VPL超限时间
+
+        </div>
+
     </div>
 </div>
 <div id="dataStatisticsChartLoding" class="display-none" style="margin-left: 20px" >
@@ -29,12 +49,12 @@
 <div class="row" id="dataStatisticsChart" style="opacity: 0">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-12 col-xs-12 col-sm-12">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="StaNum_container">
                 <div class="portlet light ">
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">误差</span>
+                            <span class="caption-subject font-dark bold uppercase">卫星数统计图</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -46,12 +66,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="ErrHist_container">
                 <div class="portlet light ">
                     <div class="portlet-title" id="_width">
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">误差</span>
+                            <span class="caption-subject font-dark bold uppercase">水平误差/垂直误差统计图</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -63,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="Hdop_container">
                 <div class="portlet light ">
                     <div class="portlet-title" >
                         <div class="caption">
@@ -80,7 +100,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="VPL_container">
                 <div class="portlet light ">
                     <div class="portlet-title" >
                         <div class="caption">
@@ -97,7 +117,152 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12">
+
+
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GPSVPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="GPSVPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="GPSVPLTime_content" class="display-none">
+                            <div id="GPSVPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GPSHPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="GPSHPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="GPSHPLTime_content" class="display-none">
+                            <div id="GPSHPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GLSVPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="GLSVPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="GLSVPLTime_content" class="display-none">
+                            <div id="GLSVPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GLSHPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="GLSHPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="GLSHPLTime_content" class="display-none">
+                            <div id="GLSHPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="BDSVPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="BDSVPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="BDSVPLTime_content" class="display-none">
+                            <div id="BDSVPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="BDSHPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="BDSHPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="BDSHPLTime_content" class="display-none">
+                            <div id="BDSHPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GroupVPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="GroupVPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="GroupVPLTime_content" class="display-none">
+                            <div id="GroupVPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GroupHPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="GroupHPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="GroupHPLTime_content" class="display-none">
+                            <div id="GroupHPLTime" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="content_container">
                 <div class="portlet light ">
                     <div class="portlet-title" >
                         <div class="caption">
@@ -124,7 +289,7 @@
 
                                 <tbody id="startInfo">
                                 <tr ng-repeat="(key, value) in processResult" ng-model="processResult">
-                                    <td>{{ key}}</td>
+                                    <td>{{sysNav[key]}}</td>
                                     <td>{{value.acc95_h.mean}} </td>
                                     <td>{{value.acc95_v.mean}} </td>
                                     <td>{{value.continuity}} </td>
@@ -140,118 +305,7 @@
 
 
 
-            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
-                <!--<div class="portlet light ">-->
-                    <!--<div class="portlet-title">-->
-                        <!--<div class="caption">-->
-                            <!--<i class="icon-settings font-dark"></i>-->
-                            <!--<span class="caption-subject font-dark sbold uppercase">精确数据</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="portlet-body">-->
-                        <!--<div id="accuracy_Hori_loading">-->
-                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
-                        <!--<div id="accuracy_Hori_content" class="display-none">-->
-                            <!--<div id="accuracy_Hori" class="chart" style="min-width:400px;height:500px"></div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
-                <!--<div class="portlet light ">-->
-                    <!--<div class="portlet-title">-->
-                        <!--<div class="caption">-->
-                            <!--<i class="icon-settings font-dark"></i>-->
-                            <!--<span class="caption-subject font-dark sbold uppercase">精确数据</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="portlet-body">-->
-                        <!--<div id="accuracy_Vert_loading">-->
-                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
-                        <!--<div id="accuracy_Vert_content" class="display-none">-->
-                            <!--<div id="accuracy_Vert" class="chart" style="min-width:400px;height:500px"></div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
-                <!--<div class="portlet light ">-->
-                    <!--<div class="portlet-title">-->
-                        <!--<div class="caption">-->
-                            <!--<i class="icon-settings font-dark"></i>-->
-                            <!--<span class="caption-subject font-dark sbold uppercase">普通数据</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="portlet-body">-->
-                        <!--<div id="accuracy_95_Hori_loading">-->
-                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
-                        <!--<div id="accuracy_95_Hori_content" class="display-none">-->
-                            <!--<div id="accuracy_95_Hori" class="chart" style="min-width:400px;height:500px"></div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
-                <!--<div class="portlet light ">-->
-                    <!--<div class="portlet-title">-->
-                        <!--<div class="caption">-->
-                            <!--<i class="icon-settings font-dark"></i>-->
-                            <!--<span class="caption-subject font-dark sbold uppercase">普通数据</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="portlet-body">-->
-                        <!--<div id="accuracy_95_Vert_loading">-->
-                            <!--<img src="assets/img/loading.gif" alt="loading"/></div>-->
-                        <!--<div id="accuracy_95_Vert_content" class="display-none">-->
-                            <!--<div id="accuracy_95_Vert" class="chart" style="min-width:400px;height:500px"></div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="col-md-12 col-xs-12 col-sm-12">-->
-                <!--<div class="portlet light ">-->
-                    <!--<div class="portlet-title">-->
-                        <!--<div class="caption">-->
-                            <!--<i class="fa fa-book fa-fw font-dark"></i>-->
-                            <!--<span class="caption-subject font-dark sbold uppercase"> 事件 </span>-->
-                            <!--<button class="col-md-8 btn btn-circle green" ng-click="downloadData()"> 下 载</button>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                    <!--<div class="portlet-body">-->
-                        <!--<div class="table-responsive">-->
-                            <!--<integrity-List></integrity-List>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="row">-->
-                <!--<div class="col-lg-5 col-md-5 col-sm-5 col-xs-10 col-lg-offset-1 col-md-offset-1">-->
-                    <!--<div class="dashboard-stat dashboard-stat-v2 blue">-->
-                        <!--<div class="details">-->
-                            <!--<div class="number">-->
-                                <!--<span data-counter="counterup" data-ng-bind="continuity"></span>-->
-                            <!--</div>-->
-                            <!--<div class="desc"> 连续性</div>-->
-                        <!--</div>-->
-                        <!--<div class="visual">-->
-                            <!--<i class="fa fa-bar-chart-o"></i>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="col-lg-5 col-md-5 col-sm-5 col-xs-10">-->
-                    <!--<div class="dashboard-stat dashboard-stat-v2 blue">-->
-                        <!--<div class="details">-->
-                            <!--<div class="number">-->
-                                <!--<span data-counter="counterup" data-ng-bind="availability"></span>-->
-                            <!--</div>-->
-                            <!--<div class="desc"> 可用性</div>-->
-                        <!--</div>-->
-                        <!--<div class="visual">-->
-                            <!--<i class="fa fa-bar-chart-o"></i>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
+
         </div>
     </div>
 </div>

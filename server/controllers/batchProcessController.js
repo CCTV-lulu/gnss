@@ -10,7 +10,8 @@ function forkBatchProcess(username, batchProcessInfo, cb) {
 
         if (batchProcessResult.status === 200) {
             updateBatchProcessDate(batchProcessResult.username, 0);
-            batchChildProcess.send({message: 'close'})
+            batchChildProcess.send({message: 'close'});
+            AllUserBatchProcess[username] = undefined;
         }
         if (batchProcessResult.status === 300) {
             AllUserBatchProcess[username] = batchChildProcess;

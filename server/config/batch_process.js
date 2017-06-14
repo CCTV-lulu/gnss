@@ -59,11 +59,11 @@ function option_init(option,myOption) {
     option.dop_hist=myOption.dop_hist||0;
     option.PL_hist=myOption.PL_hist||0;
     option.acc95=1;
-    option.up_slice.hpl_num.flag=myOption.hpl_num?myOption.hpl_num.flag:0;
-    option.up_slice.hpl_num.up_min=50;
+    option.up_slice.hpl_num.flag=myOption.hpl_num||0;
+    option.up_slice.hpl_num.up_min=200;
     option.up_slice.hpl_num.up_len=30;
-    option.up_slice.vpl_num.flag=myOption.vpl_num?myOption.vpl_num.flag:0;
-    option.up_slice.vpl_num.up_min=50;
+    option.up_slice.vpl_num.flag=myOption.vpl_num||0;
+    option.up_slice.vpl_num.up_min=200;
     option.up_slice.vpl_num.up_len=30;
 }
 function satis_init(para,filter) {
@@ -71,15 +71,17 @@ function satis_init(para,filter) {
     para.bt=cmn.epoch2time([2017,5,11,0,0,0]);
     para.et=cmn.epoch2time([2017,5,12,23,59,59]);
 
-    para.hist[ca.SYS_GPS]=new hist_create();
-    para.hist[ca.SYS_GLO]=new hist_create();
-    para.hist[ca.SYS_CMP]=new hist_create();
-    para.hist[ca.SYS_ALL]=new hist_create();
-    para.option[ca.SYS_GPS]=new statis_option_create();
-    para.option[ca.SYS_GLO]=new statis_option_create();
-    para.option[ca.SYS_CMP]=new statis_option_create();
-    para.option[ca.SYS_ALL]=new statis_option_create();
+    //para.hist[ca.SYS_GPS]=new hist_create();
+    //para.hist[ca.SYS_GLO]=new hist_create();
+    //para.hist[ca.SYS_CMP]=new hist_create();
+    //para.hist[ca.SYS_ALL]=new hist_create();
+
+    //para.option[ca.SYS_GLO]=new statis_option_create();
+    //para.option[ca.SYS_CMP]=new statis_option_create();
+    //para.option[ca.SYS_ALL]=new statis_option_create();
     filter.sys.forEach(function(sys){
+        para.hist[sys]=new hist_create();
+        para.option[sys]=new statis_option_create();
         option_init(para.option[sys],filter.options);
     });
     //option_init(para.option[ca.SYS_GPS]);
@@ -131,6 +133,12 @@ function batch_process(batchProcessFiler){
         return   process.send({status:301, effectiveTime: files.allTime});
     }
     process.send({status:300, effectiveTime: files.allTime});
+
+    var para=new statis_create();
+    satis_init(para, batchProcessFiler);
+    statis.option_set(para);
+    console.log(para)
+
     processOneDay(files.allFilesData, 0,function(data){
         fs.writeFile('./public/json/'+ batchProcessFiler.username  +'.json',JSON.stringify(data),function(err){
             if(err) throw err;
@@ -138,16 +146,9 @@ function batch_process(batchProcessFiler){
         });
     });
 
-    batchProcessFiler.sys=[0,1];
-    batchProcessFiler.options={
-        sat_hist:1,
-        err_hist:1
-    };
 
 
-    var para=new statis_create();
-    satis_init(para, batchProcessFiler);
-    statis.option_set(para);
+
 
 
 
