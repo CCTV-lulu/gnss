@@ -59,8 +59,11 @@ module.exports.option_set=function(para){
     return 0;
 };
 module.exports.statistic_data=function (data) {
-    if(cmn.timediff(data.time,statistic_para.bt)<0 || cmn.timediff(data.time,statistic_para.et)>0)
+    if(cmn.timediff(data.time,statistic_para.bt)<0 || cmn.timediff(data.time,statistic_para.et)>0){
         return 1;
+
+    }
+
     for(var sys in statistic_result){
         try{
             if(data.data.hasOwnProperty(sys)){

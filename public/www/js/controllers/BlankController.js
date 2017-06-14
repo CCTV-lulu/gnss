@@ -1,105 +1,84 @@
 angular.module('MetronicApp').controller('BlankController', function ($scope, Mongodb, $location, Prompt, getStationStatus,
-                                                                          DateTable, DataAnalyseChart, EventData, $timeout, $interval) {
-    var getBatchDataPolling;
-    var timeDelay;
+                                                                      DateTable, DataAnalyseChart, EventData, $timeout, $interval, BatchProcess) {
+    //var getBatchDataPolling;
+    //var timeDelay;
+    init()
 
-    $interval.cancel(getBatchDataPolling);
-    $timeout.cancel(timeDelay);
-    $(".loading").animate({"width": "0%"}, 0);
-
-    $scope.$on('logout', function (event, url) {
-        $interval.cancel(getBatchDataPolling);
-        $timeout.cancel(timeDelay);
-        $scope.$emit('logout-connect-app','data')
-    });
-
-    $scope.$on('goOutBlank', function (event, data) {
-        $interval.cancel(getBatchDataPolling);
-        $timeout.cancel(timeDelay);
-        if (data == 'dashboard') {
-            return $location.path("/dashboard.html/" + localStorage.getItem("staId"))
-        } else {
-            return $location.path(data)
+    function init() {
+        $(".loading").animate({"width": "0%"}, 0);
+        DateTable.dateTable();
+        $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
+        $scope.filter = {
+            sys: [true, true, true, true],
+            option: {
+                sat_hist: true,
+                err_hist: true,
+                dop_hist: true,
+                PL_hist: true,
+                hpl_num: false,
+                vpl_num: false
+            }
         }
-    });
-
-    function showAllBaseStation() {
-        Mongodb.getUserStaId(function (data) {
-            if (data.allStation[0] != undefined) {
-                $scope.allBlankStation = data.allStation;
-            }
-            else{
-                var userSta = []
-                userSta.push(data.userStation||"")
-                //console.log(userSta)
-                $scope.allBlankStation = userSta;
-                //console.log($scope.allBaseStation)
-            }
-        })
     }
 
-    showAllBaseStation()
 
-    $scope.downloadData = function () {
-        Mongodb.downloadSatData(function (data) {
-            if(data.status == 202){
-                return  Prompt.promptBox('warning', '当前基站还没有数据！！')
+    function getFilter() {
+        var sys = [];
+        var options = {}
+        $('input[name=sys]').each(function () {
+            if (this.checked) {
+                sys.push(Number(this.value))
             }
+        });
+        $('#options input').each(function () {
+            if (this.checked) {
+                options[this.name] = 1;
+            }
+        });
+        return {
+            sys: sys,
+            options: options
+        }
 
-            location.href = "http://localhost:3000/downloadStaData"
-        })
     }
+
 
     $scope.findData = function () {
-            var startDate = $('#searchDateRange').html();
-            var stationId = $('#single').val();
-            if (stationId) {
-                $("#dataStatisticsChart").css("opacity", 0)
-                $('#dataStatisticsChartLoding').show();
-                var str = startDate.replace(new RegExp('-', 'gm'), ',')
-                    .replace(new RegExp(' ', 'gm'), ',');
-                var allDateArray = DateTable.allDate(startDate);
-                getStationStatus.getStationStatus(stationId, 1, function (data) {
-                    if(data.stationData == false) {
-                        $('#dataStatisticsChartLoding').hide();
-                        Prompt.promptBox('warning', '当前基站还没有数据！！')
-                    }else {
-                        var findData = {};
-                        findData.allDate = allDateArray;
-                        findData.sta_id = data.stationData[0].station_id;
-                        findData.bt = str.substring(0, 10);
-                        findData.et = str.substring(13, 23);
-                        findData.rb = [data.stationData[0].dealWithData.lat, data.stationData[0].dealWithData.lon, data.stationData[0].dealWithData.H];
-                        findData.username = localStorage.getItem('userName');
-                        Mongodb.findSatData(findData, function (data) {
-                            startBatchProcess(data)
-                        })
-                    }
-                });
-            } else {
-                Prompt.promptBox('warning', '请选择要查询的基站！！')
-            }
-    }
+        var startDate = $('#searchDateRange').html();
+        var stationId = $('#single').val();
+        if (stationId) {
+            $("#dataStatisticsChart").css("opacity", 0);
+            $('#dataStatisticsChartLoding').show();
+            var str = startDate.replace(new RegExp('-', 'gm'), ',')
+                .replace(new RegExp(' ', 'gm'), ',');
+            var allDateArray = DateTable.allDate(startDate);
 
-    function dataType(data) {
-        DataAnalyseChart.lineChart(data, 'accuracy', 'Hori', 'accuracy_Hori');
-        DataAnalyseChart.lineChart(data, 'accuracy', 'Vert', 'accuracy_Vert');
-        DataAnalyseChart.lineChart(data, 'accuracy_95', 'Hori', 'accuracy_95_Hori');
-        DataAnalyseChart.lineChart(data, 'accuracy_95', 'Vert', 'accuracy_95_Vert');
-    }
+            var findData = {};
+            findData.allDate = allDateArray;
+            findData.sta_id = stationId;
+            findData.bt = str.substring(0, 10);
+            findData.et = str.substring(13, 23);
+            var filer = getFilter();
+            findData.sys = filer.sys;
+            findData.options = filer.options
 
-    function dateTable() {
-        DateTable.dateTable();
-    }
+            BatchProcess.startBatchProcess(findData, function (data) {
+                startBatchProcess(data)
+            })
 
-    dateTable();
+
+        } else {
+            Prompt.promptBox('warning', '请选择要查询的基站！！')
+        }
+    };
+
 
     function startBatchProcess(data) {
+        //if (data.status == 201) {
+        //    waiting(data);
+        //    return Prompt.promptBox("warning", "有一个数据正在处理！将为你返回正在执行中的时间段分析结果")
+        //}
         if (data.status == 202) {
-            waiting(data)
-            return Prompt.promptBox("warning", "有一个数据正在处理！将为你返回正在执行中的时间段分析结果")
-        }
-        if (data.status == 201) {
             $('#dataStatisticsChartLoding').hide();
             return Prompt.promptBox("warning", "选择的日期间隔中数据为空！")
         }
@@ -107,46 +86,497 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     }
 
 //进度条
-    function waiting(data){
 
-        if(!$('.loading').is(":hidden")) return;
+    function waiting(data) {
+        var waitTime = parseInt(data.effectiveTime)
+        if (!show_wait(waitTime)) return;
+        getResult();
+
+    }
+
+    function show_wait(waitTime) {
+        var $loading = $('.loading');
+        if (!$loading.is(":hidden")) return false;
+        $('#dataStatisticsChart .col-xs-12').hide();
+        $loading.stop();
+        $loading.animate({"width": "0%"}, 0);
+        $loading.show();
+        $loading.animate({"width": "100%"}, 1000 * waitTime);
+        return true;
+    }
+
+    function getResult() {
+        if ($location.path() != '/blank') return;
+        BatchProcess.getBatchProcessResult(function (data) {
+            if (data.status == 400) {
+                return batchProcessErr()
+            }
+            if (data.result.isRunning === 1) {
+                return setTimeout(getResult, 5000)
+            }
+            if (data.result.isRunning === -1) {
+                return batchProcessErr();
+            }
+            //$interval.cancel(getBatchDataPolling);
+
+            $.getJSON('/json/' + data.result.userName + '.json', function (data) {
+
+                showProcessResult(data)
+            });
+
+        })
+    }
+
+    function batchProcessErr() {
+        $(".loading").hide();
+        //$interval.cancel(getBatchDataPolling);
+        Prompt.promptBox("warning", "处理异常请再次请求")
+    }
+
+    function showProcessResult(data) {
+        $('.loading').hide();
+        Prompt.promptBox("success", "数据处理完毕");
+        showErrHist('ErrHist', data);
+        showHdop('Hdop', data);
+        showVPL('VPL', data);
+        showTime(data)
+        showStaNum('StaNum', data);
+        showAvailability('content', data);
+        $('#dataStatisticsChartLoding').hide();
+        $("#dataStatisticsChart").css("opacity", 1);
+        //$scope.integritys = EventData.table(data.result.data);
+        //if (data.result.data.continuity && data.result.data.availability) {
+        //    $scope.continuity = data.result.data.continuity;
+        //    $scope.availability = data.result.data.availability;
+        //}
+
+    }
 
 
-        var waitTime = data.waitTime;
-        $interval.cancel(getBatchDataPolling);
-        $timeout.cancel(timeDelay)
+    function showErrHist(type, data) {
 
-        $(".loading").animate({"width": "0%"}, 0);
-        $(".loading").fadeIn();
-        $(".loading").animate({"width": "100%"}, 1000*waitTime);
-        timeDelay = $timeout(function () {
-            getBatchDataPolling = $interval(function () {
-                Mongodb.getUserFindStaData(function (data) {
-                    console.log('----------------------------')
-                    if(data.status == 202) {
-                        return;
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        var names = ['GPSErrHist', 'GLSErrHist', 'BDSErrHist', 'GroupErrHist'];
+
+        var series = [];
+        Object.keys(data).forEach(function (key) {
+            var info = {name: names[Number(key)], data: []};
+            if (!data[key].sat_hist) return;
+            data[key].herr_hist.Y.forEach(function (y, index) {
+                info.data.push([data[key].herr_hist.X[index], y])
+            });
+            if (info.data.length > 0) {
+                series.push(info)
+            }
+        });
+        if (series.length == 0) return;
+        $('#' + type + '_container').show();
+
+        Highcharts.setOptions({
+            lang: {
+                resetZoom: '重置',
+                resetZoomTitle: '重置缩放比例'
+            },
+            global: {
+                useUTC: false
+            }
+        });
+
+        $('#' + type).highcharts({
+
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                type: 'line',
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift',
+                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+                resetZoomButton: {
+                    position: {
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: 0,
+                        y: -30
+                    },
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 0,
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
                     }
-                    if(data.status == 201){
-                        $(".loading").fadeOut();
-                        $interval.cancel(getBatchDataPolling);
-                        return Prompt.promptBox("warning", "处理异常请再次请求")
-                    }
-                    $(".loading").fadeOut();
-                    $interval.cancel(getBatchDataPolling);
-                    Prompt.promptBox("success", "数据处理完毕")
-                    dataType(data.result.data);
-                    $('#dataStatisticsChartLoding').hide();
-                    $("#dataStatisticsChart").css("opacity", 1)
-                    $scope.integritys = EventData.table(data.result.data);
-                    if (data.result.data.continuity && data.result.data.availability) {
-                        $scope.continuity = data.result.data.continuity;
-                        $scope.availability = data.result.data.availability;
-                    }
-        
+                }
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+            subtitle: {
+                text: '双击选中区域放大图标，按住shift点击拖动'
+            },
+            //xAxis: {
+            //    categories: xAxis
+            //},
+            series: series
+        })
+    }
 
-                })
-            }, 5000)
-        }, waitTime * 1000)
+
+    function showAvailability(type, result) {
+        var newResult = {};
+
+        Object.keys(result).forEach(function (key) {
+            var value = result[key];
+            newResult[key] = {};
+            newResult[key].availability = value.availability;
+            newResult[key].continuity = value.continuity;
+            newResult[key].acc95_h = value.acc95_h;
+            newResult[key].acc95_v = value.acc95_v;
+            newResult[key].integrity = value.integrity
+        });
+
+        $scope.processResult = newResult;
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        $('#' + type + '_container').show();
+
+    }
+
+    function showHdop(type, data) {
+
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        var names = ['GPSHdop', 'GLSHdop', 'BDSHdop', 'GroupHdop'];
+
+        var series = [];
+        Object.keys(data).forEach(function (key) {
+            var info = {name: names[Number(key)], data: []};
+            if (!data[key].hdop_hist) return;
+            data[key].hdop_hist.X.forEach(function (x, index) {
+                info.data.push([x, data[key].hdop_hist.Y[index]])
+            });
+            if (info.data.length > 0) {
+                series.push(info)
+            }
+
+        });
+        if (series.length == 0) return;
+        $('#' + type + '_container').show();
+        Highcharts.setOptions({
+            lang: {
+                resetZoom: '重置',
+                resetZoomTitle: '重置缩放比例'
+            },
+            global: {
+                useUTC: false
+            }
+        });
+
+        $('#' + type).highcharts({
+
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                type: 'line',
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift',
+                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+                resetZoomButton: {
+                    position: {
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: 0,
+                        y: -30
+                    },
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 0,
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+            subtitle: {
+                text: '双击选中区域放大图标，按住shift点击拖动'
+            },
+
+            series: series
+        })
+    }
+
+
+    function showVPL(type, data) {
+
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        var names = ['GPSVpl', 'GLSVpl', 'BDSVpl', 'GroupVpl'];
+
+        var series = [];
+        Object.keys(data).forEach(function (key) {
+            var info = {name: names[Number(key)], data: []};
+            if (!data[key].hpl_hist) return;
+            data[key].hpl_hist.X.forEach(function (x, index) {
+                info.data.push([x, data[key].hpl_hist.Y[index]])
+            });
+            if (info.data.length > 0) {
+                series.push(info)
+            }
+        });
+        if (series.length == 0) return;
+        $('#' + type + '_container').show();
+
+        Highcharts.setOptions({
+            lang: {
+                resetZoom: '重置',
+                resetZoomTitle: '重置缩放比例'
+            },
+            global: {
+                useUTC: false
+            }
+        });
+
+        $('#' + type).highcharts({
+
+            exporting: {
+                enabled: false
+            },
+            chart: {
+                type: 'line',
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift',
+                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+                resetZoomButton: {
+                    position: {
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: 0,
+                        y: -30
+                    },
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 0,
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+            subtitle: {
+                text: '双击选中区域放大图标，按住shift点击拖动'
+            },
+            //xAxis: {
+            //    type: 'category',
+            //    tickWidth: 10
+            //
+            //},
+            series: series
+        })
+    }
+
+    function showTime(data) {
+        chartTimeLine('GPSVPLTime', data, 0, 'vpl_num');
+        chartTimeLine('GPSHPLTime', data, 0, 'hpl_num');
+        chartTimeLine('GLSVPLTime', data, 1, 'vpl_num');
+        chartTimeLine('GLSHPLTime', data, 1, 'hpl_num');
+        chartTimeLine('BDSVPLTime', data, 2, 'vpl_num');
+        chartTimeLine('BDSHPLTime', data, 2, 'hpl_num');
+        chartTimeLine('GroupVPLTime', data, 3, 'vpl_num');
+        chartTimeLine('GroupHPLTime', data, 3, 'hpl_num')
+    }
+
+    function chartTimeLine(id, data, sys, type) {
+
+        //var showData = data[type];
+        var series = [];
+        var name = id.replace('Time', '');
+        var info = {name: name, data: []};
+        var startTime;
+        sys = sys.toString();
+        if (!data[sys]) return;
+        var up_slice = data[sys].up_slice;
+        up_slice[type].X.forEach(function (x, index) {
+            var time = new Date(x).getTime();
+            if (index == 0) {
+
+                startTime = new Date(x).getTime();
+                console.log(startTime)
+            }
+            if (time - startTime <= 24 * 60 * 60 * 1000) {
+                info.data.push([time, up_slice[type].Y[index]])
+            } else {
+                console.log(time)
+            }
+
+
+        });
+        if (info.data.length > 0) {
+            series.push(info)
+        }
+
+        if (series.length == 0) return;
+        $('#' + id + '_loading').hide();
+        $('#' + id + '_content').show();
+        $('#' + id + '_container').show();
+        Highcharts.setOptions({
+            lang: {
+                resetZoom: '重置',
+                resetZoomTitle: '重置缩放比例'
+            },
+            global: {
+                useUTC: false
+            }
+        });
+        $('#' + id).highcharts({
+            chart: {
+                type: 'column',
+                zoomType: 'x',
+                panning: true,
+                panKey: 'shift',
+                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+                resetZoomButton: {
+                    position: {
+                        align: 'right',
+                        verticalAlign: 'top',
+                        x: 0,
+                        y: -30
+                    },
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 0,
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            },
+            xAxis: {
+                type: 'datetime',
+                dateTimeLabelFormats: {
+                    second: '%H:%M:%S',
+                    minute: '%e. %m %H:%M',
+                    hour: '%m/%e %H:%M',
+                    day: '%m/%e %H:%M',
+                    week: '%e. %m',
+                    month: '%b %y',
+                    year: '%Y'
+                }
+
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+
+            legend: {
+                enabled: true
+            },
+            //图例开关,默认是：true
+            series: series
+
+        });
+    }
+
+    function showStaNum(type, data) {
+        //var showData = data[type];
+        var names = ['GPSStaNum', 'GLSStaNum', 'BDSStaNum', 'GroupStaNum'];
+
+        var series = [];
+        Object.keys(data).forEach(function (key) {
+            var info = {name: names[Number(key)], data: []};
+            if (!data[key].sat_hist) return;
+            data[key].sat_hist.X.forEach(function (x, index) {
+                info.data.push([x, data[key].sat_hist.Y[index]])
+            });
+            if (info.data.length > 0) {
+                series.push(info)
+            }
+        });
+        if (series.length == 0) return;
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        $('#' + type + '_container').show();
+        $('#' + type).highcharts({
+            chart: {
+                type: 'column'
+
+            },
+            //线类型
+            title: {
+                text: ''
+            },
+            //标题
+            subtitle: {
+                text: ''
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+            xAxis: {
+                type: 'category',
+                tickWidth: 1
+
+            },
+            yAxis: {
+                min: 0,
+                max: 1,
+                title: {
+                    text: ''
+                }
+            },
+            legend: {
+                enabled: true
+            },
+            //图例开关,默认是：true
+            series: series
+
+        });
     }
 
 

@@ -7,7 +7,7 @@ var mongoose = require('mongoose'),
 module.exports.init = function () {
     var stationSchema = new mongoose.Schema({
         userName: String,
-        status: Boolean,
+        isRunning: Number,
         effectiveTime: String,
         data: Object,
         createTime:Date

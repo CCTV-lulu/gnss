@@ -29,7 +29,7 @@ module.exports = {
                     }
                 });
             }else{
-                batchProcessData.status = condition.status;
+                batchProcessData.isRunning = condition.isRunning;
                 batchProcessData.effectiveTime = condition.effectiveTime;
                 batchProcessData.createTime =  condition.createTime;
                 batchProcessData.data =  condition.data;

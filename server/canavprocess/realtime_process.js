@@ -36,32 +36,7 @@ function rtcm_init(sta_id) {
 }
 
 
-function postHttp(){
-    var http = require("http");
 
-    var options = {
-        "method": "POST",
-        "hostname": "localhost",
-        "port": "3000",
-        "path": "/getStationConfig"
-    };
-
-    var req = http.request(options, function (res) {
-        var chunks = [];
-
-        res.on("data", function (chunk) {
-            chunks.push(chunk);
-        });
-
-        res.on("end", function () {
-            var body = Buffer.concat(chunks);
-            console.log(body.toString());
-        });
-    });
-
-    req.write("{\n  staId: 1\n}");
-    req.end();
-}
 function getProopt(sta_id) {
 
 

@@ -1,6 +1,6 @@
 var passport = require('passport');
 var BatchProcess = require('../data/batchProcess.js');
-var killChild = require('../controllers/stationController');
+var batchProcessController = require('../controllers/batchProcessController');
 
 module.exports = {
     login: function (req, res, next) {
@@ -12,10 +12,10 @@ module.exports = {
             }
             req.logIn(user, function(err) {
                 if (err) return next(err);
-                killChild.killChild(user.username)
-                BatchProcess.deleteBatchProcess(user.username).then(function () {
-                    console.log(user.username+'success')
-                });
+                batchProcessController.killUserBatchProcess(user.username);
+                //BatchProcess.deleteBatchProcess(user.username).then(function () {
+                //    console.log(user.username+'success')
+                //});
                 return res.send(user);
             })
         });
@@ -23,10 +23,11 @@ module.exports = {
     },
 //登录验证完后登录
     logout: function (req, res, next) {
-        killChild.killChild(req.user.username)
-        BatchProcess.deleteBatchProcess(req.user.username).then(function () {
-            console.log('delete success')
-        });
+        batchProcessController.killUserBatchProcess(req.user.username);
+        //killChild.killChild(req.user.username)
+        //BatchProcess.deleteBatchProcess(req.user.username).then(function () {
+        //    console.log('delete success')
+        //});
 
        req.session.destroy();
         req.logout();
