@@ -80,6 +80,7 @@ function getStaData(cwd,logResolvePath,log_path) {
         var buff = Buffer.concat(allData);
         fs.writeFile(dataPath, buff,function () {
             console.log('-------------------------------------------ok')
+            followProcess(cwd, dataPath)
 
         });
     });
@@ -116,12 +117,13 @@ function GetDateDiff(startTime, endTime, diffType) {
 
 
 
-function followProcess(cwd, dataPath, stationId){
+function followProcess(cwd, dataPath){
     var stream;
     var len=300;
     var maxLen=400;
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
+    var stationId = fileName.split('.data-')[0];
     var timeInfo = fileName.replace("data-",'');
     var startTime;
     var endTime;
@@ -172,4 +174,5 @@ function followProcess(cwd, dataPath, stationId){
      });*/
 
 }
-//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-11",2);
+//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-11");
+
