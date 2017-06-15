@@ -239,7 +239,7 @@ function getAllFilePath(station, allDate){
         }
     });
     allFiles.allFilesData = allFilesData;
-    allFiles.allTime = allFileSize/5;
+    allFiles.allTime = allFileSize/2;
     return allFiles
 }
 
