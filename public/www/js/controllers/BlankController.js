@@ -136,10 +136,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     function showProcessResult(data) {
         $('.loading').hide();
         Prompt.promptBox("success", "数据处理完毕");
-        showErrHist('ErrHist', data);
-        showHdop('Hdop', data);
-        showVPL('VPL', data);
-        showTime(data)
+        showErrHist('HErrHist', data,'herr_hist');
+        showErrHist('VErrHist', data,'verr_hist');
+        showDop('Hdop', data, 'vdop_hist');
+        showDop('Vdop', data, 'hdop_hist');
+        showPL('VPL', data, 'vpl_hist');
+        showPL('HPL', data, 'hpl_hist');
+        showTime(data);
         showStaNum('StaNum', data);
         showAvailability('content', data);
         $('#dataStatisticsChartLoding').hide();
@@ -153,7 +156,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     }
 
 
-    function showErrHist(type, data) {
+    function showErrHist(type, data,showType) {
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -162,9 +165,9 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if (!data[key].sat_hist) return;
-            data[key].herr_hist.Y.forEach(function (y, index) {
-                info.data.push([data[key].herr_hist.X[index], y])
+            if (!data[key][showType]) return;
+            data[key][showType].Y.forEach(function (y, index) {
+                info.data.push([data[key][showType].X[index], y])
             });
             if (info.data.length > 0) {
                 series.push(info)
@@ -252,18 +255,18 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
     }
 
-    function showHdop(type, data) {
+    function showDop(type, data,showType) {
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSHdop', 'GLSHdop', 'BDSHdop', 'GroupHdop'];
+        var names = ['GPSDop', 'GLSDop', 'BDSDop', 'GroupDop'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if (!data[key].hdop_hist) return;
-            data[key].hdop_hist.X.forEach(function (x, index) {
-                info.data.push([x, data[key].hdop_hist.Y[index]])
+            if (!data[key][showType]) return;
+            data[key][showType].X.forEach(function (x, index) {
+                info.data.push([x, data[key][showType].Y[index]])
             });
             if (info.data.length > 0) {
                 series.push(info)
@@ -329,18 +332,18 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     }
 
 
-    function showVPL(type, data) {
+    function showPL(type, data,showType) {
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSVpl', 'GLSVpl', 'BDSVpl', 'GroupVpl'];
+        var names = ['GPSPL', 'GLSPL', 'BDSPL', 'GroupPL'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
-            if (!data[key].hpl_hist) return;
-            data[key].hpl_hist.X.forEach(function (x, index) {
-                info.data.push([x, data[key].hpl_hist.Y[index]])
+            if (!data[key][showType]) return;
+            data[key][showType].X.forEach(function (x, index) {
+                info.data.push([x, data[key][showType].Y[index]])
             });
             if (info.data.length > 0) {
                 series.push(info)

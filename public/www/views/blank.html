@@ -66,19 +66,54 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="ErrHist_container">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="VErrHist_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">水平误差</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="VErrHist_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="VErrHist_content" class="display-none">
+                            <div id="VErrHist" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="HErrHist_container">
                 <div class="portlet light ">
                     <div class="portlet-title" id="_width">
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">水平误差/垂直误差统计图</span>
+                            <span class="caption-subject font-dark bold uppercase">垂直误差</span>
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="ErrHist_loading">
+                        <div id="HErrHist_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="ErrHist_content" class="display-none">
-                            <div id="ErrHist" class="chart" style="height: 350px;"></div>
+                        <div id="HErrHist_content" class="display-none">
+                            <div id="HErrHist" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="Vdop_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">VDOP</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="Vdop_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="Vdop_content" class="display-none">
+                            <div id="Vdop" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -88,7 +123,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HDOP/VDOP</span>
+                            <span class="caption-subject font-dark bold uppercase">HDOP</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -105,7 +140,7 @@
                     <div class="portlet-title" >
                         <div class="caption">
                             <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">HPL/VPL</span>
+                            <span class="caption-subject font-dark bold uppercase">VPL</span>
                         </div>
                     </div>
                     <div class="portlet-body">
@@ -113,6 +148,23 @@
                             <img src="assets/img/loading.gif" alt="loading"/></div>
                         <div id="VPL_content" class="display-none">
                             <div id="VPL" class="chart" style="height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="HPL_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">HPL</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="HPL_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="HPL_content" class="display-none">
+                            <div id="HPL" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
