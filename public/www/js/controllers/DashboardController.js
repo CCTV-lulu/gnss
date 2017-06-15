@@ -190,7 +190,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 StarMapChart.starMap(chartData.satpos);
                 settingSys(chartData);
                 updateH(chartData);
-                //updateDxDy(chartData)
+                updateDxDy(chartData)
                 updateChart(chartData);
             })
         })
@@ -393,7 +393,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                         symbol: "circle"
                     },
                     animation: false,
-                    lineWidth: 1,
+                    lineWidth: 0,
                     pointStart: 0,
                     pointInterval: 45
 
