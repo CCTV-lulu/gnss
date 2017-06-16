@@ -19,8 +19,10 @@ module.exports = function (app) {
         console.log('/--------------get log')
         var logPath = config.logPath.toString() + req.file.originalname;
         var logResolvePath = cwd+logPath;
-        var name = fs.rename(req.file.path, logResolvePath);
-        getStaData(cwd,logResolvePath,logPath);
+        var name = fs.rename(req.file.path, logResolvePath,function(){
+            getStaData(cwd,logResolvePath,logPath);
+        });
+
         fs.readdir(cwd+"/logs", function (err, files) {
             if (err) {
                 return
