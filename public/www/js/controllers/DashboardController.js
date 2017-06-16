@@ -86,7 +86,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
 
-                            //startOneStaStatus();
+                            startOneStaStatus();
                             $('.table-responsive tbody').show();
 
                             //showSatelliteNum(data.stationData[i].satnum)
