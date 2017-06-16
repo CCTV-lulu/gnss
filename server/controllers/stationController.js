@@ -301,39 +301,28 @@ function getUserStationInfo(req, res) {
 
     if (req.user.roles.includes('admin')) {
         Station.all().then(function (allStations) {
-            return res.send({allStations:  allStations})
+            return res.send({allStations: allStations})
         });
-    }else{
+    } else {
         UserStationInfo.findStaIdByName(req.user.username, function (err, userStationInfo) {
             if (err) {
                 return res.send({status: false, message: '拉取信息失败'})
             }
-            return res.send({userStationInfo:  userStationInfo})
+            return res.send({userStationInfo: userStationInfo})
         })
     }
 
 }
 
 
-function  getStationConfig (req, res){
 
-    StationConfig.findByStaId(req.body.StaId,function(stationConfig){
-        if(stationConfig.status){
-            return res.send({status: true, config: stationConfig.config})
-        }
-        res.send({status: false})
-    });
-
-
-
-}
 
 function deleteStation(req, res) {
     Station.deleteByName(req.body.name).then(function (result) {
         UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
             UsersData.deleteUserStationList(req.body.name).then(function (results) {
-                StationConfig.deleteByStaName(req.body.name).then(function(){
-                    res.send({status:true})
+                StationConfig.deleteByStaName(req.body.name).then(function () {
+                    res.send({status: true})
                 });
             })
         })
@@ -345,15 +334,15 @@ function deleteStation(req, res) {
     })
 }
 function addStation(req, res) {
-    var newStation = {name:req.body.name,staId:req.body.staId};
+    var newStation = {name: req.body.name, staId: req.body.staId};
     Station.create(newStation).then(function (result) {
-        if(result.status){
-            StationConfig.create(newStation).then(function(){
-                Station.all().then(function(allStation){
-                    res.send({status:true, allStations:allStation})
+        if (result.status) {
+            StationConfig.create(newStation).then(function () {
+                Station.all().then(function (allStation) {
+                    res.send({status: true, allStations: allStation})
                 })
             })
-        }else{
+        } else {
             res.send(result)
         }
 
@@ -376,7 +365,7 @@ function getStationStatus(req, res, next) {
         var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId];
         stationData.StationSocketStatus = socketStatus;
     }
-    stationData.stationData = StationSocketStatus.getStatInfo(limit,req.query.staId);
+    stationData.stationData = StationSocketStatus.getStatInfo(limit, req.query.staId);
 
     res.send(stationData);
 
@@ -408,14 +397,20 @@ function getStationStatus(req, res, next) {
 }
 
 
-/*==========================new*/
+/*==========================threshold*/
 
+function getStationConfig(req, res) {
 
+    StationConfig.findByStaId(req.body.StaId, function (stationConfig) {
+        if (stationConfig.status) {
+            return res.send({status: true, config: stationConfig.threshold})
+        }
+        res.send({status: false})
+    });
 
+}
 
-
-
-
+/*==================================*/
 
 
 

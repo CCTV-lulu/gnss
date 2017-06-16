@@ -278,80 +278,71 @@ function estpos(obs, rs, dts,vars, svh, nav,opt,NX ,sol, vsat,azel,vare,H,v,sst)
 function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
     var info,i,j,p;
     var n,m,k,len;
-    var A,S,I,Ht,V,w;
-    var sigma=0,pbiasB,FSN,FSN_t,HPL,HPL_t,VPL,VPL_t,SSE;
-    var FSat;
+    var svh_e=[];
+    var A=[],S=[],I,Ht,V,w;
+    var sigma=0,pbiasB,FSN,FSN_t,HPL,HPL_t,VPL,VPL_t,SSE,sys,sat;
+    var FSat,svh_r=[];
+    len=obs.length;
     n=sol.ns;
     m=sol.navsys.length+3;
-    k=n-m;  //degrees of freedom
+    k=n-m;
+    for(j=0;j<len;j++){
+        svh_e[j]=svh[j];
+        svh_r[j]=0;
+    }
+    while ((SSE=raim_for(obs,rs,dts,vars,svh,nav,opt,NX,sol,vare,H,v,A,S))>opt.threshold_PFD[k]){
+        FSN = v[0]*v[0]/S[0][0];
+        FSat = sst[0];
+        if(S[0][0]<0)
+            return 3;
+        HPL = math.sqrt((A[0][0]*A[0][0]+A[1][0]*A[1][0])/S[0][0]);
+        VPL = math.sqrt((A[2][0]*A[2][0])/S[0][0]);
+        n=sol.ns;
+        for(i=1;i<n;i++){
+            if(S[i][i]<0)
+                return 3;
+            FSN_t = v[i]*v[i]/S[i][i];
+            HPL_t = math.sqrt((A[0][i]*A[0][i]+A[1][i]*A[1][i])/S[i][i]);
+            VPL_t = math.sqrt((A[2][i]*A[2][i])/S[i][i]);
+            if(HPL_t==Infinity || VPL_t==Infinity || isNaN(HPL_t) || isNaN(VPL_t))
+                return 3;
+            if(FSN_t>FSN){
+                FSN = FSN_t;
+                FSat = sst[i];
+            }
+        }
+        sys=cmn.str2sys(FSat.substr(0,1));
+        sat=parseInt(FSat.substr(1,FSat.length-1));
+
+        for(j=0;j<len;j++){
+            if(obs[j].sys==sys && obs[j].sat==sat){
+                svh_e[j]=1;
+                svh_r[j]=1;
+            }
+        }
+        vsat=new Array();
+        vare=new Array();
+        azel=new Array();
+        v=new Array();
+        H=new Array(NX);
+        sst=new Array();
+        if(estpos(obs,rs,dts,vars,svh_e,nav,opt,NX,sol,vsat,azel,vare,H,v,sst)){
+            return 2;
+        }
+    }
+    /* find excluded sat and calculate HPL/VPL */
+    n=sol.ns;
+    sigma=0;
+    for (p=0;p<n;p++)
+        sigma += vare[p];
+    sigma = math.sqrt(sigma/n);
+    k=n-m;
     if (k<=0) {
         return 1;
     }
-    /* calculate pbiasB */
-    for (i=0;i<n;i++)
-        sigma += vare[i];
-    sigma = math.sqrt(sigma/n);
     if(k>opt.nclamda_PMD.length)
         return 2;
     pbiasB = sigma*math.sqrt(opt.nclamda_PMD[k]);
-
-    /* calculate matrix A/S */
-    I=math.eye(n);
-    V=math.inv(math.diag(vare));
-    Ht=math.transpose(H);
-    //A=math.multiply(math.inv(math.multiply(math.multiply(H,V),Ht)),H);
-    A=math.multiply(math.inv(math.multiply(H,Ht)),H);
-    //S=math.subtract(I,math.multiply(math.multiply(Ht,A),V)).valueOf();
-    S=math.subtract(I,math.multiply(Ht,A)).valueOf();   // S = I-H' x A
-    w=math.multiply(S,v);
-    SSE=math.norm(w);
-    /* find excluded sat and calculate HPL/VPL */
-    if(SSE>opt.threshold_PFD[k]){
-        var svh_e=[],rms_e,rms=100;
-        var stat=0;
-        len=obs.length;
-        for(i=0;i<len;i++){
-            for(j=0;j<len;j++){
-                if(j==i)
-                    svh_e[j]=1;
-                else
-                    svh_e[j]=svh[j];
-            }
-            vsat=new Array();
-            vare=new Array();
-            azel=new Array();
-            v=new Array();
-            H=new Array(NX);
-            sst=new Array();
-            if(!estpos(obs,rs,dts,vars,svh_e,nav,opt,NX,sol,vsat,azel,vare,H,v,sst)){
-                rms_e=0;
-                n=sol.ns;
-                sigma=0;
-                for (p=0;p<n;p++)
-                    sigma += vare[p];
-                sigma = math.sqrt(sigma/n);
-                k=n-m;
-                if(k>opt.nclamda_PMD.length)
-                    return 2;
-                pbiasB = sigma*math.sqrt(opt.nclamda_PMD[k]);
-                I=math.eye(n);
-                V=math.inv(math.diag(vare));
-                Ht=math.transpose(H);
-                //A=math.multiply(math.inv(math.multiply(math.multiply(H,V),Ht)),H);
-                A=math.multiply(math.inv(math.multiply(H,Ht)),H);
-                //S=math.subtract(I,math.multiply(math.multiply(Ht,A),V)).valueOf();
-                S=math.subtract(I,math.multiply(Ht,A)).valueOf();   // S = I-H' x A
-                w=math.multiply(S,v);
-                SSE=math.norm(w);
-                if(SSE>opt.threshold_PFD[k])
-                    continue;
-                stat=1;
-                break;
-            }
-        }
-        if(stat==0)
-            return 3;
-    }
     FSN = v[0]*v[0]/S[0][0];
     FSat = sst[0];
     if(S[0][0]<0)
@@ -382,7 +373,40 @@ function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
     sol.VPL=pbiasB*VPL;
     sol.HPL=pbiasB*HPL;
     sol.ex=FSat;
+    sol.svh=svh_r;
     return 0;
+}
+function raim_for(obs,rs,dts,vars,svh,nav,opt,NX,sol,vare,H,v,A,S) {
+    var i,n,m,k;
+    var sigma=0,pbiasB,I,Ht,V,w,SSE;
+    var At,St;
+    n=sol.ns;
+    m=sol.navsys.length+3;
+    k=n-m;  //degrees of freedom
+    if (k<=0) {
+        return 1;
+    }
+    /* calculate pbiasB */
+    for (i=0;i<n;i++)
+        sigma += vare[i];
+    sigma = math.sqrt(sigma/n);
+    if(k>opt.nclamda_PMD.length)
+        return 0;
+    pbiasB = sigma*math.sqrt(opt.nclamda_PMD[k]);
+
+    /* calculate matrix A/S */
+    I=math.eye(n);
+    //V=math.inv(math.diag(vare));
+    Ht=math.transpose(H);
+    //A=math.multiply(math.inv(math.multiply(math.multiply(H,V),Ht)),H);
+    At=math.multiply(math.inv(math.multiply(H,Ht)),H);
+    //S=math.subtract(I,math.multiply(math.multiply(Ht,A),V)).valueOf();
+    St=math.subtract(I,math.multiply(Ht,At)).valueOf();   // S = I-H' x A
+    w=math.multiply(St,v);
+    for(i=0;i<At.length;i++)A[i]=At[i];
+    for(i=0;i<St.length;i++)S[i]=St[i];
+    SSE=math.norm(w);
+    return SSE;
 }
 function resdop(obs, rs,dts,nav,rr,x,azel,vsat, v,H){
     var rate,pos=new Array(3),E=new Array(3),a=new Array(3),

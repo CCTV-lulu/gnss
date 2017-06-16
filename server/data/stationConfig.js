@@ -88,6 +88,19 @@ module.exports = {
     },
     deleteByStaName: function (stationName) {
         return StationConfig.remove({stationName: stationName}).exec()
+    },
+    all: function(){
+        var defer = Promise.defer();
+        StationConfig.where().exec(function (err, data) {
+            if (err) {
+                defer.reject('do not find all users')
+            } else {
+                defer.resolve({status:true, stationConfig: data})
+            }
+        });
+        return defer.promise;
     }
+
+
 
 };

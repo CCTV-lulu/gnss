@@ -11,7 +11,6 @@ var nodepos = require('./pvtpos/nodepos.js');
 var pnt = require('./pvtpos/pntpos.js');
 var math=require('mathjs');
 var cwd=__dirname;
-var http =  require('http');
 
 var rtcmParse={};
 var stationPara = {};
@@ -34,12 +33,7 @@ function rtcm_init(sta_id) {
     rtcm=rtcmParse[sta_id];
     return rtcm;
 }
-
-
-
 function getProopt(sta_id) {
-
-
     var staopt = path.join(cwd, '/config/opt' + sta_id + '.json');
     if (fs.existsSync(staopt)) {
         try {
@@ -60,9 +54,6 @@ function getProopt(sta_id) {
 function pos_config(sta_id,prcopt) {
     var para={};
     if (!stationPara.hasOwnProperty(sta_id)) {
-        if(!prcopt){
-            prcopt = getProopt(sta_id);
-        }
         //var prcopt = getProopt(sta_id);
         if(prcopt!=0){
             stationPara[sta_id] = new nodepos.posPara_create(prcopt);
@@ -77,9 +68,9 @@ function pos_config(sta_id,prcopt) {
     return para;
 }
 
-module.exports.parser_pos=function(sta_id,data,prcopt) {
+module.exports.parser_pos=function(sta_id,data,opt) {
     var rtcm=rtcm_init(sta_id);
-    var para=pos_config(sta_id,prcopt);
+    var para=pos_config(sta_id,opt);
     var pos_list = [];
     if(para!=0){
         var results=[];
@@ -154,10 +145,10 @@ module.exports.parser_pos=function(sta_id,data,prcopt) {
     }
     return pos_list;
 };
-module.exports.procset=function (sta_id) {
+module.exports.procset=function (sta_id,prcopt) {
     try{
         if(stationPara.hasOwnProperty(sta_id)){
-            var prcopt=getProopt(sta_id);
+            //var prcopt=getProopt(sta_id);
             var prcUp=stationPara[sta_id].prcopt;
             prcUp.mode=prcopt.mode;           /* positioning mode (PMODE_???) */
             prcUp.nf=prcopt.nf;             /* number of frequencies (1:L1,2:L1+L2,3:L1+L2+L5) */
@@ -214,10 +205,13 @@ module.exports.delconfig=function (sta_id) {
 
 function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     prcopt.sys = sys;
+    sol.ex="";
+    sol.VPL=0;
+    sol.HPL=0;
     pnt.pntpos_RAIM(obs, nav, prcopt, sol);
     logjson.posR[sys] = new nodepos.posR_create();
     nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //nodepos.eleUpdate(para);
-    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

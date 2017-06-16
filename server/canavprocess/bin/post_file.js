@@ -5,7 +5,7 @@ var cmn=require('../routes/comn');
 var opt=require('../config/optcomm.json');
 var readline=require('readline');
 var statis=require('../statistics_process');
-var test_file='/Users/chen/2016work/new_gnss/followData/beijing-thu.data-2017-06-12';
+var test_file='/home/long/document/data/rover_20170606_log';
 
 var stream=fs.createReadStream(test_file);
 var readfile=new create_filestream(test_file);
@@ -16,7 +16,6 @@ function statis_create() {
     this.hist={};    //new hist_create();
     this.option={};//new statis_option_create();
 }
-
 function statis_option_create() {
     this.sat_hist=0;
     this.err_hist=0;
@@ -102,8 +101,8 @@ function option_init(option) {
 }
 function satis_init(para) {
     para.id=0;
-    para.bt=cmn.epoch2time([2017,5,12,0,0,0]);
-    para.et=cmn.epoch2time([2017,5,12,23,59,59]);
+    para.bt=cmn.epoch2time([2017,4,28,11,45,0]);
+    para.et=cmn.epoch2time([2017,4,28,13,10,30]);
     para.hist[ca.SYS_GPS]=new hist_create();
     para.hist[ca.SYS_GLO]=new hist_create();
     para.hist[ca.SYS_CMP]=new hist_create();
@@ -118,10 +117,7 @@ function satis_init(para) {
     option_init(para.option[ca.SYS_ALL]);
 }
 var para=new statis_create();
-
-
 satis_init(para);
-
 statis.option_set(para);
 function create_filestream(file) {
 

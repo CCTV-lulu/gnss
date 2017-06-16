@@ -1,19 +1,47 @@
 angular.module('MetronicApp').controller('ThresholdController', function ($rootScope, $scope, $http, settingInfo, $location,
-                                                                          getCommitThreshold, Prompt) {
+                                                                          getCommitThreshold, Prompt,Threshold) {
+    init()
 
-    $scope.$on('logout', function (event, url) {
-        $scope.$emit('logout-connect-app','data')
-        //$('body').addClass('page-on-load');
-        //location.reload(true)
-    });
+    function init(){
+        $scope.station = $rootScope.allStations;
+
+        $scope.allStations = $rootScope.allStations;
+        $rootScope.$watch('allStations',function(allStations){
+            if(allStations==undefined) return;
+            $scope.allStations = allStations;
+            $scope.station = $scope.allStations[0] ? $scope.allStations[0].sta_id : ''
+
+        });
+
+        $scope.allSingal = {
+            2:'BDS',
+            0:'GPS',
+            1:'GLS',
+            3:'组合'
+        };
+        $scope.signal = '0';
+    }
+    function getThreshold(){
+        Threshold.getThreshold(function(threshold){
+            $scope.threshold = threshold
+        })
+    }
+
+
+
+
+    /*==========================*/
+
+
+
 
     $scope.getStationThreshold = function (station) {
         var staName = station || $('#single').val();
         localStorage.setItem('thresholdBastation', staName);
-        getCommitThreshold.threshold(staName, function (data) {
-            var Threshold = data.staThreshold;
-            $scope.test = Threshold;
-        })
+        //getCommitThreshold.threshold(staName, function (data) {
+        //    var Threshold = data.staThreshold;
+        //    $scope.test = Threshold;
+        //})
     }
 
     $scope.commitThreshold = function (Max, Min) {
@@ -44,4 +72,10 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
             $scope.test = undefined;
         }
     })
+
+    $scope.$on('logout', function (event, url) {
+        $scope.$emit('logout-connect-app','data')
+        //$('body').addClass('page-on-load');
+        //location.reload(true)
+    });
 });

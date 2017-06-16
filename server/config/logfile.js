@@ -162,7 +162,6 @@ function followProcess(cwd, dataPath){
             stream.on("close", function () {
                 console.log('the file process close');
                 fwrite.close();
-                process.emit(1);
             });
         }
     });

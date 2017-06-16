@@ -313,7 +313,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         };
         for (var i in webIn.posR) {
             if (webIn.posR[i].stat == 0) {
-                webIn.posR[i] = new PosR()
+                webIn.posR[i].HPL = 0;
+                webIn.posR[i].VPL = 0;
             }
         }
 
@@ -581,5 +582,22 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             getBatchProcessResult: getBatchProcessResult
         }
 
+    })
+    .factory('Threshold',function($http, $location, settingInfo, Prompt, Passport, httpRequest){
+        var url = "http://" + settingInfo.server + ":" + settingInfo.port;
+        function setThreshold(data, cb) {
+            httpRequest.post(url + "/setThreshold", data, function (result) {
+                cb(result)
+            })
+        }
+        function getThreshold(cb){
+            httpRequest.httpGet( url + "/threshold", function (result) {
+                cb(result)
+            })
+        }
+        return {
+            setThreshold: setThreshold,
+            getThreshold: getThreshold
+        }
     });
 

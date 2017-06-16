@@ -181,7 +181,7 @@ function satR_create() {
     this.tow=0;
     this.utc="";
     this.svh=1;
-    this.ELe=0;
+    this.Ele=0;
     this.Azi=0;
     this.SNR=[0,0];
     this.ura=0;
@@ -932,10 +932,10 @@ function satShowStruct(obs,nav,sol,logjson) {
         ob.sat=obs[i].sat;
         ob.SNR[0]=obs[i].SNR[0]*0.25;
         ob.SNR[1]=obs[i].SNR[1]*0.25;
-        if(sol.stat){
+        //if(sol.stat){
             ob.Azi = sol.azel[i * 2]*ca.R2D;
             ob.Ele = sol.azel[1 + i * 2]*ca.R2D;
-        }
+        //}
         if(ob.sys==ca.SYS_GPS){
             if(nav.ura_gps[ob.sat-1]!=undefined){
                 ob.ura=nav.ura_gps[ob.sat-1].ura;
@@ -970,6 +970,9 @@ function satShowStruct(obs,nav,sol,logjson) {
             time=cmn.gpst2bdt(obs[i].time);
             cmn.time2bdt(time,ws);
             time=time2string(time);
+        }
+        if(sol.svh[i]>0){
+            ob.svh=1;
         }
         ob.week=ws[0];
         ob.tow=ws[1];

@@ -48,5 +48,4 @@ module.exports = function (app) {
     app.post('/startBatchProcess', auth.isInRole('admin'), controllers.batchProcess.startBatchProcess);
 
 
-
 };

@@ -127,9 +127,7 @@ function integrity_strunt(posR,hist,para,cont) {
     var time = posR.time;
     var fail=new fail_create();
     fail.startTime=time;
-
     if (posR.posNum <= posR.navsys.length + 3) {
-
         fail.type.push(opt.hpl_cant);
         haserr=1;
     }
@@ -147,7 +145,6 @@ function integrity_strunt(posR,hist,para,cont) {
     if(haserr>0){
         return ;
     }
-
     if(para.err_hist>0){
         accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, dH);
         accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, dV);

@@ -41,8 +41,9 @@ module.exports.parser_pos=function(data) {
     var pos_list = [];
     var results = parse.datatype(rtcm, data);
     results.forEach(function (sta_data) {
-        var sta_id = 0;
         var logjson = new nodepos.logOutJson();
+        //var logsat={};
+        //logsat.satR=[];
         if (nodepos.updateObsNav(sta_data, para, logjson)) {
             if(cmn.timediff(sta_data.time,prcopt.bt)<0 || cmn.timediff(sta_data.time,prcopt.et)>0)
                 return false;
@@ -77,6 +78,7 @@ module.exports.parser_pos=function(data) {
                     }
                     follow_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
                     nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
+                    //nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logsat);
                 }
             }
             catch (err){
@@ -88,7 +90,7 @@ module.exports.parser_pos=function(data) {
     });
     return pos_list;
 };
-module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
+module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
     if(bt.length<6 || et.length<6){
         return 1;
     }
@@ -101,9 +103,6 @@ module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
     rtcm.buff=new Buffer(len*5);
     rtcm.time=prcopt.bt;
     rtcm.realtime=1;
-    if(!opt_init){
-        opt_init = getProopt(sta_id);
-    }
     //var opt_init = getProopt(sta_id);
     if(opt_init!=0){
         para = new nodepos.posPara_create(opt_init);
@@ -119,10 +118,14 @@ module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
 
 function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     prcopt.sys = sys;
+    sol.ex="";
+    sol.VPL=0;
+    sol.HPL=0;
     pnt.pntpos_RAIM(obs, nav, prcopt, sol);
     logjson.posR[sys] = new nodepos.posResult();
     nodepos.posOutStruct(para, sys, logjson);
+    //nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //logjson.time=sol.time;
-    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

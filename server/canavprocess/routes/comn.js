@@ -369,6 +369,19 @@ function time2string_Local(time) {
 function sysstr(sys) {
     return syscode[sys];
 }module.exports.sysstr=sysstr;
+function str2sys(str) {
+    if(str==syscode[0]){
+        return ca.SYS_GPS;
+    }
+    else if(str==syscode[1]){
+        return ca.SYS_GLO;
+    }
+    else if(str==syscode[2]){
+        return ca.SYS_CMP;
+    }
+    else
+        return ca.SYS_ALL;
+}module.exports.str2sys=str2sys;
 function sysclude(sys,opt) {
     var stat=1,i;
     for(i=0;i<opt.navsys.length;i++){
