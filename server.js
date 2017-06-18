@@ -1,14 +1,14 @@
 var express = require('express');
 
-var env = process.argv[2]|| process.env.NODE_ENV || 'development';
+var env = process.argv[2] || process.env.NODE_ENV || 'development';
 
 var app = express();
 var config = require('./server/config/config')[env];
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:63342');
     res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-type','Accept');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Content-type', 'Accept');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
     next();
 });
@@ -18,10 +18,22 @@ require('./server/config/mongoose')(config);
 require('./server/config/passport')();
 require('./server/config/routes')(app);
 require('./server/config/logfile')(app);
+var messagequeue = require('./server/config/messagequeue');
+messagequeue.initSockectServer();
 
-app.listen(config.port);
+
+var morgan = require('morgan');
+var faye = require('faye');
+var http = require('http');
+var bayeux = new faye.NodeAdapter({mount: '/faye', timeout: 45});
+var server = http.createServer(app);
+
+messagequeue.initSockectClinet(bayeux)
+
+bayeux.attach(server);
 
 
+server.listen(config.port);
 
 
 console.log("Server running on port: " + config.port);

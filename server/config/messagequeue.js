@@ -11,10 +11,10 @@ var app = express();
 var server = require('http').Server(app);
 
 var io = require('socket.io')(server);
-var statInfo ={};
+var statInfo = {};
 var amqp = require('amqp-connection-manager');
 //var parser = require('../parser');
-var parse=require('../canavprocess/realtime_process.js');
+var parse = require('../canavprocess/realtime_process.js');
 var StationConfig = require('../data/stationConfig.js');
 
 var AllStationsConfig = {};
@@ -56,11 +56,12 @@ function saveStaInfo(data) {
         //updated_at: updated_at,
         data: data
     };
-    if(!statInfo[data.station_id]){
+    checkThreshold(data)
+    if (!statInfo[data.station_id]) {
         statInfo[data.station_id] = []
     }
     statInfo[data.station_id].push(staInfo);
-    if(statInfo[data.station_id].length>300){
+    if (statInfo[data.station_id].length > 300) {
         statInfo[data.station_id].shift()
     }
 
@@ -122,24 +123,84 @@ function releaseCacheBuffer(station) {
 
 var allBuffers = {};
 
+//io.on('connection', function (socket) {
+//    var stationName = socket.handshake.query.station;
+//    console.log(socket.handshake.query.station)
+//    socket.on('disconnect', function () {
+//        StationSocketStatus[stationName] = false
+//    });
+//    StationSocketStatus[stationName] = true;
+//
+//    socket.on('' + stationName, function (data) {
+//        if (!StationSocketStatus[stationName]) {
+//            StationSocketStatus[stationName] = true;
+//        }
+//        onMessage(data);
+//    }, function (error) {
+//        console.log(error)
+//    });
+//});
 
 
+function initSockectServer() {
 
-function changeStationConfig(staId, config){
+    io.on('connection', function (socket) {
+        var stationName = socket.handshake.query.station;
+        console.log(socket.handshake.query.station);
+        socket.on('disconnect', function () {
+            StationSocketStatus[stationName] = false
+        });
+        StationSocketStatus[stationName] = true;
+        socket.on('' + stationName, function (data) {
+            if (!StationSocketStatus[stationName]) {
+                StationSocketStatus[stationName] = true;
+            }
+            onMessage(data);
+        }, function (error) {
+            console.log(error)
+        });
+    });
+    server.listen(33666);
+}
+var faye;
+function initSockectClinet(bayeux) {
+    faye = bayeux;
+
+}
+function checkThreshold(data) {
+    var threshold = getStationConfig(data.station_id).threshold;
+    if(threshold==undefined) return;
+    Object.keys(data).forEach(function (sys) {
+        if (threshold.sys) {
+            Object.keys(threshold.sys).forEach(function (type) {
+                console.log(data[sys][type], threshold.sys[type])
+                if (data[sys][type] > threshold.sys[type]) {
+                    setFaye(data.station_id, sys, type)
+                }
+            })
+        }
+    })
+}
+function setFaye(station_id, sys, type) {
+    faye.getClient().publish('/channel/' + station_id, {sys: sys, type: type})
+}
+
+
+function changeStationConfig(staId, config) {
     AllStationsConfig[staId] = config;
 }
 
-function getStationConfig(staId){
-    if(AllStationsConfig[staId] !== undefined){
-       return AllStationsConfig[staId]
+function getStationConfig(staId) {
+    if (AllStationsConfig[staId] !== undefined) {
+        return AllStationsConfig[staId]
     }
-    StationConfig.findByStaId(staId).then(function(result){
-        if(result.status){
-            AllStationsConfig[staId] = result.stationConfig.config
+    StationConfig.findByStaId(staId).then(function (result) {
+        if (result.status) {
+            AllStationsConfig[staId] = result.stationConfig
         }
 
     });
-    return 0
+    return {config:0, threshold:{}}
 
 }
 
@@ -148,16 +209,12 @@ function onMessage(data) {
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    //var cacheBuffers = getCacheBuffer(message.station, buf, getStationConfig[data.station]);
-    //var buffLength = cacheBuffers.buffLength;
-    //var buffers = cacheBuffers.buffers;
-    //var bigBuff = Buffer.concat(buffers);
-    var optJson = getStationConfig([data.station])
+    var optJson = getStationConfig([data.station]).config
     var results = parse.parser_pos(data.station, buf, optJson);
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
-            sta_data.station_id =  message.station;
+            sta_data.station_id = message.station;
             saveStaInfo(sta_data)
         } catch (err) {
             console.log(err.message);
@@ -167,40 +224,27 @@ function onMessage(data) {
 }
 
 var StationSocketStatus = {};
-io.on('connection', function (socket) {
-    var stationName = socket.handshake.query.station;
-    console.log(socket.handshake.query.station)
-    socket.on('disconnect', function () {
-        StationSocketStatus[stationName] = false
-    });
-    StationSocketStatus[stationName] = true;
-
-    socket.on('' + stationName, function (data) {
-        if (!StationSocketStatus[stationName]) {
-            StationSocketStatus[stationName] = true;
-        }
-        onMessage(data);
-    }, function (error) {
-        console.log(error)
-    });
-});
 
 
-
-function getStatInfo(number,id){
-    if(number>1){
+function getStatInfo(number, id) {
+    if (number > 1) {
         return statInfo[id]
-    }else{
-        if(statInfo[id] == undefined){
+    } else {
+        if (statInfo[id] == undefined) {
             return []
         }
-        return statInfo[id][statInfo[id].length-1] ? [statInfo[id][statInfo[id].length-1]] :[];
+        return statInfo[id][statInfo[id].length - 1] ? [statInfo[id][statInfo[id].length - 1]] : [];
     }
 
 }
+function initStationOpt(staId) {
+    AllStationsConfig[staId] = undefined
+}
 module.exports = {
     StationSocketStatus: StationSocketStatus,
-    getStatInfo: getStatInfo
+    getStatInfo: getStatInfo,
+    initSockectServer: initSockectServer,
+    initSockectClinet: initSockectClinet
 };
 
 

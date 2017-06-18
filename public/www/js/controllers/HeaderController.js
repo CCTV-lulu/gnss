@@ -1,10 +1,7 @@
 MetronicApp.controller('HeaderController',
     ['$interval', '$rootScope', '$scope', 'Show', 'Mongodb',
-        'Passport', 'signalTypeInfo', '$location', 'signalTypObj', 'Prompt', 'userStationInfo','$state','getStationStatus',
-        function ($interval, $rootScope, $scope, Show, Mongodb, Passport, signalTypeInfo, $location, signalTypObj, Prompt, userStationInfo,$state,getStationStatus) {
-
-
-
+        'Passport', 'signalTypeInfo', '$location', 'signalTypObj', 'Prompt', 'userStationInfo', '$state', 'getStationStatus',
+        function ($interval, $rootScope, $scope, Show, Mongodb, Passport, signalTypeInfo, $location, signalTypObj, Prompt, userStationInfo, $state, getStationStatus) {
 
 
             $scope.logoutGnss = function () {
@@ -19,20 +16,23 @@ MetronicApp.controller('HeaderController',
             }
 
 
-
-
-
-
-
-
+            function subscribe(staId) {
+                if (!staId) {
+                    staId = "*"
+                }
+                if (!$rootScope.client) {
+                    $rootScope.client = new Faye.Client('/faye', {timeout: 20});
+                    $rootScope.client.subscribe('/channel/' + staId, function (message) {
+                        console.log('--------' + message.data)
+                    });
+                }
+            }
 
 
             /*=========new*/
 
 
             var intervalGetCurrentStationStatus;
-
-
 
 
             $scope.changeSignalType = function (name) {
@@ -45,23 +45,18 @@ MetronicApp.controller('HeaderController',
                 saveSingalType($rootScope.rootSingalType)
             };
             $scope.menuClosed = false;
-            $scope.changeSideBar = function(){
+            $scope.changeSideBar = function () {
                 $scope.menuClosed = !$scope.menuClosed;
-                if($scope.menuClosed ){
+                if ($scope.menuClosed) {
                     $('body').addClass('page-sidebar-closed');
                     $('ul.page-sidebar-menu').addClass('page-sidebar-menu-closed');
-                }else{
+                } else {
                     $('body').removeClass('page-sidebar-closed');
                     $('ul.page-sidebar-menu').removeClass('page-sidebar-menu-closed');
                 }
 
 
             };
-
-
-
-
-
 
 
             function showOption(rootUserStationInfo) {
@@ -91,19 +86,6 @@ MetronicApp.controller('HeaderController',
             }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             /*=============get station status*/
 
 
@@ -114,25 +96,26 @@ MetronicApp.controller('HeaderController',
             });
 
 
-
-            function init(activeUser){
-                if(!activeUser) return ;
-                userStationInfo.getUserStationInfo(function(userStationInfo){
+            function init(activeUser) {
+                if (!activeUser) return;
+                userStationInfo.getUserStationInfo(function (userStationInfo) {
                     $scope.updateRate = getRate();
                     $scope.isAdmin = $rootScope.rootIsAdmin || false;
-                    if($scope.isAdmin){
+                    if ($scope.isAdmin) {
+                        subscribe()
                         var currentStationInfo = checkCurrentStationInfo(userStationInfo.allStations);
-                        if($location.path() ==  '/dashboard') {
+                        if ($location.path() == '/dashboard') {
                             $rootScope.stationId = currentStationInfo.realTimeStation.staId
                         }
-                        if($location.path()  ==  '/stardata'){
-                             $rootScope.stationId = currentStationInfo.originStation.staId
+                        if ($location.path() == '/stardata') {
+                            $rootScope.stationId = currentStationInfo.originStation.staId
                         }
                         $scope.realTimeStation = currentStationInfo.realTimeStation.name;
                         $scope.originStation = currentStationInfo.originStation.name;
 
                         showOption(userStationInfo);
-                    }else{
+                    } else {
+                        subscribe(userStationInfo.userStationInfo.data.staId)
                         $rootScope.stationId = userStationInfo.userStationInfo.data.staId;
                         $scope.realTimeStation = userStationInfo.userStationInfo.data.name;
                         $scope.originStation = userStationInfo.userStationInfo.data.name;
@@ -141,48 +124,50 @@ MetronicApp.controller('HeaderController',
 
             }
 
-            $rootScope.$watch('stationId',function(stationId){
-                if(stationId == undefined) return;
+            $rootScope.$watch('stationId', function (stationId) {
+                if (stationId == undefined) return;
                 resetIntervalGetCurrentStationStatus(stationId)
             });
 
-            var intervalStatus= true;
-            function resetIntervalGetCurrentStationStatus(stationId){
+            var intervalStatus = true;
+
+            function resetIntervalGetCurrentStationStatus(stationId) {
                 $interval.cancel(intervalGetCurrentStationStatus);
 
-                intervalGetCurrentStationStatus = $interval(function(){
-                    if(!intervalStatus) return;
+                intervalGetCurrentStationStatus = $interval(function () {
+                    if (!intervalStatus) return;
                     intervalStatus = false;
                     getCurrentStationStatus(stationId);
-                }, $scope.updateRate*1000)
+                }, $scope.updateRate * 1000)
             }
 
 
-            function getRate(){
-                if(!getRateStorate()){
+            function getRate() {
+                if (!getRateStorate()) {
                     saveRateStorate(1)
                 }
                 return getRateStorate()
             }
 
-            function getRateStorate(){
+            function getRateStorate() {
                 return localStorage.getItem($rootScope.activeUser + 'UpdateRate')
             }
-            function saveRateStorate(rate){
+
+            function saveRateStorate(rate) {
                 localStorage.setItem($rootScope.activeUser + 'UpdateRate', rate)
             }
 
-            function getCurrentStationInfo(station){
+            function getCurrentStationInfo(station) {
 
-                if(!getCurrentStationInfoStorage()){
-                    var defaultInfo ={
-                        realTimeStation:{
-                            name:station.name,
-                            staId:station.staId
+                if (!getCurrentStationInfoStorage()) {
+                    var defaultInfo = {
+                        realTimeStation: {
+                            name: station.name,
+                            staId: station.staId
                         },
-                        originStation:{
-                            name:station.name,
-                            staId:station.staId
+                        originStation: {
+                            name: station.name,
+                            staId: station.staId
                         }
                     };
                     saveCurrentStationInfoStorage(defaultInfo)
@@ -191,48 +176,48 @@ MetronicApp.controller('HeaderController',
             }
 
 
-            function checkCurrentStationInfo(stations){
+            function checkCurrentStationInfo(stations) {
                 var currentInfo = getCurrentStationInfoStorage();
 
-                if(!currentInfo){
-                    currentInfo ={
-                        realTimeStation:{
-                            name:stations[0].name,
-                            staId:stations[0].staId
+                if (!currentInfo) {
+                    currentInfo = {
+                        realTimeStation: {
+                            name: stations[0].name,
+                            staId: stations[0].staId
                         },
-                        originStation:{
-                            name:stations[0].name,
-                            staId:stations[0].staId
+                        originStation: {
+                            name: stations[0].name,
+                            staId: stations[0].staId
                         }
                     };
                 }
 
-                var realTimeStationStatus  = false;
-                var originStationStatus  = false;
+                var realTimeStationStatus = false;
+                var originStationStatus = false;
 
-                for(var i = 0; i<stations.length; i++){
-                    if(stations[i].staId == currentInfo.realTimeStation.staId &&
-                        stations[i].name == currentInfo.realTimeStation.name){
+                for (var i = 0; i < stations.length; i++) {
+                    if (stations[i].staId == currentInfo.realTimeStation.staId &&
+                        stations[i].name == currentInfo.realTimeStation.name) {
                         realTimeStationStatus = true;
                     }
-                    if(stations[i].staId == currentInfo.originStation.staId &&
-                        stations[i].name == currentInfo.originStation.name){
+                    if (stations[i].staId == currentInfo.originStation.staId &&
+                        stations[i].name == currentInfo.originStation.name) {
                         originStationStatus = true;
                     }
 
                 }
 
-                if(!realTimeStationStatus){
+                if (!realTimeStationStatus) {
                     currentInfo.realTimeStation = {
-                        name:stations[0].name,
-                        staId:stations[0].staId
+                        name: stations[0].name,
+                        staId: stations[0].staId
                     }
                 }
 
-                if(!originStationStatus){
+                if (!originStationStatus) {
                     currentInfo.originStation = {
-                        name:stations[0].name,
-                        staId:stations[0].staId
+                        name: stations[0].name,
+                        staId: stations[0].staId
                     }
                 }
 
@@ -242,13 +227,12 @@ MetronicApp.controller('HeaderController',
             }
 
             function getCurrentStationInfoStorage() {
-                return JSON.parse(localStorage.getItem($rootScope.activeUser + '_currentStationInfo')||"false");
+                return JSON.parse(localStorage.getItem($rootScope.activeUser + '_currentStationInfo') || "false");
             }
 
             function saveCurrentStationInfoStorage(stationInfo) {
                 localStorage.setItem($rootScope.activeUser + '_currentStationInfo', JSON.stringify(stationInfo));
             }
-
 
 
             $rootScope.$watch('rootIsAdmin', function (rootIsAdmin) {
@@ -263,7 +247,7 @@ MetronicApp.controller('HeaderController',
                     init($rootScope.activeUser);
                     $scope.stationShow = true;
                     $scope.starShow = false;
-                    $scope.socketStatusShow =  true;
+                    $scope.socketStatusShow = true;
 
                 } else if (toState.name == 'stardata') {
                     clearInterval();
@@ -271,13 +255,13 @@ MetronicApp.controller('HeaderController',
                     init($rootScope.activeUser);
                     $scope.stationShow = false;
                     $scope.starShow = true;
-                    $scope.socketStatusShow =  true;
+                    $scope.socketStatusShow = true;
 
                 } else {
                     clearInterval();
                     $scope.stationShow = false;
                     $scope.starShow = false;
-                    $scope.socketStatusShow =  false;
+                    $scope.socketStatusShow = false;
 
                 }
 
@@ -291,18 +275,16 @@ MetronicApp.controller('HeaderController',
 
             });
 
-            function clearInterval(){
-                if(intervalGetCurrentStationStatus){
+            function clearInterval() {
+                if (intervalGetCurrentStationStatus) {
                     $interval.cancel(intervalGetCurrentStationStatus)
                 }
 
             }
 
 
-
-
             $scope.changeRealTimeStation = function (name, staId) {
-                var currentStationInfo = getCurrentStationInfo({name:name,staId:staId});
+                var currentStationInfo = getCurrentStationInfo({name: name, staId: staId});
                 if (currentStationInfo.realTimeStation.staId == staId) {
                     return;
                     //Prompt.promptBox('warning', '切换成功！！');
@@ -315,11 +297,10 @@ MetronicApp.controller('HeaderController',
                 $scope.realTimeStation = currentStationInfo.realTimeStation.name;
 
 
-
             };
 
             $scope.changeStartDataStation = function (name, staId) {
-                var currentStationInfo = getCurrentStationInfo({name:name,staId:staId});
+                var currentStationInfo = getCurrentStationInfo({name: name, staId: staId});
                 if (currentStationInfo.originStation.staId == staId) {
                     return;
                     //Prompt.promptBox('warning', '切换成功！！');
@@ -346,12 +327,8 @@ MetronicApp.controller('HeaderController',
             };
 
 
-
-
-
-
-            function getCurrentStationStatus (stationId){
-                getStationStatus.getStationStatus(stationId , 1, function (data) {
+            function getCurrentStationStatus(stationId) {
+                getStationStatus.getStationStatus(stationId, 1, function (data) {
 
                     if (data.StationSocketStatus == true) {
                         $scope.StationSocketStatus = '实时数据接收中'
@@ -364,14 +341,10 @@ MetronicApp.controller('HeaderController',
             }
 
             $scope.$on('$destroy', function () {
-                if(intervalGetCurrentStationStatus){
+                if (intervalGetCurrentStationStatus) {
                     $interval.cancel(intervalGetCurrentStationStatus)
                 }
             })
-
-
-
-
 
 
         }
