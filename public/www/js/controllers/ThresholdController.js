@@ -3,13 +3,14 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
     init()
 
     function init(){
-        $scope.station = $rootScope.allStations;
+
 
         $scope.allStations = $rootScope.allStations;
+
         $rootScope.$watch('allStations',function(allStations){
             if(allStations==undefined) return;
             $scope.allStations = allStations;
-            $scope.station = $scope.allStations[0] ? $scope.allStations[0].sta_id : ''
+            $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
 
         });
 
@@ -23,27 +24,36 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         getThreshold()
     }
     function getThreshold(){
-        Threshold.getThreshold(function(threshold){
-            console.log(threshold);
-            $scope.threshold = threshold
+        Threshold.getThreshold(function(allThreshold){
+            $scope.allThreshold = allThreshold.allThreshold;
+            $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
         })
     }
 
-    $scope.commitThreshold = function (Max, Min) {
-        var staName = $('#single').val();
-        if (staName == '? undefined:undefined ?') {
-            Prompt.promptBox("warning", "请选择基站")
-        } else {
-            $scope.test[Max] = undefined;
-            $scope.test[Min] = undefined;
-            var Threshold = {};
-            for (var i in $scope.test) {
-                Threshold[i] = $scope.test[i];
-            }
-            var username = localStorage.getItem('userName');
-            getCommitThreshold.setStaThreshold(staName, username, Threshold)
-        }
+    $scope.$watch('signal',function(signal){
+        if(!signal||!$scope.allThreshold) return;
+        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+    });
+    $scope.$watch('station',function(station){
+        if(!station||!$scope.allThreshold) return;
+        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+    });
+
+    function showThreshold(){
+
     }
+
+    $scope.commitThreshold = function () {
+        var data = {
+            staId: $scope.station,
+            signal: $scope.signal,
+            threshold: $scope.threshold
+        };
+        console.log(data)
+        Threshold.setThreshold(data,function(allThreshold){
+            $scope.allThreshold = allThreshold.allThreshold;
+        })
+    };
 
 
 
@@ -53,47 +63,47 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
 
 
 
-    $scope.getStationThreshold = function (station) {
-        var staName = station || $('#single').val();
-        localStorage.setItem('thresholdBastation', staName);
-        //getCommitThreshold.threshold(staName, function (data) {
-        //    var Threshold = data.staThreshold;
-        //    $scope.test = Threshold;
-        //})
-    }
-
-    $scope.commitThreshold = function (Max, Min) {
-        var staName = $('#single').val();
-        if (staName == '? undefined:undefined ?') {
-            Prompt.promptBox("warning", "请选择基站")
-        } else {
-            $scope.test[Max] = undefined;
-            $scope.test[Min] = undefined;
-            var Threshold = {};
-            for (var i in $scope.test) {
-                Threshold[i] = $scope.test[i];
-            }
-            var username = localStorage.getItem('userName');
-            getCommitThreshold.setStaThreshold(staName, username, Threshold)
-        }
-    }
-
-    getCommitThreshold.getUserStaId(function (data) {
-        if (data) {
-            //console.log(data)
-            $scope.allBlankStation = data[0];
-            $scope.test = data[1];
-        }
-        else {
-            //console.log(data)
-            $scope.allBaseStation = undefined;
-            $scope.test = undefined;
-        }
-    })
-
-    $scope.$on('logout', function (event, url) {
-        $scope.$emit('logout-connect-app','data')
-        //$('body').addClass('page-on-load');
-        //location.reload(true)
-    });
+    //$scope.getStationThreshold = function (station) {
+    //    var staName = station || $('#single').val();
+    //    localStorage.setItem('thresholdBastation', staName);
+    //    //getCommitThreshold.threshold(staName, function (data) {
+    //    //    var Threshold = data.staThreshold;
+    //    //    $scope.test = Threshold;
+    //    //})
+    //}
+    //
+    //$scope.commitThreshold = function (Max, Min) {
+    //    var staName = $('#single').val();
+    //    if (staName == '? undefined:undefined ?') {
+    //        Prompt.promptBox("warning", "请选择基站")
+    //    } else {
+    //        $scope.test[Max] = undefined;
+    //        $scope.test[Min] = undefined;
+    //        var Threshold = {};
+    //        for (var i in $scope.test) {
+    //            Threshold[i] = $scope.test[i];
+    //        }
+    //        var username = localStorage.getItem('userName');
+    //        getCommitThreshold.setStaThreshold(staName, username, Threshold)
+    //    }
+    //}
+    //
+    //getCommitThreshold.getUserStaId(function (data) {
+    //    if (data) {
+    //        //console.log(data)
+    //        $scope.allBlankStation = data[0];
+    //        $scope.test = data[1];
+    //    }
+    //    else {
+    //        //console.log(data)
+    //        $scope.allBaseStation = undefined;
+    //        $scope.test = undefined;
+    //    }
+    //})
+    //
+    //$scope.$on('logout', function (event, url) {
+    //    $scope.$emit('logout-connect-app','data')
+    //    //$('body').addClass('page-on-load');
+    //    //location.reload(true)
+    //});
 });

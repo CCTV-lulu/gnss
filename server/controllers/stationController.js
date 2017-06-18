@@ -377,18 +377,17 @@ function getStationStatus(req, res, next) {
 /*==========================threshold*/
 
 function getStaThreshold(req, res) {
-
-    StationConfig.getAllStationThreshold( function (stationConfig) {
-        //if (stationConfig.status) {
-        //    return res.send({status: true, config: stationConfig.threshold})
-        //}
+    StationConfig.getAllStationThreshold().then( function (stationConfig) {
         res.send(stationConfig)
     });
 }
 
 function setStaThreshold(req, res) {
     var thresholdInfo  = req.body;
-    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.singal,thresholdInfo.threshold).then(function (result) {
+    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal,thresholdInfo.threshold).then(function (result) {
+        if(result.status){
+            StationSocketStatus.initStationOpt(thresholdInfo.staId)
+        }
        res.send(result)
     })
 }

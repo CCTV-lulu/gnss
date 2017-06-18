@@ -102,7 +102,8 @@ module.exports = {
             if (err) {
                 defer.resolve({status:false, message:'拉取数据失败'})
             } else {
-                defer.resolve({status:true, allThreshold: handleAllThreshold(AllStationConfig)})
+                var allThreshold = handleAllThreshold(AllStationConfig);
+                defer.resolve({status:true, allThreshold: allThreshold})
             }
         });
         return defer.promise;
@@ -117,7 +118,7 @@ module.exports = {
             if(!stationConfig){
                 return defer.resolve({status:false, message:'请刷新'})
             }
-            var newThreshold = stationConfig.threshold;
+            var newThreshold = stationConfig.threshold||{};
             newThreshold[singal]= threshold;
             StationConfig.update({staId: staId},{$set:{threshold:newThreshold}},function(err, result){
                 if (err) {

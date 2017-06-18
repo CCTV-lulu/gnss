@@ -586,12 +586,12 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
     .factory('Threshold',function($http, $location, settingInfo, Prompt, Passport, httpRequest){
         var url = "http://" + settingInfo.server + ":" + settingInfo.port;
         function setThreshold(data, cb) {
-            httpRequest.post(url + "/setThreshold", data, function (result) {
+            httpRequest.post(url + "/setStaThreshold", data, function (result) {
                 cb(result)
             })
         }
         function getThreshold(cb){
-            httpRequest.httpGet( url + "/threshold", function (result) {
+            httpRequest.httpGet( url + "/getStaThreshold", function (result) {
                 cb(result)
             })
         }

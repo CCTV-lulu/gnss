@@ -11,7 +11,7 @@
                     <label class="col-lg-4 col-md-4 control-label">基站名：</label>
                     <div class="col-md-5">
                         <select id='station' class='form-control select2' ng-model="station" ng-change="getStationThreshold()">
-                        <option ng-repeat='blankStation in allStations' value={{blankStation.sta_id}}>{{blankStation.name}}</option>
+                        <option ng-repeat='blankStation in allStations' value={{blankStation.staId}}>{{blankStation.name}}</option>
                         </select>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">水平误差：</label>
                     <div class="col-md-5">
-                        <input type="number" class="form-control" ng-model="dH"  placeholder="max值">
+                        <input type="number" class="form-control" ng-model="threshold.dH"  placeholder="max值">
                     </div>
 
 
@@ -34,7 +34,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">垂直误差：</label>
                     <div class="col-md-5    ">
-                        <input type="number" class="form-control " ng-model="dV" placeholder="max值">
+                        <input type="number" class="form-control " ng-model="threshold.dV" placeholder="max值">
                     </div>
 
 
@@ -42,7 +42,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">HDOP：</label>
                     <div class="col-md-5    ">
-                        <input type="number" class="form-control "ng-model="HDOP" placeholder="max值">
+                        <input type="number" class="form-control "ng-model="threshold.HDOP" placeholder="max值">
                     </div>
 
 
@@ -50,7 +50,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">VDOP：</label>
                     <div class="col-md-5    ">
-                        <input type="number" class="form-control " ng-model="VDOP" placeholder="max值">
+                        <input type="number" class="form-control " ng-model="threshold.VDOP" placeholder="max值">
                     </div>
 
 
@@ -58,7 +58,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">HPL：</label>
                     <div class="col-md-5    ">
-                        <input type="number" class="form-control " ng-model="HPL" placeholder="max值">
+                        <input type="number" class="form-control " ng-model="threshold.HPL" placeholder="max值">
                     </div>
 
 
@@ -66,7 +66,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">VPL：</label>
                     <div class="col-md-5    ">
-                        <input type="number" class="form-control" ng-model="VPL" placeholder="max值">
+                        <input type="number" class="form-control" ng-model="threshold.VPL" placeholder="max值">
                     </div>
 
 

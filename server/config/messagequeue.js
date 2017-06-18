@@ -167,22 +167,29 @@ function initSockectClinet(bayeux) {
     faye = bayeux;
 
 }
-function checkThreshold(data) {
-    var threshold = getStationConfig(data.station_id).threshold;
+function checkThreshold(StaData) {
+    var thresholdInfo = getStationConfig(StaData.station_id)
+    var threshold = thresholdInfo.threshold;
+    var data = StaData.posR
+    //console.log(threshold)
+    //console.log( getStationConfig(data.station_id))
     if(threshold==undefined) return;
     Object.keys(data).forEach(function (sys) {
-        if (threshold.sys) {
-            Object.keys(threshold.sys).forEach(function (type) {
-                console.log(data[sys][type], threshold.sys[type])
-                if (data[sys][type] > threshold.sys[type]) {
-                    setFaye(data.station_id, sys, type)
+        if (threshold[sys]) {
+            Object.keys(threshold[sys]).forEach(function (type) {
+                //console.log(type)
+                //console.log(data[sys][type])
+                //console.log( threshold[sys][type])
+                if (data[sys][type] > threshold[sys][type]) {
+                    setFaye(StaData.station_id, sys, type)
                 }
             })
         }
     })
 }
+
 function setFaye(station_id, sys, type) {
-    faye.getClient().publish('/channel/' + station_id, {sys: sys, type: type})
+    faye.getClient().publish('/channel/' + station_id, {sys: sys, type: type,staId:station_id})
 }
 
 
@@ -191,6 +198,7 @@ function changeStationConfig(staId, config) {
 }
 
 function getStationConfig(staId) {
+
     if (AllStationsConfig[staId] !== undefined) {
         return AllStationsConfig[staId]
     }
@@ -200,6 +208,7 @@ function getStationConfig(staId) {
         }
 
     });
+
     return {config:0, threshold:{}}
 
 }
@@ -209,6 +218,7 @@ function onMessage(data) {
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
+
     var optJson = getStationConfig([data.station]).config
     var results = parse.parser_pos(data.station, buf, optJson);
     //releaseCacheBuffer(message.station);
@@ -244,7 +254,8 @@ module.exports = {
     StationSocketStatus: StationSocketStatus,
     getStatInfo: getStatInfo,
     initSockectServer: initSockectServer,
-    initSockectClinet: initSockectClinet
+    initSockectClinet: initSockectClinet,
+    initStationOpt: initStationOpt
 };
 
 

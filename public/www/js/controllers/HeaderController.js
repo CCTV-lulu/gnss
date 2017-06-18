@@ -5,14 +5,20 @@ MetronicApp.controller('HeaderController',
 
 
             $scope.logoutGnss = function () {
-                var sideBarArr = ['dashboard', 'blank', 'threshold', 'stardata', 'administrator'];
-                for (var i = 0; i < sideBarArr.length; i++) {
-                    var sideBarClass = $('#' + sideBarArr[i]).attr('class');
-                    if (sideBarClass == 'nav-item active') {
-                        $('#' + sideBarArr[i]).attr('class', 'nav-item');
-                    }
-                }
+                //var sideBarArr = ['dashboard', 'blank', 'threshold', 'stardata', 'administrator'];
+                //for (var i = 0; i < sideBarArr.length; i++) {
+                //    var sideBarClass = $('#' + sideBarArr[i]).attr('class');
+                //    if (sideBarClass == 'nav-item active') {
+                //        $('#' + sideBarArr[i]).attr('class', 'nav-item');
+                //    }
+                //}
                 $scope.$emit('logout-to-parent', 'data');
+                Passport.logout(function () {
+                    $rootScope.rootIsAdmin = undefined;
+                    $rootScope.rootUserInfo = undefined;
+                    $rootScope.activeUser = undefined;
+                    $location.path('/')
+                })
             }
 
 
@@ -23,10 +29,16 @@ MetronicApp.controller('HeaderController',
                 if (!$rootScope.client) {
                     $rootScope.client = new Faye.Client('/faye', {timeout: 20});
                     $rootScope.client.subscribe('/channel/' + staId, function (message) {
-                        console.log('--------' + message.data)
+                        $rootScope.warnning = "基站："+message.staId+'信号类型：'+message.sys +  message.type+ '超出最大值';
+                        //Prompt.promptBox('warning', message)
                     });
                 }
             }
+
+            $rootScope.$watch('warnning', function (message) {
+                if (!message) return;
+                Prompt.promptBox('warning', message)
+            });
 
 
             /*=========new*/
