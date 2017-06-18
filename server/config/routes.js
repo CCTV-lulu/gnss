@@ -21,7 +21,7 @@ module.exports = function (app) {
     app.get('/userStaId', auth.isInRole('user'), controllers.station.getUserStationId);
     app.get('/getStationStatus', auth.isInRole('user'), controllers.station.getStationStatus);
 
-    app.post('/getStationConfig', controllers.station.getStationConfig);
+
 
     app.get('/getStation', auth.isInRole('user'), controllers.station.getStations);
 
@@ -46,6 +46,8 @@ module.exports = function (app) {
     /*=======batchProcess*/
     app.get('/getBatchProcessResult', auth.isInRole('admin'), controllers.batchProcess.getBatchProcess);
     app.post('/startBatchProcess', auth.isInRole('admin'), controllers.batchProcess.startBatchProcess);
-
+    /*================threshole*/
+    app.get('/getStaThreshold', auth.isInRole('admin'),controllers.station.getStaThreshold);
+    app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold)
 
 };

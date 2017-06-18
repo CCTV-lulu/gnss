@@ -51,6 +51,13 @@ var config = {
         99.149326161404, 100.2010569434503, 101.23261982627712, 102.245122154836,
         103.239573583795, 104.216897742612, 105.177942166677, 106.12348679984
     ]
+};
+function handleAllThreshold(allConfig){
+    var allThreshold ={};
+    allConfig.forEach(function(oneConfig){
+        allThreshold[oneConfig.staId]= oneConfig.threshold ||{}
+    });
+    return allThreshold
 }
 
 
@@ -89,15 +96,40 @@ module.exports = {
     deleteByStaName: function (stationName) {
         return StationConfig.remove({stationName: stationName}).exec()
     },
-    all: function(){
+    getAllStationThreshold: function(){
         var defer = Promise.defer();
-        StationConfig.where().exec(function (err, data) {
+        StationConfig.where().exec(function (err, AllStationConfig) {
             if (err) {
-                defer.reject('do not find all users')
+                defer.resolve({status:false, message:'拉取数据失败'})
             } else {
-                defer.resolve({status:true, stationConfig: data})
+                defer.resolve({status:true, allThreshold: handleAllThreshold(AllStationConfig)})
             }
         });
+        return defer.promise;
+    },
+    setStationThreshold: function(staId, singal, threshold){
+        var self = this;
+        var defer = Promise.defer();
+        StationConfig.findOne({staId: staId}).exec(function(err, stationConfig){
+            if(err){
+                return defer.resolve({status:false, message:'拉取数据失败'})
+            }
+            if(!stationConfig){
+                return defer.resolve({status:false, message:'请刷新'})
+            }
+            var newThreshold = stationConfig.threshold;
+            newThreshold[singal]= threshold;
+            StationConfig.update({staId: staId},{$set:{threshold:newThreshold}},function(err, result){
+                if (err) {
+                    return defer.resolve({status:false, message:'保存失败'})
+                } else {
+                    self.getAllStationThreshold().then(function(allThreshold){
+                        return defer.resolve(allThreshold)
+                    })
+                }
+            })
+
+        })
         return defer.promise;
     }
 

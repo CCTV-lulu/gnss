@@ -5,7 +5,7 @@
             <i class="icon-settings"></i>阈值报警设置 </div>
     </div>
     <div class="portlet-body form">
-        <form class="form-horizontal">
+        <div class="form-horizontal">
             <div class="form-body">
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">基站名：</label>
@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">水平误差：</label>
                     <div class="col-md-5">
-                        <input type="text" class="form-control" ng-model="test.staNumThresholdMax"  placeholder="max值">
+                        <input type="number" class="form-control" ng-model="dH"  placeholder="max值">
                     </div>
 
 
@@ -34,7 +34,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">垂直误差：</label>
                     <div class="col-md-5    ">
-                        <input type="text" class="form-control " ng-model="test.pdopThresholdMax" placeholder="max值">
+                        <input type="number" class="form-control " ng-model="dV" placeholder="max值">
                     </div>
 
 
@@ -42,7 +42,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">HDOP：</label>
                     <div class="col-md-5    ">
-                        <input type="text" class="form-control "ng-model="test.absoluteThresholdMax" placeholder="max值">
+                        <input type="number" class="form-control "ng-model="HDOP" placeholder="max值">
                     </div>
 
 
@@ -50,7 +50,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">VDOP：</label>
                     <div class="col-md-5    ">
-                        <input type="text" class="form-control " ng-model="test.posaccThresholdMax" placeholder="max值">
+                        <input type="number" class="form-control " ng-model="VDOP" placeholder="max值">
                     </div>
 
 
@@ -58,7 +58,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">HPL：</label>
                     <div class="col-md-5    ">
-                        <input type="text" class="form-control " ng-model="test.protectionLevelThresholdMax" placeholder="max值">
+                        <input type="number" class="form-control " ng-model="HPL" placeholder="max值">
                     </div>
 
 
@@ -66,7 +66,7 @@
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">VPL：</label>
                     <div class="col-md-5    ">
-                        <input type="text" class="form-control" ng-model="test.protectionLevelThresholdMax" placeholder="max值">
+                        <input type="number" class="form-control" ng-model="VPL" placeholder="max值">
                     </div>
 
 
@@ -75,11 +75,11 @@
             <div class="form-actions">
                 <div class="row">
                     <div class="col-lg-offset-5 col-md-offset-4">
-                        <button class="btn btn-circle green col-md-4" ng-click="commitThreshold('','')"> 保 存 </button>
+                        <button class="btn btn-circle green col-md-4" ng-click="commitThreshold()"> 保 存 </button>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 </div>

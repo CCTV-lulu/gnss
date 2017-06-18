@@ -155,30 +155,7 @@ function getUserStaThreshold(req, res) {
         });
     })
 }
-function setStaThreshold(req, res) {
-    var userStaThreshold = {
-        userName: req.body.username,
-        staName: req.body.staName,
-        staThreshold: req.body.Threshold
-    };
-    StaThreshold.setStaThreshold(userStaThreshold).then(function (data) {
-        if (data['ok'] == 0) {
-            res.send({
-                status: false,
-                message: 'creat station threshold false'
-            })
-        } else {
-            res.send({
-                status: true
-            })
-        }
-    }, function (error) {
-        res.send({
-            status: 400,
-            message: error
-        });
-    })
-}
+
 
 
 //function getBatchProcessStatus(userBatchProcesStatus) {
@@ -399,17 +376,22 @@ function getStationStatus(req, res, next) {
 
 /*==========================threshold*/
 
-function getStationConfig(req, res) {
+function getStaThreshold(req, res) {
 
-    StationConfig.findByStaId(req.body.StaId, function (stationConfig) {
-        if (stationConfig.status) {
-            return res.send({status: true, config: stationConfig.threshold})
-        }
-        res.send({status: false})
+    StationConfig.getAllStationThreshold( function (stationConfig) {
+        //if (stationConfig.status) {
+        //    return res.send({status: true, config: stationConfig.threshold})
+        //}
+        res.send(stationConfig)
     });
-
 }
 
+function setStaThreshold(req, res) {
+    var thresholdInfo  = req.body;
+    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.singal,thresholdInfo.threshold).then(function (result) {
+       res.send(result)
+    })
+}
 /*==================================*/
 
 
@@ -424,12 +406,13 @@ module.exports = {
     getUserStaThreshold: getUserStaThreshold,
     deleteStation: deleteStation,
     addStation: addStation,
-    setStaThreshold: setStaThreshold,
+
     //setUserFindTime: setUserFindTime,
     //getUserFindStaData: getUserFindStaData,
     //killChild: killChild,
     //downloadStaData: downloadStaData,
-    getStationConfig: getStationConfig,
+    getStaThreshold: getStaThreshold,
+    setStaThreshold: setStaThreshold,
 
     getUserStationInfo: getUserStationInfo
 };
