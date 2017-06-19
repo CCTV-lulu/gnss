@@ -108,7 +108,8 @@ module.exports = {
         });
         return defer.promise;
     },
-    setStationThreshold: function(staId, singal, threshold){
+    setStationThreshold: function(staId, singal, threshold,config){
+
         var self = this;
         var defer = Promise.defer();
         StationConfig.findOne({staId: staId}).exec(function(err, stationConfig){
@@ -120,6 +121,11 @@ module.exports = {
             }
             var newThreshold = stationConfig.threshold||{};
             newThreshold[singal]= threshold;
+            //var newConfig =  stationConfig.config||{};
+            //if(config.elmin !== undefined){
+            //    newConfig.elmin[parseInt(singal)] = config.elmin;
+            //}
+
             StationConfig.update({staId: staId},{$set:{threshold:newThreshold}},function(err, result){
                 if (err) {
                     return defer.resolve({status:false, message:'保存失败'})
