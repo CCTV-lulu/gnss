@@ -49,9 +49,14 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
             signal: $scope.signal,
             threshold: $scope.threshold
         };
-        console.log(data)
         Threshold.setThreshold(data,function(allThreshold){
-            $scope.allThreshold = allThreshold.allThreshold;
+            if(allThreshold.status){
+                $scope.allThreshold = allThreshold.allThreshold;
+                Prompt.promptBox('success','保存成功')
+            }else{
+                Prompt.promptBox('warnning',allThreshold.message)
+            }
+
         })
     };
 
