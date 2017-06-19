@@ -3,17 +3,6 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
     init()
 
     function init(){
-
-
-        $scope.allStations = $rootScope.allStations;
-
-        $rootScope.$watch('allStations',function(allStations){
-            if(allStations==undefined) return;
-            $scope.allStations = allStations;
-            $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
-
-        });
-
         $scope.allSingal = {
             2:'BDS',
             0:'GPS',
@@ -21,25 +10,63 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
             3:'组合'
         };
         $scope.signal = '0';
-        getThreshold()
+        getThreshold();
+         $scope.isAdmin = $rootScope.rootIsAdmin;
+        $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
+            $scope.isAdmin=rootIsAdmin;
+            getStation($scope.isAdmin)
+        });
+        getStation($scope.isAdmin)
+        $scope.isReadonly=false
+    }
+
+    function getStation(isAdmin){
+        if(isAdmin){
+            $scope.allStations = $rootScope.allStations;
+
+            $rootScope.$watch('allStations',function(allStations){
+                if(allStations==undefined) return;
+                $scope.allStations = allStations;
+                $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
+
+            });
+
+        }else{
+            $scope.station =$rootScope.stationId;
+            $scope.stationInfoId= $rootScope.stationId;
+            $scope.stationInfoName = $rootScope.stationName;
+
+        }
     }
     function getThreshold(){
         Threshold.getThreshold(function(allThreshold){
             $scope.allThreshold = allThreshold.allThreshold;
-            $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+            showThreshold()
+            //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
         })
     }
 
     $scope.$watch('signal',function(signal){
         if(!signal||!$scope.allThreshold) return;
-        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+        showThreshold()
+        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
     $scope.$watch('station',function(station){
+        console.log(!station||!$scope.allThreshold)
         if(!station||!$scope.allThreshold) return;
-        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+        showThreshold()
+        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
 
     function showThreshold(){
+        if(!$scope.isAdmin){
+            $scope.isReadonly = false;
+        }
+        console.log($scope.allThreshold)
+        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+        if(!$scope.isAdmin){
+            $scope.isReadonly = true;
+        }
 
     }
 
@@ -52,6 +79,7 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         Threshold.setThreshold(data,function(allThreshold){
             if(allThreshold.status){
                 $scope.allThreshold = allThreshold.allThreshold;
+                showThreshold()
                 Prompt.promptBox('success','保存成功')
             }else{
                 Prompt.promptBox('warnning',allThreshold.message)

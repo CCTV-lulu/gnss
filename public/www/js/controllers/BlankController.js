@@ -428,7 +428,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         //var showData = data[type];
         var series = [];
         var name = id.replace('Time', '');
-        var info = {name: name, data: []};
+        var info = {name: name, data: [],color: 'red'};
         var startTime;
         sys = sys.toString();
         if (!data[sys]) return;
@@ -477,7 +477,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
                         align: 'right',
                         verticalAlign: 'top',
                         x: 0,
-                        y: -30
+                        y: 0
                     },
                     theme: {
                         fill: 'white',

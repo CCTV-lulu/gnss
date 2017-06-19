@@ -33,6 +33,7 @@ MetronicApp.controller('SidebarController', ['$state', '$scope', '$location', 'M
 
 
     $scope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+        $("li.nav-item").removeClass('active');
         $("#" + toState.name).addClass('active');
     })
     $scope.dataConnect = function (url) {

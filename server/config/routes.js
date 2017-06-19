@@ -47,7 +47,7 @@ module.exports = function (app) {
     app.get('/getBatchProcessResult', auth.isInRole('admin'), controllers.batchProcess.getBatchProcess);
     app.post('/startBatchProcess', auth.isInRole('admin'), controllers.batchProcess.startBatchProcess);
     /*================threshole*/
-    app.get('/getStaThreshold', auth.isInRole('admin'),controllers.station.getStaThreshold);
+    app.get('/getStaThreshold', auth.isInRole('user'),controllers.station.getStaThreshold);
     app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold)
 
 };

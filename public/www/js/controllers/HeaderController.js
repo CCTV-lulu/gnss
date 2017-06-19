@@ -129,6 +129,7 @@ MetronicApp.controller('HeaderController',
                     } else {
                         subscribe(userStationInfo.userStationInfo.data.staId)
                         $rootScope.stationId = userStationInfo.userStationInfo.data.staId;
+                        $rootScope.stationName = userStationInfo.userStationInfo.data.name;
                         $scope.realTimeStation = userStationInfo.userStationInfo.data.name;
                         $scope.originStation = userStationInfo.userStationInfo.data.name;
                     }
