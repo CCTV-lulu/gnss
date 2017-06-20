@@ -117,7 +117,9 @@ module.exports = {
         });
         return defer.promise;
     },
+
     setStationThreshold: function (staId, singal, threshold,config) {
+
         var self = this;
         var defer = Promise.defer();
         StationConfig.findOne({staId: staId}).exec(function (err, stationConfig) {
@@ -127,12 +129,14 @@ module.exports = {
             if (!stationConfig) {
                 return defer.resolve({status: false, message: '请刷新'})
             }
+
             var newThreshold = stationConfig.threshold || {};
             newThreshold[singal] = threshold;
             var newConfig = stationConfig.config||{};
             newConfig.elmin[parseInt(singal)] = config.elmin;
             newConfig.rb[parseInt(singal)]=config.rb;
             StationConfig.update({staId: staId}, {$set: {threshold:newThreshold,config: newConfig}}, function (err, result) {
+
                 if (err) {
                     return defer.resolve({status: false, message: '保存失败'})
                 } else {
