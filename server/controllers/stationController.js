@@ -384,7 +384,7 @@ function getStaThreshold(req, res) {
 
 function setStaThreshold(req, res) {
     var thresholdInfo  = req.body;
-    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal,thresholdInfo.threshold).then(function (result) {
+    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal,thresholdInfo.threshold,thresholdInfo.config).then(function (result) {
         if(result.status){
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
         }

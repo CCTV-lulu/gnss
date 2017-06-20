@@ -18,6 +18,10 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         });
         getStation($scope.isAdmin)
         $scope.isReadonly=false
+        // $scope.config ={rb:[0,0,0],
+        //     elmin:12
+        // }
+
     }
 
     function getStation(isAdmin){
@@ -63,7 +67,8 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
             $scope.isReadonly = false;
         }
         console.log($scope.allThreshold)
-        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].threshold:{}
+        $scope.config=$scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].config:{}
         if(!$scope.isAdmin){
             $scope.isReadonly = true;
         }
@@ -74,7 +79,8 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         var data = {
             staId: $scope.station,
             signal: $scope.signal,
-            threshold: $scope.threshold
+            threshold: $scope.threshold,
+            config:$scope.config
         };
         Threshold.setThreshold(data,function(allThreshold){
             if(allThreshold.status){
