@@ -91,7 +91,7 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    console.log(err);
+                    // console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_GLO)) {
@@ -100,7 +100,7 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    console.log(err);
+                    // console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
@@ -114,7 +114,7 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    console.log(err);
+                    // console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_ALL)) {

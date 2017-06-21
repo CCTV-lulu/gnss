@@ -6,8 +6,8 @@ var mongoose = require('mongoose'),
     StationStatusModel = require('../data/Models/StationStatus'),
     UserStationInfo = require('../data/Models/UserStationInfo'),
     StationConfig = require('../data/Models/StationConfig'),
-    batchProcessModel = require('../data/Models/batchProcess');
-
+    batchProcessModel = require('../data/Models/batchProcess'),
+    WarningInfo = require('../data/Models/WarningInfo');
     mongoose.Promise = global.Promise;
 
 
@@ -34,6 +34,7 @@ module.exports = function (config) {
     staThresholdModel.init();
     batchProcessModel.init();
     UserStationInfo.init();
-    StationConfig.init()
+    StationConfig.init();
+    WarningInfo.init();
 
 };

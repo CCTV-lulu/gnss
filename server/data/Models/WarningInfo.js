@@ -3,9 +3,13 @@ var mongoose = require('mongoose'),
 
 module.exports.init = function () {
     var stationSchema = new mongoose.Schema({
+        happendTime:String,
         stationName: String,
-        stationId:string,
-
+        staId:String,
+        sys:Number,
+        warningContent:String,
+        warningValue:Number,
+        threshod:Number
 
     });
 
@@ -13,5 +17,5 @@ module.exports.init = function () {
 
     });
 
-    var UserStationId = mongoose.model('WarningInfo', stationSchema);
+    var WarningInfo  = mongoose.model('WarningInfo', stationSchema);
 };
