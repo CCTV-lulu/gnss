@@ -18,9 +18,6 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         });
         getStation($scope.isAdmin)
         $scope.isReadonly=false
-        // $scope.config ={rb:[0,0,0],
-        //     elmin:12
-        // }
 
     }
 

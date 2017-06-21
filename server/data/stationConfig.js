@@ -61,7 +61,6 @@ function handleAllThreshold(allConfig) {
             config[index.toString()].config = {elmin: oneElmin, rb: oneConfig.config.rb[index]}
         })
         Object.keys(config).forEach(function(sys){
-            console.log(sys)
             config[sys].threshold = oneConfig.threshold ? oneConfig.threshold[sys]:{}
         })
         allThreshold[oneConfig.staId]=config

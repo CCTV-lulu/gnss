@@ -168,6 +168,7 @@ function initSockectClinet(bayeux) {
 
 }
 function checkThreshold(StaData) {
+    console.log(StaData)
     var thresholdInfo = getStationConfig(StaData.station_id)
     var threshold = thresholdInfo.threshold;
     var data = StaData.posR
@@ -181,14 +182,14 @@ function checkThreshold(StaData) {
                 //console.log(data[sys][type])
                 //console.log( threshold[sys][type])
                 if (data[sys][type] > threshold[sys][type]) {
-                    setFaye(StaData.station_id, sys, type)
+                    sendFaye(StaData.station_id, sys, type)
                 }
             })
         }
     })
 }
 
-function setFaye(station_id, sys, type) {
+function sendFaye(station_id, sys, type) {
     faye.getClient().publish('/channel/' + station_id, {sys: sys, type: type,staId:station_id})
 }
 

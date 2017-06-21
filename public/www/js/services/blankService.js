@@ -81,6 +81,7 @@ MetronicApp.factory('DateTable',  function() {
                 allDate.push(endYear + '-' + startDate.substring(18,20) + '-' + nextDay)
             }
         }
+
         return allDate;
     }
     return {dateTable: dateTable, allDate: allDate}
