@@ -276,5 +276,5 @@ module.exports = {
 };
 
 
-server.listen(33666,'192.168.1.17');
+server.listen(33666);
 

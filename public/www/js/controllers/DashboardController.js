@@ -67,7 +67,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
         getStationStatus.getStationStatus(staId, limit, function (data) {
             if (limit == 10 && data.stationData != false && data.stationData != undefined) {
-                if (data.stationData.length < 300) {
+                if (data.stationData.length < 50) {
                     return cb()
                 }
 
@@ -77,7 +77,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             showChart(data.stationData[i]);
                             showDxDy(data.stationData, 'gpsDxDy');
                             showDxDy(data.stationData, 'glsDxDy');
-                            showDxDy(data.stationData, 'dbsDxDy');
+                            showDxDy(data.stationData, 'bdsDxDy');
                             showDxDy(data.stationData, 'groupDxDy');
                             showH(data.stationData, 'H');
                             //
@@ -199,6 +199,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
 
     function showSNR(data, type) {
+        var names = {
+            gpsSNY:['L1','L2'],
+            glsSNY:['R1','R2'],
+            bdsSNY:['B1','B2']
+
+        }
         var showData = data[type];
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -253,12 +259,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             },
             //图例开关,默认是：true
             series: [{
-                name: '1频点',
+                name: names[type][0],
                 color: '#0011FF',
                 data: showData[0].slice(0,15)
             },
                 {
-                    name: '2频点',
+                    name: names[type][1],
                     color: '#00FF00',
                     data: showData[1].slice(0,15)
                 }]
@@ -302,7 +308,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         var types = {
             'gpsDxDy': 0,
             'glsDxDy': 1,
-            'dbsDxDy': 2,
+            'bdsDxDy': 2,
             'groupDxDy': 3
         };
         var show_date = [];
@@ -415,7 +421,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     function showH(allSta, type) {
         var types = {
             'gpsDH': 0,
-            'glsDH': 1,
+            //'glsDH': 1,
             'dbsDH': 2,
             'groupDH': 3
         };
@@ -440,6 +446,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
             xAxis.push(index);
             for (var i in sta.posR) {
+                if(i == 1)  continue;
                 push_data(sta.posR[i], staArrs[i])
             }
         });
@@ -523,10 +530,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 name: 'gpsDH',
                 data: gpsY
             }
+                //, {
+                //    name: 'glsDH',
+                //    data: glsY
+                //}
                 , {
-                    name: 'glsDH',
-                    data: glsY
-                }, {
                     name: 'dbsDH',
                     data: dbsY
                 }, {

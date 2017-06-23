@@ -21,7 +21,8 @@ MetronicApp.factory('DataArray', function() {
                 enabled: false
             },
             chart: {
-                polar: true
+                polar: true,
+                height: 700
             },
             title: {
                 text: ''
@@ -60,6 +61,7 @@ MetronicApp.factory('DataArray', function() {
                         enabled: true,
                         format: '{point.id}',
                         inside: true,
+                        allowOverlap: true,
                         verticalAlign: 'middle'
                     }
                 },
@@ -71,12 +73,17 @@ MetronicApp.factory('DataArray', function() {
             },
             tooltip: {
                 pointFormatter: function(){
-                    return '<tr><td style="color: {series.color}">Azi: </td>' +
+
+                    return '<tr><td style="color: {series.color}">id: </td>' +
+
+                        '<td style="text-align: right"><b>'+this.id +'</b></td></tr>'+'<br>'+'<tr><td style="color: {series.color}">Azi: </td>' +
+
                         '<td style="text-align: right"><b>'+ Math.round(this.x) +'</b></td></tr>'+'<br><tr><td style="color: {series.color}">Ele: </td>' +
                         '<td style="text-align: right"><b>' + Math.round(this.y) +'</b></td></tr>'
                 }
             },
-            series: [{
+            series: [
+                {
                 name: "北斗",
                 type: 'scatter',
                 data: data.bdsatpos
@@ -84,13 +91,16 @@ MetronicApp.factory('DataArray', function() {
                 name: "gls",
                 type: 'scatter',
                 data: data.glsatpos
-            }, {
+            },
+                {
                 name: "gps",
                 type: 'scatter',
                 data: data.gpsatpos
             }]
         });
+
     }
+
 
     return {starMap: starMap}
 

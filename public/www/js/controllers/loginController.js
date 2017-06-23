@@ -2,7 +2,7 @@ MetronicApp.controller('loginController', ['$state', '$scope', '$location', 'Sho
     $('body').addClass('page-on-load');
     Show.isShowLogin(true);
     Show.isShowAdmin({});
-    localStorage.clear();
+    localStorage.removeItem('userName');
     $rootScope.activeUser = undefined;
     $rootScope.rootUserInfo = undefined;
     $rootScope.warnning = undefined;

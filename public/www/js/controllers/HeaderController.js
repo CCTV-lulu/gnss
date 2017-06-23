@@ -30,8 +30,7 @@ MetronicApp.controller('HeaderController',
                     $rootScope.client = new Faye.Client('/faye', {timeout: 20});
                     $rootScope.client.subscribe('/channel/' + staId, function (message) {
                         var type=['GPS','GLS','BDS'];
-                        $rootScope.warnning = "基站名称："+message.stationName+'信号类型：'+type[message.sys] + '警告内容：'+message.warningContent+
-                            '警告数值：'+message.warningValue;
+                        $rootScope.warnning = "基站名称："+message.stationName+'信号类型：'+type[message.sys] + '警告内容：'+message.warningContent;
                         //Prompt.promptBox('warning', message)
                     });
                 }
