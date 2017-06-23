@@ -1,5 +1,7 @@
 var child_process = require('child_process');
 var BatchProcessModel = require('../data/batchProcess');
+var fs = require('fs')
+var rimraf = require('rimraf')
 
 var AllUserBatchProcess = {};
 
@@ -105,20 +107,23 @@ function getBatchProcess(req, res) {
 }
 
 function killUserBatchProcess(username, cb) {
-    if(AllUserBatchProcess[username]){
-        AllUserBatchProcess[username].send({message: 'close'});
-        BatchProcessModel.deleteBatchProcess(username).then(function () {
-            if (cb) {
-                cb()
+    rimraf("./public/chartImage/" + username, function (err) {
+        fs.mkdir("./public/chartImage/" + username, function (err) {
+            if (AllUserBatchProcess[username]) {
+                AllUserBatchProcess[username].send({message: 'close'});
+                BatchProcessModel.deleteBatchProcess(username).then(function () {
+                    if (cb) {
+                        cb()
+                    }
+                });
+                AllUserBatchProcess[username] = undefined;
+            } else {
+                if (cb) {
+                    cb()
+                }
             }
-        });
-        AllUserBatchProcess[username] = undefined;
-    }else{
-        if(cb){
-            cb()
-        }
-    }
-
+        })
+    })
 
 
 }

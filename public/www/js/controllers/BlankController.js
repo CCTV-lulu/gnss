@@ -136,6 +136,10 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     function showProcessResult(data) {
         $('.loading').hide();
         Prompt.promptBox("success", "数据处理完毕");
+        $('#dataStatisticsChartLoding').hide();
+        $("#dataStatisticsChart").css("opacity", 1);
+        console.log('startTime')
+        console.log(new Date())
         showErrHist('HErrHist', data,'herr_hist');
         showErrHist('VErrHist', data,'verr_hist');
         showDop('Hdop', data, 'vdop_hist');
@@ -145,8 +149,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         showTime(data);
         showStaNum('StaNum', data);
         showAvailability('content', data);
-        $('#dataStatisticsChartLoding').hide();
-        $("#dataStatisticsChart").css("opacity", 1);
+
         //$scope.integritys = EventData.table(data.result.data);
         //if (data.result.data.continuity && data.result.data.availability) {
         //    $scope.continuity = data.result.data.continuity;
@@ -413,115 +416,142 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     }
 
     function showTime(data) {
-        chartTimeLine('GPSVPLTime', data, 0, 'vpl_num');
-        chartTimeLine('GPSHPLTime', data, 0, 'hpl_num');
-        chartTimeLine('GLSVPLTime', data, 1, 'vpl_num');
-        chartTimeLine('GLSHPLTime', data, 1, 'hpl_num');
-        chartTimeLine('BDSVPLTime', data, 2, 'vpl_num');
-        chartTimeLine('BDSHPLTime', data, 2, 'hpl_num');
-        chartTimeLine('GroupVPLTime', data, 3, 'vpl_num');
-        chartTimeLine('GroupHPLTime', data, 3, 'hpl_num')
+        var signals = ['GPS', 'GLS', 'BDS', 'Group'];
+        for(var sys in data){
+            var sysIndex = parseInt(sys)
+            if(data[sys].up_slice.vpl_num ==1){
+
+                chartTimeLine(signals[sysIndex]+'VPLTime',signals[sysIndex]+'vpl_num.png')
+            }
+            if(data[sys].up_slice.hpl_num ==1){
+                chartTimeLine(signals[sysIndex]+'HPLTime', signals[sysIndex]+'vpl_num.png')
+            }
+
+        }
+        //chartTimeLine('GPSVPLTime', data, 3, 'vpl_num');
+        //chartTimeLine('GPSHPLTime', data, 3, 'hpl_num');
+        //chartTimeLine('GLSVPLTime', data, 3, 'vpl_num');
+        //chartTimeLine('GLSHPLTime', data, 3, 'hpl_num');
+        //chartTimeLine('BDSVPLTime', data, 3, 'vpl_num');
+        //chartTimeLine('BDSHPLTime', data, 3, 'hpl_num');
+        //chartTimeLine('GroupVPLTime', data, 3, 'vpl_num');
+        //chartTimeLine('GroupHPLTime', data, 3, 'hpl_num');
+        console.log('endTime')
+        console.log(new Date())
     }
 
-    function chartTimeLine(id, data, sys, type) {
+    function chartTimeLine(id, imageName) {
 
         //var showData = data[type];
-        var series = [];
-        var name = id.replace('Time', '');
-        var info = {name: name, data: [],color: 'red'};
-        var startTime;
-        sys = sys.toString();
-        if (!data[sys]) return;
-        var up_slice = data[sys].up_slice;
-        up_slice[type].X.forEach(function (x, index) {
-            var time = new Date(x).getTime();
-            if (index == 0) {
-
-                startTime = new Date(x).getTime();
-                console.log(startTime)
-            }
-            if (time - startTime <= 24 * 60 * 60 * 1000) {
-                info.data.push([time, up_slice[type].Y[index]])
-            } else {
-                console.log(time)
-            }
-
-
-        });
-        if (info.data.length > 0) {
-            series.push(info)
-        }
-
-        if (series.length == 0) return;
+        //var series = [];
+        //var name = id.replace('Time', '');
+        //var info = {name: name, data: [],color: 'red'};
+        //var startTime;
+        //sys = sys.toString();
+        //if (!data[sys]) return;
+        //var up_slice = data[sys].up_slice;
+        //up_slice[type].X.forEach(function (x, index) {
+        //    var time = new Date(x).getTime();
+        //    if (index == 0) {
+        //
+        //        startTime = new Date(x).getTime();
+        //        //console.log(startTime)
+        //    }
+        //    if (time - startTime <= 24 * 60 * 60 * 1000) {
+        //        info.data.push([time, 500])
+        //    } else {
+        //        //console.log(time)
+        //    }
+        //
+        //
+        //});
+        //if (info.data.length > 0) {
+        //    series.push(info)
+        //}
+        //return
+        //if (series.length == 0) return;
+        $("#"+id+' img').attr('src','/chartImage/1/'+imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
-        Highcharts.setOptions({
-            lang: {
-                resetZoom: '重置',
-                resetZoomTitle: '重置缩放比例'
-            },
-            global: {
-                useUTC: false
-            }
-        });
-        $('#' + id).highcharts({
-            chart: {
-                type: 'column',
-                zoomType: 'x',
-                panning: true,
-                panKey: 'shift',
-                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
-                resetZoomButton: {
-                    position: {
-                        align: 'right',
-                        verticalAlign: 'top',
-                        x: 0,
-                        y: 0
-                    },
-                    theme: {
-                        fill: 'white',
-                        stroke: 'silver',
-                        r: 0,
-                        states: {
-                            hover: {
-                                fill: '#41739D',
-                                style: {
-                                    color: 'white'
-                                }
-                            }
-                        }
-                    }
-                }
 
 
-            },
-            xAxis: {
-                type: 'datetime',
-                dateTimeLabelFormats: {
-                    second: '%H:%M:%S',
-                    minute: '%e. %m %H:%M',
-                    hour: '%m/%e %H:%M',
-                    day: '%m/%e %H:%M',
-                    week: '%e. %m',
-                    month: '%b %y',
-                    year: '%Y'
-                }
-
-            },
-            plotOptions: {
-                series: {
-                    animation: false
-                }
-            },
-
-            legend: {
-                enabled: true
-            },
-            //图例开关,默认是：true
-            series: series
-
-        });
+        //Highcharts.setOptions({
+        //    lang: {
+        //        resetZoom: '重置',
+        //        resetZoomTitle: '重置缩放比例'
+        //    },
+        //    global: {
+        //        useUTC: false<div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GroupVPLTime_container" style="display: none;">…</div>
+        //    }
+        //});
+        //$('#' + id).highcharts({
+        //    chart: {
+        //        type: 'column',
+        //        zoomType: 'x',
+        //        panning: true,
+        //        panKey: 'shift',
+        //        selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+        //        resetZoomButton: {
+        //            position: {
+        //                align: 'right',
+        //                verticalAlign: 'top',
+        //                x: 0,
+        //                y: 0
+        //            },
+        //            theme: {
+        //                fill: 'white',
+        //                stroke: 'silver',
+        //                r: 0,
+        //                states: {
+        //                    hover: {
+        //                        fill: '#41739D',
+        //                        style: {
+        //                            color: 'white'
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        },
+        //        events: {
+        //            load: function () {
+        //                //// set up the updating of the chart each second
+        //                console.log('----end-----type'+type)
+        //                console.log(new Date())
+        //
+        //
+        //
+        //            }
+        //        }
+        //
+        //
+        //    },
+        //    xAxis: {
+        //        type: 'datetime',
+        //        dateTimeLabelFormats: {
+        //            second: '%H:%M:%S',
+        //            minute: '%e. %m %H:%M',
+        //            hour: '%m/%e %H:%M',
+        //            day: '%m/%e %H:%M',
+        //            week: '%e. %m',
+        //            month: '%b %y',
+        //            year: '%Y'
+        //        }
+        //
+        //    },
+        //    plotOptions: {
+        //        series: {
+        //            animation: false
+        //        }
+        //    },
+        //
+        //    legend: {
+        //        enabled: true
+        //    },
+        //    //图例开关,默认是：true
+        //    series: series
+        //
+        //});
     }
 
     function showStaNum(type, data) {
@@ -582,5 +612,9 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         });
     }
 
+    //$.getJSON('/json/' +   '1.json', function (data) {
+    //
+    //    showProcessResult(data)
+    //});
 
 });

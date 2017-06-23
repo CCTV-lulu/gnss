@@ -27,6 +27,7 @@
     "socket.io": "^1.7.3",
     "streambrake": "0.0.4",
     "threads_a_gogo": "^0.1.13",
-    "faye":"1.2.4"
+    "faye":"1.2.4",
+    "highcharts-export-server":"*"
   }
 }
