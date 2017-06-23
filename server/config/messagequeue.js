@@ -16,6 +16,7 @@ var amqp = require('amqp-connection-manager');
 //var parser = require('../parser');
 var parse = require('../canavprocess/realtime_process.js');
 var StationConfig = require('../data/stationConfig.js');
+var WarningInfo = require('../data/warningInfo.js');
 
 var AllStationsConfig = {};
 
@@ -170,26 +171,41 @@ function initSockectClinet(bayeux) {
 function checkThreshold(StaData) {
     var thresholdInfo = getStationConfig(StaData.station_id)
     var threshold = thresholdInfo.threshold;
+    var stationName=thresholdInfo.stationName;
     var data = StaData.posR
-    //console.log(threshold)
+    console.log(stationName)
+    console.log(StaData.time)
+    console.log(typeof StaData.time)
     //console.log( getStationConfig(data.station_id))
     if(threshold==undefined) return;
     Object.keys(data).forEach(function (sys) {
         if (threshold[sys]) {
             Object.keys(threshold[sys]).forEach(function (type) {
-                //console.log(type)
                 //console.log(data[sys][type])
                 //console.log( threshold[sys][type])
                 if (data[sys][type] > threshold[sys][type]) {
-                    setFaye(StaData.station_id, sys, type)
+                    sendFaye(StaData.station_id, sys, type, threshold[sys][type], data[sys][type],stationName,StaData.time)
                 }
             })
         }
     })
 }
 
-function setFaye(station_id, sys, type) {
-    faye.getClient().publish('/channel/' + station_id, {sys: sys, type: type,staId:station_id})
+function sendFaye(station_id, sys, type, threshold, warningValue,stationName,time ) {
+    var warningInfo = {
+        happendTime:time,
+        stationName: stationName,
+        staId: station_id,
+        sys:sys,
+        warningContent:type,
+        warningValue:warningValue,
+        threshold:threshold
+
+    }
+    WarningInfo.create(warningInfo).then(function(){
+        faye.getClient().publish('/channel/' + station_id, warningInfo)
+    })
+
 }
 
 
@@ -259,5 +275,5 @@ module.exports = {
 };
 
 
-server.listen(33666);
+server.listen(33666,'192.168.1.17');
 

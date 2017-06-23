@@ -52,10 +52,18 @@ var config = {
         103.239573583795, 104.216897742612, 105.177942166677, 106.12348679984
     ]
 };
-function handleAllThreshold(allConfig){
-    var allThreshold ={};
-    allConfig.forEach(function(oneConfig){
-        allThreshold[oneConfig.staId]= oneConfig.threshold ||{}
+function handleAllThreshold(allConfig) {
+    var allThreshold = {};
+    allConfig.forEach(function (oneConfig) {
+        var config = {};
+        oneConfig.config.elmin.forEach(function (oneElmin,index) {
+            config[index.toString()] = {}
+            config[index.toString()].config = {elmin: oneElmin, rb: oneConfig.config.rb[index]}
+        })
+        Object.keys(config).forEach(function(sys){
+            config[sys].threshold = oneConfig.threshold ? oneConfig.threshold[sys]:{}
+        })
+        allThreshold[oneConfig.staId]=config
     });
     return allThreshold
 }
@@ -71,11 +79,11 @@ module.exports = {
             threshold: {}
 
         };
-        StationConfig.create(newStationConfig,function(err, data){
-            if(err){
-                return defer.reject({status:false,message:err})
+        StationConfig.create(newStationConfig, function (err, data) {
+            if (err) {
+                return defer.reject({status: false, message: err})
             }
-            return defer.resolve({status:true, message:data})
+            return defer.resolve({status: true, message: data})
         });
         return defer.promise;
     },
@@ -96,41 +104,42 @@ module.exports = {
     deleteByStaName: function (stationName) {
         return StationConfig.remove({stationName: stationName}).exec()
     },
-    getAllStationThreshold: function(){
+    getAllStationThreshold: function () {
         var defer = Promise.defer();
         StationConfig.where().exec(function (err, AllStationConfig) {
             if (err) {
-                defer.resolve({status:false, message:'拉取数据失败'})
+                defer.resolve({status: false, message: '拉取数据失败'})
             } else {
                 var allThreshold = handleAllThreshold(AllStationConfig);
-                defer.resolve({status:true, allThreshold: allThreshold})
+                defer.resolve({status: true, allThreshold: allThreshold})
             }
         });
         return defer.promise;
     },
-    setStationThreshold: function(staId, singal, threshold,config){
+
+    setStationThreshold: function (staId, singal, threshold,config) {
 
         var self = this;
         var defer = Promise.defer();
-        StationConfig.findOne({staId: staId}).exec(function(err, stationConfig){
-            if(err){
-                return defer.resolve({status:false, message:'拉取数据失败'})
+        StationConfig.findOne({staId: staId}).exec(function (err, stationConfig) {
+            if (err) {
+                return defer.resolve({status: false, message: '拉取数据失败'})
             }
-            if(!stationConfig){
-                return defer.resolve({status:false, message:'请刷新'})
+            if (!stationConfig) {
+                return defer.resolve({status: false, message: '请刷新'})
             }
-            var newThreshold = stationConfig.threshold||{};
-            newThreshold[singal]= threshold;
-            //var newConfig =  stationConfig.config||{};
-            //if(config.elmin !== undefined){
-            //    newConfig.elmin[parseInt(singal)] = config.elmin;
-            //}
 
-            StationConfig.update({staId: staId},{$set:{threshold:newThreshold}},function(err, result){
+            var newThreshold = stationConfig.threshold || {};
+            newThreshold[singal] = threshold;
+            var newConfig = stationConfig.config||{};
+            newConfig.elmin[parseInt(singal)] = config.elmin;
+            newConfig.rb[parseInt(singal)]=config.rb;
+            StationConfig.update({staId: staId}, {$set: {threshold:newThreshold,config: newConfig}}, function (err, result) {
+
                 if (err) {
-                    return defer.resolve({status:false, message:'保存失败'})
+                    return defer.resolve({status: false, message: '保存失败'})
                 } else {
-                    self.getAllStationThreshold().then(function(allThreshold){
+                    self.getAllStationThreshold().then(function (allThreshold) {
                         return defer.resolve(allThreshold)
                     })
                 }
@@ -139,7 +148,6 @@ module.exports = {
         })
         return defer.promise;
     }
-
 
 
 };

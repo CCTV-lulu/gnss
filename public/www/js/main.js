@@ -102,6 +102,24 @@ MetronicApp.config(['$stateProvider', '$httpProvider', '$urlRouterProvider', fun
             }
         })
 
+        .state('warning', {
+            url: '/warning',
+            templateUrl: "views/warning.html",
+            data: {pageTitle: "Warning Page Template"},
+            controller: "WarningController",
+            resolve: {
+                deps: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'MetronicApp',
+                        insertBefore: '#ng_load_plugins_before',
+                        files: [
+                            'js/controllers/WarningController.js'
+                        ]
+                    });
+                }]
+            }
+        })
+
         .state('stardata', {
         url: '/stardata',
         templateUrl: "views/stardata.html",

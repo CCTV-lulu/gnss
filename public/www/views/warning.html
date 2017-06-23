@@ -1,0 +1,50 @@
+<h1 class="page-title"> 历史警告信息查询 </h1>
+<div class="page-bar" style="margin-bottom: 0;height: 5px">
+    <div class="loading" style="background: #4271ff;height: 5px;z-index: 99999;display:none"></div>
+</div>
+<div class="page-bar">
+    <div class="row">
+        <div class="col-md-5" style="margin: 10px 10px 20px 10px;">
+            <div>时间选择：</div>
+            <div class="controls">
+                <div id="reportrange" class="pull-left dateRange" style="width:350px">
+                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                    <span id="searchDateRange"></span>
+                    <b class="caret"></b>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" style="margin: 28px 10px 20px 10px;">
+            <div class="form-group">
+                <blank-Station-List></blank-Station-List>
+            </div>
+        </div>
+
+        <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
+            <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>
+        </div>
+        <div class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
+            <label>定位系统: </label>
+            <input type="checkbox" na="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
+            <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
+            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
+            <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
+        </div>
+
+        <div id='options' class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
+            <label>统计选项: </label>
+            <input type="checkbox" name="sat_hist" ng-checked="{{filter.option['sat_hist']}}"> 卫星数
+            <input type="checkbox" name="err_hist"  ng-checked="{{filter.option['err_hist']}}"> 定位误差
+            <input type="checkbox" name="dop_hist" ng-checked="{{filter.option['dop_hist']}}"> DOP值
+            <input type="checkbox" name="PL_hist" ng-checked="{{filter.option['PL_hist']}}"> 保护水平
+            <input type="checkbox" name="hpl_num" ng-checked="{{filter.option['hpl_num']}}"> HPL超限时间
+            <input type="checkbox" name="vpl_num" ng-checked="{{filter.option['vpl_num']}}"> VPL超限时间
+
+        </div>
+
+    </div>
+</div>
+
+
+
+

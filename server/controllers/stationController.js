@@ -13,6 +13,7 @@ var encryption = require('../utilities/cripto'),
 
     StationConfig = require('../data/stationConfig'),
     UserStationInfo = require('../data/userStationInfo'),
+    WarningInfo = require('../data/warningInfo.js'),
     UsersData = require('../data/usersData');
 
 
@@ -384,7 +385,7 @@ function getStaThreshold(req, res) {
 
 function setStaThreshold(req, res) {
     var thresholdInfo  = req.body;
-    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal,thresholdInfo.threshold).then(function (result) {
+    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal,thresholdInfo.threshold,thresholdInfo.config).then(function (result) {
         if(result.status){
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
         }
@@ -393,6 +394,22 @@ function setStaThreshold(req, res) {
 }
 
 /*==========================waring*/
+function createWaring(){
+    WarningInfo.where().then(function(warningInfo){
+        if(!warningInfo.status){
+            res.send(warningInfo)
+        }else{
+            warningInfo
+        }
+    })
+}
+function createCSV(){
+        var csv = json2csv({data: CARS, fields: APKNAME});
+        fs.writeFile('file.csv', csv, function (err) {
+            if (err) throw err;
+            console.log('file saved');
+        });
+}
 
 
 

@@ -58,6 +58,7 @@ module.exports = {
 
         Station.findOne({name: req.body.station})
             .then(function (station) {
+
                 if (!station && req.body.type !== 'true') {
                     return res.send({status: false, message: "基站不存在！"})
                 }
