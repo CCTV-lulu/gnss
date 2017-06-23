@@ -23,9 +23,17 @@
         <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
             <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>
         </div>
+        <div class="col-md-12 col-xs-12 col-sm-12 ng-hide" id='warning' style="margin: 0 10px 10px 10px;">
+            <div id="wait">
+                数据查询中请稍后。。。
+            </div>
+            <div id="success">
+                数据查询结束。。。
+            </div>
+        </div>
         <div class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
             <label>定位系统: </label>
-            <input type="checkbox" na="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
+            <input type="checkbox" name="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
             <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
             <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
             <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
@@ -33,12 +41,13 @@
 
         <div id='options' class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
             <label>统计选项: </label>
-            <input type="checkbox" name="sat_hist" ng-checked="{{filter.option['sat_hist']}}"> 卫星数
-            <input type="checkbox" name="err_hist"  ng-checked="{{filter.option['err_hist']}}"> 定位误差
-            <input type="checkbox" name="dop_hist" ng-checked="{{filter.option['dop_hist']}}"> DOP值
-            <input type="checkbox" name="PL_hist" ng-checked="{{filter.option['PL_hist']}}"> 保护水平
-            <input type="checkbox" name="hpl_num" ng-checked="{{filter.option['hpl_num']}}"> HPL超限时间
-            <input type="checkbox" name="vpl_num" ng-checked="{{filter.option['vpl_num']}}"> VPL超限时间
+
+            <input type="checkbox" name="dH"  ng-checked="{{filter.types['dH']}}"> 水平误差
+            <input type="checkbox" name="dV" ng-checked="{{filter.types['dV']}}"> 垂直误差
+            <input type="checkbox" name="HDOP" ng-checked="{{filter.types['HDOP']}}"> HDOP
+            <input type="checkbox" name="VDOP"  ng-checked="{{filter.types['VDOP']}}"> VDOP
+            <input type="checkbox" name="HPL" ng-checked="{{filter.types['HPL']}}"> HPL
+            <input type="checkbox" name="VPL" ng-checked="{{filter.types['VPL']}}"> VPL
 
         </div>
 

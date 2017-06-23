@@ -599,5 +599,23 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             setThreshold: setThreshold,
             getThreshold: getThreshold
         }
+    })
+    .factory('WarningCSV',function($http, $location, settingInfo, Prompt, Passport, httpRequest){
+        var url = "http://" + settingInfo.server + ":" + settingInfo.port;
+        function createWaring(data, cb) {
+            httpRequest.post(url + "/createWaring", data, function (result) {
+                cb(result)
+            })
+        }
+
+        function getWarningInfo(filename,cb){
+            httpRequest.httpGet( url + "/getWarningInfo?filename="+filename, function (result) {
+                cb(result)
+            })
+        }
+        return {
+            createWaring: createWaring,
+            getWarningInfo: getWarningInfo
+        }
     });
 

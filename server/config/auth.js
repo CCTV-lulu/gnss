@@ -1,6 +1,7 @@
 var passport = require('passport');
 var BatchProcess = require('../data/batchProcess.js');
 var batchProcessController = require('../controllers/batchProcessController');
+var stationController = require('../controllers/stationController');
 
 module.exports = {
     login: function (req, res, next) {
@@ -13,6 +14,7 @@ module.exports = {
             req.logIn(user, function(err) {
                 if (err) return next(err);
                 batchProcessController.killUserBatchProcess(user.username);
+                stationController.removeCSV(req.user.username);
                 //BatchProcess.deleteBatchProcess(user.username).then(function () {
                 //    console.log(user.username+'success')
                 //});
@@ -24,6 +26,7 @@ module.exports = {
 //登录验证完后登录
     logout: function (req, res, next) {
         batchProcessController.killUserBatchProcess(req.user.username);
+        stationController.removeCSV(req.user.username);
         //killChild.killChild(req.user.username)
         //BatchProcess.deleteBatchProcess(req.user.username).then(function () {
         //    console.log('delete success')

@@ -48,6 +48,9 @@ module.exports = function (app) {
     app.post('/startBatchProcess', auth.isInRole('admin'), controllers.batchProcess.startBatchProcess);
     /*================threshole*/
     app.get('/getStaThreshold', auth.isInRole('user'),controllers.station.getStaThreshold);
-    app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold)
+    app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold);
+    /*====================Warning*/
+    app.get('/getWarningInfo' ,controllers.station.checkWarningStatus)
+    app.post('/createWaring',controllers.station.createWaring)
 
 };

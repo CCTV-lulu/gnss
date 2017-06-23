@@ -1,9 +1,10 @@
 var WarningInfo = require('mongoose').model('WarningInfo');
 module.exports = {
     create: function (warning) {
+        console.log(warning)
         var defer = Promise.defer();
         var newWarningInfo = {
-            happendTime:warning.time,
+            happendTime:warning.happendTime,
             stationName: warning.stationName,
             staId: warning.staId,
             sys:warning.sys,
@@ -20,13 +21,15 @@ module.exports = {
         return defer.promise;
     },
     where: function(condition){
-        var defer = promise.defer();
-        WarningInfo.where().exec(condition).then(function(err,data){
+        var defer = Promise.defer();
+        WarningInfo.where(condition).exec(function(err,data){
+            console.log(err)
             if(err){
                 return defer.resolve({status:false})
             }
             defer.resolve({status:true,result: data})
         })
+        return defer.promise;
     }
 
 

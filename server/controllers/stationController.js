@@ -1,6 +1,13 @@
 var fs = require('fs');
 var path = require('path');
 var StationSocketStatus = require('../config/messagequeue');
+var json2csv = require('json2csv');
+var rimraf = require('rimraf');
+var iconv = require('iconv-lite');
+//var multer = require('multer'); // v1.0.5
+var CSVPath = './public/csv';
+var FILEPATH = '/csv';
+
 
 //var batchProcessData = require('../batch_process_data/batch_process_data');
 
@@ -38,7 +45,6 @@ function getUserStationId(req, res) {
         if (err) {
             return res.send({status: false, message: 'getUserStationId error  '})
         }
-        //console.log(req.user)
         Station.all().then(function (stations) {
             if (stations[0] == null) {
                 var station = {
@@ -70,12 +76,10 @@ function getUserStationId(req, res) {
                             if (req.user.roles.length == 1) {
                                 var userStation = JSON.parse(JSON.stringify(userStationId));
                                 userStation.name = username
-                                //console.log(userStation)
                                 var station = {
                                     userStation: userStation,//普通用户发一个，管理员都发
                                     allStation: []
                                 };
-                                //console.log('user')
 
                                 res.send(station)
                             }
@@ -156,7 +160,6 @@ function getUserStaThreshold(req, res) {
         });
     })
 }
-
 
 
 //function getBatchProcessStatus(userBatchProcesStatus) {
@@ -293,8 +296,6 @@ function getUserStationInfo(req, res) {
 }
 
 
-
-
 function deleteStation(req, res) {
     Station.deleteByName(req.body.name).then(function (result) {
         UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
@@ -378,44 +379,116 @@ function getStationStatus(req, res, next) {
 /*==========================threshold*/
 
 function getStaThreshold(req, res) {
-    StationConfig.getAllStationThreshold().then( function (stationConfig) {
+    StationConfig.getAllStationThreshold().then(function (stationConfig) {
         res.send(stationConfig)
     });
 }
 
 function setStaThreshold(req, res) {
-    var thresholdInfo  = req.body;
-    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal,thresholdInfo.threshold,thresholdInfo.config).then(function (result) {
-        if(result.status){
+    var thresholdInfo = req.body;
+    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold, thresholdInfo.config).then(function (result) {
+        if (result.status) {
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
         }
-       res.send(result)
+        res.send(result)
     })
 }
 
-/*==========================waring*/
-function createWaring(){
-    WarningInfo.where().then(function(warningInfo){
-        if(!warningInfo.status){
+function createWaring(req, res) {
+    var username = 1;
+    var path = CSVPath + "/" + username;
+    var conditionInfo = req.body;
+    var fileName = new Date().getTime() + ".csv";
+    settWarningStatus(username, fileName, true);
+    var condition = {
+        "$and": [
+            {"happendTime": {"$gt": new Date(conditionInfo.bt)}},
+            {"happendTime": {"$lt": new Date(conditionInfo.et)}},
+            {staId: conditionInfo.staId},
+            {sys: {$in: conditionInfo.sys}},
+            {warningContent: {$in: conditionInfo.types}}
+
+        ]
+    }
+
+    WarningInfo.where(condition).then(function (warningInfo) {
+        if (!warningInfo.status) {
             res.send(warningInfo)
-        }else{
-            warningInfo
+        } else {
+            fs.mkdir(path, function (err) {
+                var time  =warningInfo.result.length/10000;
+                createCSV(warningInfo.result, path, fileName);
+                return res.send({status: true, fileName: fileName, time:time})
+            })
         }
     })
 }
-function createCSV(){
-        var csv = json2csv({data: CARS, fields: APKNAME});
-        fs.writeFile('file.csv', csv, function (err) {
-            if (err) throw err;
-            console.log('file saved');
-        });
+
+var WarningStatus = {};
+
+function getWarningStatus(username, path) {
+    return WarningStatus[username] ? WarningStatus[username][path] : true;
+}
+
+function settWarningStatus(username, path, boolean) {
+    if (!WarningStatus[username]) {
+        WarningStatus[username] = {}
+    }
+    WarningStatus[username][path] = boolean
 }
 
 
+function checkWarningStatus(req, res) {
+    var username = req.user.username;
+    var filePath = FILEPATH + '/' + username + "/" + req.query.filename;
+    var path = CSVPath + '/' + username;
+    if (!getWarningStatus(username, path)) {
+        res.send({status: true, filePath: filePath})
+
+    } else {
+        res.send({status: false})
+    }
+
+}
+
+
+function createCSV(warningInfos, path, fileName) {
+    var data = [];
+    var fields = ['时间', '基站名称', '系统模式', '告警内容', '告警数值', '当前阈值'];
+    var sys = ['GPS', 'GLS', 'BDS', 'Group'];
+    warningInfos.forEach(function (info) {
+        data.push({
+            '时间': info.happendTime,
+            '基站名称': info.stationName,
+            '系统模式': sys[info.sys],
+            '告警内容': info.warningContent,
+            '告警数值': info.warningValue,
+            '当前阈值': info.threshold
+
+        })
+    });
+
+    json2csv({data: data, fields: fields}, function (err, csv) {
+        if (err)  console.log(err);
+        var newCsv = iconv.encode(csv, 'GBK'); // 转编码
+
+        fs.writeFile(path + '/' + fileName, newCsv, function (err) {
+            if (err) throw err;
+            var username = path.split('/').pop()
+            settWarningStatus(username, path, false)
+            console.log('file saved');
+        });
+    });
+
+}
+
+function removeCSV(username){
+    rimraf("./public/csv/" + username, function (err) {
+
+    })
+}
 
 /*==================================*/
-
-
 
 
 module.exports = {
@@ -435,6 +508,10 @@ module.exports = {
     getStaThreshold: getStaThreshold,
     setStaThreshold: setStaThreshold,
 
-    getUserStationInfo: getUserStationInfo
+    getUserStationInfo: getUserStationInfo,
+    createWaring: createWaring,
+    checkWarningStatus: checkWarningStatus,
+    removeCSV:removeCSV
+
 };
 

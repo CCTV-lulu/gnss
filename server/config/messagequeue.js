@@ -193,7 +193,7 @@ function checkThreshold(StaData) {
 
 function sendFaye(station_id, sys, type, threshold, warningValue,stationName,time ) {
     var warningInfo = {
-        happendTime:time,
+        happendTime: new Date(time),
         stationName: stationName,
         staId: station_id,
         sys:sys,
@@ -201,7 +201,8 @@ function sendFaye(station_id, sys, type, threshold, warningValue,stationName,tim
         warningValue:warningValue,
         threshold:threshold
 
-    }
+
+    };
     WarningInfo.create(warningInfo).then(function(){
         faye.getClient().publish('/channel/' + station_id, warningInfo)
     })

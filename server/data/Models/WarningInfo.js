@@ -3,13 +3,13 @@ var mongoose = require('mongoose'),
 
 module.exports.init = function () {
     var stationSchema = new mongoose.Schema({
-        happendTime:String,
+        happendTime: Date,
         stationName: String,
         staId:String,
         sys:Number,
         warningContent:String,
         warningValue:Number,
-        threshod:Number
+        threshold: Number
 
     });
 

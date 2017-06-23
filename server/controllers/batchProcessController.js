@@ -107,23 +107,26 @@ function getBatchProcess(req, res) {
 }
 
 function killUserBatchProcess(username, cb) {
-    rimraf("./public/chartImage/" + username, function (err) {
-        fs.mkdir("./public/chartImage/" + username, function (err) {
-            if (AllUserBatchProcess[username]) {
-                AllUserBatchProcess[username].send({message: 'close'});
-                BatchProcessModel.deleteBatchProcess(username).then(function () {
+
+        rimraf("./public/chartImage/" + username, function (err) {
+            fs.mkdir("./public/chartImage/" + username, function (err) {
+                if (AllUserBatchProcess[username]) {
+                    AllUserBatchProcess[username].send({message: 'close'});
+                    BatchProcessModel.deleteBatchProcess(username).then(function () {
+                        if (cb) {
+                            cb()
+                        }
+                    });
+                    AllUserBatchProcess[username] = undefined;
+                } else {
                     if (cb) {
                         cb()
                     }
-                });
-                AllUserBatchProcess[username] = undefined;
-            } else {
-                if (cb) {
-                    cb()
                 }
-            }
+            })
         })
-    })
+
+
 
 
 }
