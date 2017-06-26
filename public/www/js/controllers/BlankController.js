@@ -167,8 +167,10 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
         var series = [];
         Object.keys(data).forEach(function (key) {
+
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
+
             data[key][showType].Y.forEach(function (y, index) {
                 info.data.push([data[key][showType].X[index], y])
             });
@@ -230,9 +232,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
-            //xAxis: {
-            //    categories: xAxis
-            //},
+            xAxis: {
+                labels:{
+                    formatter:function(){
+                        return this.value+'m';
+                    }
+                }
+            },
             series: series
         })
     }
@@ -329,7 +335,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
-
+            xAxis: {
+                labels:{
+                    formatter:function(){
+                        return this.value+'m';
+                    }
+                }
+            },
             series: series
         })
     }
@@ -405,6 +417,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             },
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
+            },
+            xAxis: {
+                labels:{
+                    formatter:function(){
+                        return this.value+'m';
+                    }
+                }
             },
             //xAxis: {
             //    type: 'category',
@@ -612,9 +631,9 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         });
     }
 
-    //$.getJSON('/json/' +   '1.json', function (data) {
-    //
-    //    showProcessResult(data)
-    //});
+    $.getJSON('/json/' +   '1.json', function (data) {
+
+        showProcessResult(data)
+    });
 
 });

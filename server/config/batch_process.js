@@ -128,7 +128,7 @@ function batch_process(batchProcessFiler) {
 
 
     var files = getFollowDatePath(batchProcessFiler);
-    if (files.allTime == 0) {
+    if (files.allTime == 30) {
         return process.send({status: 301, effectiveTime: files.allTime});
     }
     process.send({status: 300, effectiveTime: files.allTime});
@@ -140,7 +140,8 @@ function batch_process(batchProcessFiler) {
     processOneDay(files.allFilesData, 0, function (data) {
 
 
-        createImage(data,batchProcessFiler).then(function(){
+        createImage(data,batchProcessFiler).then(function(results){
+            console.log()
             exporter.killPool()
             for(var sys in data){
                 data[sys].up_slice = {
@@ -269,7 +270,7 @@ function chartImage(chartInfo,username) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
         fs.writeFile( "./public/chartImage/"+username+'/'+ chartInfo.fileName+".png", res.data, 'base64', function (err) {
-            defer.resolve()
+            defer.resolve(chartInfo.fileName)
         });
 
     })
@@ -285,7 +286,9 @@ function handleDate(data,filter) {
             filter.sys.forEach(function(sys){
                 var singalIndex = parseInt(sys);
                 var singal = signals[singalIndex];
-                chartDateArray.push(getTimeLine(singal+lineType, data, singalIndex, lineType))
+                var line = getTimeLine(singal+lineType, data, singalIndex, lineType)
+                if(line === false) return ;
+                chartDateArray.push(line)
             })
         }
     });
@@ -310,11 +313,14 @@ function getTimeLine(name, data, sys, type) {
             startTime = new Date(up_slice[type].X[i]).getTime();
         }
         if (time - startTime > 24 * 60 * 60 * 1000) break;
-
+        var currentTime = time
         info.data.push([time, up_slice[type].Y[i]])
     }
-
-    return {fileName:fileName, series: [info]}
+    var warningLine = {"type": "line", name: '警告线', data: [[startTime,200],[currentTime,200]], color: 'red'}
+    if(info.data.length == 0){
+        return false
+    }
+    return {fileName:fileName, series: [info,warningLine]}
 }
 
 //function getLineDate(type, data, showType,sysArr) {
