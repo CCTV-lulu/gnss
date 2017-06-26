@@ -50,25 +50,24 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
 
     function getStationInfo(staId, limit) {
-
         try {
-            loadStationStatus(staId, limit,function(){
+            loadStationStatus($rootScope.stationId, limit,function(){
                 if(listenRootCurrentStationStatus !== true){
-                    getStationInfo(staId, limit)
+                    getStationInfo($rootScope.stationId, limit)
                 }
 
             })
         } catch (err) {
-
+            console.log(err)
         }
     }
 
     function loadStationStatus(staId, limit, cb) {
 
         getStationStatus.getStationStatus(staId, limit, function (data) {
-            if (limit == 10 && data.stationData != false && data.stationData != undefined) {
+            if (limit == 10 ) {
                 if (data.stationData.length < 300) {
-                    return setTimeout(cb, 2000)
+                    return cb()
                 }
 
                 for (var i = 0; i < (data.stationData.length); i++) {
@@ -108,10 +107,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
 
         }
-        if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
-            $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
-
-        }
+        //if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
+        //    $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
+        //
+        //}
         if (staInfo.posR[3]&&getDxDy(staInfo.posR[3])) {
             $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
         }

@@ -250,6 +250,9 @@ var StationSocketStatus = {};
 
 function getStatInfo(number, id) {
     if (number > 1) {
+        if (statInfo[id] == undefined) {
+            return []
+        }
         return statInfo[id]
     } else {
         if (statInfo[id] == undefined) {
@@ -260,11 +263,7 @@ function getStatInfo(number, id) {
 
 }
 function initStationOpt(staId) {
-    console.log('initStationOpt')
-    console.log(AllStationsConfig)
-    console.log(staId)
     AllStationsConfig[staId] = undefined
-    console.log(AllStationsConfig)
 }
 module.exports = {
     StationSocketStatus: StationSocketStatus,
