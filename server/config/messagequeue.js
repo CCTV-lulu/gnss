@@ -265,7 +265,11 @@ function getStatInfo(number, id) {
 
 }
 function initStationOpt(staId) {
+    cosnole.log('initStationOpt')
+    console.log(AllStationsConfig)
+    console.log(staId)
     AllStationsConfig[staId] = undefined
+    console.log(AllStationsConfig)
 }
 module.exports = {
     StationSocketStatus: StationSocketStatus,
