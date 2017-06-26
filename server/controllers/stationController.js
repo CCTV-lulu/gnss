@@ -301,6 +301,7 @@ function deleteStation(req, res) {
         UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
             UsersData.deleteUserStationList(req.body.name).then(function (results) {
                 StationConfig.deleteByStaName(req.body.name).then(function () {
+                    StationSocketStatus.initStationOpt(req.body.staId)
                     res.send({status: true})
                 });
             })
