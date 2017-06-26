@@ -446,6 +446,8 @@ function checkWarningStatus(req, res) {
     var filePath = FILEPATH + '/' + username + "/" + req.query.filename;
     var path = CSVPath + '/' + username+ "/" + req.query.filename;
     console.log(WarningStatus)
+    console.log(path)
+    console.log(getWarningStatus(username, path))
     if (!getWarningStatus(username, path)) {
         res.send({status: true, filePath: filePath})
 
