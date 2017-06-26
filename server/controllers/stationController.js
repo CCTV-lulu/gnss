@@ -399,7 +399,7 @@ function createWaring(req, res) {
     var path = CSVPath + "/" + username;
     var conditionInfo = req.body;
     var fileName = new Date().getTime() + ".csv";
-    settWarningStatus(username, fileName, true);
+    settWarningStatus(username, path+'/'+fileName, true);
     var condition = {
         "$and": [
             {"happendTime": {"$gt": new Date(conditionInfo.bt)}},
@@ -479,7 +479,7 @@ function createCSV(warningInfos, path, fileName) {
         fs.writeFile(path + '/' + fileName, newCsv, function (err) {
             if (err) throw err;
             var username = path.split('/').pop()
-            settWarningStatus(username, path, false)
+            settWarningStatus(username, path + '/' + fileName, false)
             console.log('file saved');
         });
     });
