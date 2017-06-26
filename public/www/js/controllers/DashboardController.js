@@ -68,7 +68,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         getStationStatus.getStationStatus(staId, limit, function (data) {
             if (limit == 10 && data.stationData != false && data.stationData != undefined) {
                 if (data.stationData.length < 300) {
-                    return cb()
+                    return setTimeout(cb, 2000)
                 }
 
                 for (var i = 0; i < (data.stationData.length); i++) {
@@ -80,7 +80,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             showDxDy(data.stationData, 'bdsDxDy');
                             showDxDy(data.stationData, 'groupDxDy');
                             showH(data.stationData, 'H');
-                            //
+
                             settingSys(data.stationData[i]);
                             StarMapChart.starMap((data.stationData[i]).satpos);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
@@ -124,10 +124,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.seriesList.gpsDH.addPoint([staInfo.posR[0].H], true, true);
 
         }
-        if (staInfo.posR[1]) {
-            $scope.seriesList.glsDH.addPoint([staInfo.posR[1].H], true, true);
 
-        }
         if (staInfo.posR[2]) {
             $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
 
