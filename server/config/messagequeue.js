@@ -177,8 +177,8 @@ function checkThreshold(StaData) {
     Object.keys(data).forEach(function (sys) {
         if (threshold[sys]) {
             Object.keys(threshold[sys]).forEach(function (type) {
-                console.log( threshold[sys][type])
-                if (data[sys][type] > threshold[sys][type]) {
+                
+                if (data[sys][type] > threshold[sys][type] && threshold[sys][type] !==null) {
                     sendFaye(StaData.station_id, sys, type, threshold[sys][type], data[sys][type],stationName,StaData.time)
                 }
             })
