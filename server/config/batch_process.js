@@ -56,6 +56,8 @@ function hist_create() {
     this.HAL = opt.HAL;
     this.Her = opt.HAL;
 }
+var UPMINVPL = 556;
+var UPMINHPL = 126;
 function option_init(option, myOption) {
     option.sat_hist = myOption.sat_hist || 0;
     option.err_hist = myOption.err_hist || 0;
@@ -63,10 +65,10 @@ function option_init(option, myOption) {
     option.PL_hist = myOption.PL_hist || 0;
     option.acc95 = 1;
     option.up_slice.hpl_num.flag = myOption.hpl_num || 0;
-    option.up_slice.hpl_num.up_min = 200;
+    option.up_slice.hpl_num.up_min = UPMINVPL;
     option.up_slice.hpl_num.up_len = 30;
     option.up_slice.vpl_num.flag = myOption.vpl_num || 0;
-    option.up_slice.vpl_num.up_min = 200;
+    option.up_slice.vpl_num.up_min = UPMINHPL;
     option.up_slice.vpl_num.up_len = 30;
 }
 function satis_init(para, filter) {
@@ -141,7 +143,6 @@ function batch_process(batchProcessFiler) {
 
 
         createImage(data,batchProcessFiler).then(function(results){
-            console.log()
             exporter.killPool()
             for(var sys in data){
                 data[sys].up_slice = {
@@ -149,7 +150,7 @@ function batch_process(batchProcessFiler) {
                     vpl_num: batchProcessFiler.options.vpl_num
                 }
             }
-            fs.writeFile('./public/json/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+            fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
                 if (err) throw err;
                 process.send({status: 200, username: batchProcessFiler.username});
             });
@@ -316,7 +317,8 @@ function getTimeLine(name, data, sys, type) {
         var currentTime = time
         info.data.push([time, up_slice[type].Y[i]])
     }
-    var warningLine = {"type": "line", name: '警告线', data: [[startTime,200],[currentTime,200]], color: 'red'}
+    var warn = type =='hpl_num'? UPMINHPL : UPMINVPL
+    var warningLine = {"type": "line", name: '警告线', data: [[startTime,warn],[currentTime,warn]], color: 'yellow'}
     if(info.data.length == 0){
         return false
     }

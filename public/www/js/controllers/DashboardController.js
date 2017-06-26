@@ -204,7 +204,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             glsSNY:['R1','R2'],
             bdsSNY:['B1','B2']
 
-        }
+        };
         var showData = data[type];
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();

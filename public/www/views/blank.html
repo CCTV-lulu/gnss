@@ -29,9 +29,9 @@
 
         <div class="col-md-12 col-xs-12 col-sm-12">
             <label>定位系统: </label>
+            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
             <input type="checkbox" name="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
             <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
-            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
             <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
         </div>
 
@@ -332,7 +332,7 @@
                         <div id="content_loading" class="display-none">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
                         <div id="content_content" >
-                            <table class="table table-striped table-bordered table-hover" id="sample_1">
+                            <table class="table table-striped table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <td></td>
@@ -355,6 +355,7 @@
                                     <td>{{value.integrity}} </td>
                                 </tr>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
