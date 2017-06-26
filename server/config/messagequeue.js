@@ -173,16 +173,11 @@ function checkThreshold(StaData) {
     var threshold = thresholdInfo.threshold;
     var stationName=thresholdInfo.stationName;
     var data = StaData.posR
-    console.log(stationName)
-    console.log(StaData.time)
-    console.log(typeof StaData.time)
-    //console.log( getStationConfig(data.station_id))
     if(threshold==undefined) return;
     Object.keys(data).forEach(function (sys) {
         if (threshold[sys]) {
             Object.keys(threshold[sys]).forEach(function (type) {
-                //console.log(data[sys][type])
-                //console.log( threshold[sys][type])
+                console.log( threshold[sys][type])
                 if (data[sys][type] > threshold[sys][type]) {
                     sendFaye(StaData.station_id, sys, type, threshold[sys][type], data[sys][type],stationName,StaData.time)
                 }
@@ -265,7 +260,7 @@ function getStatInfo(number, id) {
 
 }
 function initStationOpt(staId) {
-    cosnole.log('initStationOpt')
+    console.log('initStationOpt')
     console.log(AllStationsConfig)
     console.log(staId)
     AllStationsConfig[staId] = undefined
