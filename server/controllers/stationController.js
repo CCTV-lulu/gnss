@@ -431,10 +431,13 @@ function getWarningStatus(username, path) {
 }
 
 function settWarningStatus(username, path, boolean) {
+    console.log('settWarningStatus')
+    console.log(WarningStatus)
     if (!WarningStatus[username]) {
         WarningStatus[username] = {}
     }
     WarningStatus[username][path] = boolean
+    console.log(WarningStatus)
 }
 
 
@@ -442,6 +445,7 @@ function checkWarningStatus(req, res) {
     var username = req.user.username;
     var filePath = FILEPATH + '/' + username + "/" + req.query.filename;
     var path = CSVPath + '/' + username;
+    console.log(WarningStatus)
     if (!getWarningStatus(username, path)) {
         res.send({status: true, filePath: filePath})
 
