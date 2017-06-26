@@ -19,7 +19,10 @@
         </div>
         <div class="col-md-3 col-sm-3" >
             <div class="form-group">
-                <blank-Station-List></blank-Station-List>
+                <select id='station' class='form-control select2'>
+                    <option ng-if="!isAdmin" ng-model="station" value={{stationInfoId}} selected>{{stationInfoName}}</option>
+                    <option ng-if="isAdmin" value='{{blankStation.staId}}' ng-repeat='blankStation in $parent.allStations'>{{blankStation.name}}</option>
+                </select>
             </div>
         </div>
 

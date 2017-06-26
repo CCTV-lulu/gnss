@@ -44,13 +44,13 @@ module.exports = function (app) {
     app.post('/addStation', auth.isInRole('admin'), controllers.station.addStation);
 
     /*=======batchProcess*/
-    app.get('/getBatchProcessResult', auth.isInRole('admin'), controllers.batchProcess.getBatchProcess);
-    app.post('/startBatchProcess', auth.isInRole('admin'), controllers.batchProcess.startBatchProcess);
+    app.get('/getBatchProcessResult', auth.isInRole('user'), controllers.batchProcess.getBatchProcess);
+    app.post('/startBatchProcess', auth.isInRole('user'), controllers.batchProcess.startBatchProcess);
     /*================threshole*/
     app.get('/getStaThreshold', auth.isInRole('user'),controllers.station.getStaThreshold);
     app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold);
     /*====================Warning*/
-    app.get('/getWarningInfo' ,controllers.station.checkWarningStatus)
-    app.post('/createWaring',controllers.station.createWaring)
+    app.get('/getWarningInfo' ,auth.isInRole('user'),controllers.station.checkWarningStatus);
+    app.post('/createWaring', auth.isInRole('user'), controllers.station.createWaring)
 
 };

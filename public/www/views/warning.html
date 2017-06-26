@@ -16,9 +16,13 @@
         </div>
         <div class="col-md-3" style="margin: 28px 10px 20px 10px;">
             <div class="form-group">
-                <blank-Station-List></blank-Station-List>
+                <select id='station' class='form-control select2'>
+                    <option ng-if="!isAdmin" ng-model="station" value={{stationInfoId}} selected>{{stationInfoName}}</option>
+                    <option ng-if="isAdmin" value='{{blankStation.staId}}' ng-repeat='blankStation in $parent.allStations'>{{blankStation.name}}</option>
+                </select>
             </div>
         </div>
+
 
         <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
             <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>

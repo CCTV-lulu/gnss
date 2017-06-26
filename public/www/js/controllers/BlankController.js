@@ -20,9 +20,32 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
                 vpl_num: false
             }
         };
-        $scope.test = '1212';
-        $scope.processResult = {};
-            initResult()
+        initResult()
+
+        $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
+            $scope.isAdmin=rootIsAdmin;
+            getStation($scope.isAdmin)
+        });
+        getStation($scope.isAdmin)
+    }
+
+    function getStation(isAdmin){
+        if(isAdmin){
+            $scope.allStations = $rootScope.allStations;
+
+            $rootScope.$watch('allStations',function(allStations){
+                if(allStations==undefined) return;
+                $scope.allStations = allStations;
+                $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
+
+            });
+
+        }else{
+            $scope.station =$rootScope.stationId;
+            $scope.stationInfoId= $rootScope.stationId;
+            $scope.stationInfoName = $rootScope.stationName;
+
+        }
     }
 
 
@@ -49,7 +72,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
 
     $scope.findData = function () {
         var startDate = $('#searchDateRange').html();
-        var stationId = $('#single').val();
+        var stationId = $('#station').val();
         if (stationId) {
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
