@@ -395,7 +395,7 @@ function setStaThreshold(req, res) {
 }
 
 function createWaring(req, res) {
-    var username = 1;
+    var username = req.user.username
     var path = CSVPath + "/" + username;
     var conditionInfo = req.body;
     var fileName = new Date().getTime() + ".csv";
