@@ -3,27 +3,31 @@
     <div class="loading" style="background: #4271ff;height: 5px;z-index: 99999;display:none"></div>
 </div>
 <div class="page-bar">
-    <div class="row">
-        <div class="col-md-5" style="margin: 10px 10px 20px 10px;">
+    <div class="row" style="padding: 5px 15px">
+        <div class="col-md-12 col-sm-12">
             <div>时间选择：</div>
+        </div>
+        <div class="col-md-5 col-sm-5" >
+
             <div class="controls">
-                <div id="reportrange" class="pull-left dateRange" style="width:350px">
+                <div id="reportrange" class="pull-left dateRange" style="width:350px;margin: 0 5px 5px 0">
                     <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
                     <span id="searchDateRange"></span>
                     <b class="caret"></b>
                 </div>
             </div>
         </div>
-        <div class="col-md-3" style="margin: 28px 10px 20px 10px;">
+        <div class="col-md-3 col-sm-3" >
             <div class="form-group">
                 <blank-Station-List></blank-Station-List>
             </div>
         </div>
 
-        <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
+        <div class="col-md-2 col-sm-2 " >
             <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>
         </div>
-        <div class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
+
+        <div class="col-md-12 col-xs-12 col-sm-12">
             <label>定位系统: </label>
             <input type="checkbox" name="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
             <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
@@ -31,7 +35,7 @@
             <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
         </div>
 
-        <div id='options' class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
+        <div id='options' class="col-md-12 col-xs-12 col-sm-12">
             <label>统计选项: </label>
             <input type="checkbox" name="sat_hist" ng-checked="{{filter.option['sat_hist']}}"> 卫星数
             <input type="checkbox" name="err_hist"  ng-checked="{{filter.option['err_hist']}}"> 定位误差

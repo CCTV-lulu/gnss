@@ -525,6 +525,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             },
             xAxis: {
                 categories: xAxis
+            },yAxis:{
+                formatter:function(){
+                    return this.value+'m';
+                }
             },
             series: [{
                 name: 'gpsDH',
