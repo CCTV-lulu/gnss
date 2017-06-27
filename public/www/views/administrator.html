@@ -12,7 +12,7 @@
                         style="margin-bottom: 10px">添加用户
                 </button>
                 <div class="col-md-offset-0 col-md-2 col-sm-2">
-                    <input ng-model="username" class="form-control" placeholder="用户名"
+                    <input ng-model="username" class="form-control" placeholder="用户名
                            id="name-info" type="text" value style="margin: 5px 0 5px 0"/></div>
                 <div class="col-md-offset-0 col-md-2 col-sm-2" >
                     <input ng-model="password" class="form-control" placeholder="密码"
@@ -21,6 +21,7 @@
                     <div class="col-md-offset-0 col-md-2 col-sm-2 col-md-2">
                         <select id='{{baseStation._id}}' class='form-control select2' ng-model="station" style="margin-top: 4px;">
                             <option ng-show=false disabled value='' >请选择基站</option>
+
                             <option ng-repeat='baseStation in allStations' value={{baseStation.name}}>
                                 {{baseStation.name}}
                             </option>
@@ -54,7 +55,11 @@
                 </button>
                 <div class="col-md-offset-1 col-md-2 col-sm-2">
                     <input ng-model="name" class="form-control" placeholder="基站名称"
+<<<<<<< HEAD
                            id="station-name" type="text" value style="margin: 5px 0 5px 0"/></div>
+=======
+                           id="station-name" type="text" value/></div>
+>>>>>>> e1b4b99c8a4e900afc04b4793b11a2562fb75d85
                 <div class="col-md-offset-1 col-md-2 col-sm-2">
                     <input ng-model="staId" class="form-control" placeholder="基站ID"
                            id="station-id" type="text" value style="margin: 5px 0 5px 0"/></div>

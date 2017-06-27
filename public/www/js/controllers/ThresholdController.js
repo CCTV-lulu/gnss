@@ -11,7 +11,7 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         };
         $scope.signal = '0';
         getThreshold();
-         $scope.isAdmin = $rootScope.rootIsAdmin;
+        $scope.isAdmin = $rootScope.rootIsAdmin;
         $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
             $scope.isAdmin=rootIsAdmin;
             getStation($scope.isAdmin)

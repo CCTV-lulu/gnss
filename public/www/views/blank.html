@@ -19,7 +19,10 @@
         </div>
         <div class="col-md-3 col-sm-3" >
             <div class="form-group">
-                <blank-Station-List></blank-Station-List>
+                <select id='station' class='form-control select2'>
+                    <option ng-if="!isAdmin" ng-model="station" value={{stationInfoId}} selected>{{stationInfoName}}</option>
+                    <option ng-if="isAdmin" value='{{blankStation.staId}}' ng-repeat='blankStation in $parent.allStations'>{{blankStation.name}}</option>
+                </select>
             </div>
         </div>
 
@@ -29,9 +32,9 @@
 
         <div class="col-md-12 col-xs-12 col-sm-12">
             <label>定位系统: </label>
+            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
             <input type="checkbox" name="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
             <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
-            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
             <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
         </div>
 
@@ -174,6 +177,41 @@
                 </div>
             </div>
 
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="BDSVPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">BDS VPL超限时间</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="BDSVPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="BDSVPLTime_content" class="display-none">
+                            <div id="BDSVPLTime" class="chart" style="height: 350px;"><img src=""></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="BDSHPLTime_container">
+                <div class="portlet light ">
+                    <div class="portlet-title" >
+                        <div class="caption">
+                            <i class="icon-settings font-dark hide"></i>
+                            <span class="caption-subject font-dark bold uppercase">BDS HPL超限时间</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div id="BDSHPLTime_loading">
+                            <img src="assets/img/loading.gif" alt="loading"/></div>
+                        <div id="BDSHPLTime_content" class="display-none">
+                            <div id="BDSHPLTime" class="chart" style="height: 350px;"><img src=""></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GPSVPLTime_container">
                 <div class="portlet light ">
@@ -243,40 +281,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="BDSVPLTime_container">
-                <div class="portlet light ">
-                    <div class="portlet-title" >
-                        <div class="caption">
-                            <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">BDS VPL超限时间</span>
-                        </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div id="BDSVPLTime_loading">
-                            <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="BDSVPLTime_content" class="display-none">
-                            <div id="BDSVPLTime" class="chart" style="height: 350px;"><img src=""></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="BDSHPLTime_container">
-                <div class="portlet light ">
-                    <div class="portlet-title" >
-                        <div class="caption">
-                            <i class="icon-settings font-dark hide"></i>
-                            <span class="caption-subject font-dark bold uppercase">BDS HPL超限时间</span>
-                        </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div id="BDSHPLTime_loading">
-                            <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="BDSHPLTime_content" class="display-none">
-                            <div id="BDSHPLTime" class="chart" style="height: 350px;"><img src=""></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GroupVPLTime_container">
                 <div class="portlet light ">
                     <div class="portlet-title" >
@@ -330,7 +335,7 @@
                         <div id="content_loading" class="display-none">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
                         <div id="content_content" >
-                            <table class="table table-striped table-bordered table-hover" id="sample_1">
+                            <table class="table table-striped table-bordered table-hover">
                                 <thead>
                                 <tr>
                                     <td></td>
@@ -353,6 +358,7 @@
                                     <td>{{value.integrity}} </td>
                                 </tr>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>

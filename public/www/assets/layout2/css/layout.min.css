@@ -548,6 +548,7 @@
     border: none !important
 }
 
+
 @media (min-width: 768px) {
     .page-header.navbar .search-form.search-form-expanded {
         width: 200px
@@ -572,7 +573,9 @@
     }
 }
 
+
 @media (min-width: 992px) {
+
     .page-sidebar-closed.page-sidebar-closed-hide-logo .page-header.navbar .page-logo {
         padding: 0;
         width: 54px
@@ -598,6 +601,7 @@
         width: 195px
     }
 }
+
 
 @media (max-width: 991px) {
     .page-header.navbar {
@@ -777,6 +781,7 @@
     border-radius: 10px !important
 }
 
+
 @media (max-width: 767px) {
     .page-header-fixed .pace .pace-progress {
         top: 136px
@@ -807,6 +812,7 @@
     margin-bottom: 20px !important
 }
 
+
 @media (min-width: 1260px) {
     .container {
         width: 1270px
@@ -818,6 +824,7 @@
         margin-bottom: 20px !important
     }
 }
+
 
 @media (max-width: 991px) {
     .page-container {
@@ -1070,7 +1077,9 @@
     padding-left: 15px
 }
 
+
 @media (min-width: 992px) {
+
     .page-full-width .page-sidebar, .page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li.open > .sub-menu, .page-sidebar-closed .page-sidebar .page-sidebar-menu.page-sidebar-menu-closed > li > .sub-menu {
         display: none !important
     }
@@ -1434,6 +1443,7 @@
     }
 }
 
+
 .page-title {
     padding: 0;
     font-size: 26px;
@@ -1572,6 +1582,7 @@
 }
 
 @media (min-width: 992px) {
+
     .page-content-wrapper {
         float: left;
         width: 100%
@@ -1619,6 +1630,7 @@
         margin-right: 0 !important
     }
 }
+
 
 @media (max-width: 991px) {
     .page-boxed > .container {
@@ -1714,7 +1726,9 @@
     margin-left: 0 !important
 }
 
+
 @media (min-width: 992px) {
+
     .page-footer {
         clear: left
     }
@@ -1769,6 +1783,7 @@
     }
 }
 
+
 @media (max-width: 991px) {
     .page-footer {
         padding-left: 10px;
@@ -1814,6 +1829,7 @@
     opacity: 1;
     filter: alpha(opacity=100)
 }
+
 
 @media (max-width: 991px) {
     .scroll-to-top {
@@ -2730,12 +2746,14 @@
     transition: background .7s ease-out
 }
 
+
 @media (max-width: 991px) {
     .quick-nav {
         top: 120px;
         margin-top: 0
     }
 }
+
 
 .page-on-load {
     background: #fefefe
@@ -2744,6 +2762,7 @@
 .page-on-load .page-container, .page-on-load .page-footer, .page-on-load .page-header, .page-on-load > .clearfix {
     display: none;
     transition: all 2s
+
 }
 
 @media (min-width: 1000px) {

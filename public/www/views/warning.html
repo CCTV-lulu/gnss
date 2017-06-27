@@ -16,9 +16,13 @@
         </div>
         <div class="col-md-3" style="margin: 28px 10px 20px 10px;">
             <div class="form-group">
-                <blank-Station-List></blank-Station-List>
+                <select id='station' class='form-control select2'>
+                    <option ng-if="!isAdmin" ng-model="station" value={{stationInfoId}} selected>{{stationInfoName}}</option>
+                    <option ng-if="isAdmin" value='{{blankStation.staId}}' ng-repeat='blankStation in $parent.allStations'>{{blankStation.name}}</option>
+                </select>
             </div>
         </div>
+
 
         <div class="col-md-2" style="margin: 28px 10px 20px 10px;">
             <button class="col-md-8 btn btn-circle green" ng-click="findData()"> 查 询</button>
@@ -33,9 +37,10 @@
         </div>
         <div class="col-md-12 col-xs-12 col-sm-12"style="margin: 0 10px 10px 10px;">
             <label>定位系统: </label>
+            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
             <input type="checkbox" name="sys" value= 0 ng-checked="{{filter.sys[0]}}"> GPS
             <input type="checkbox" name="sys" value= 1 ng-checked="{{filter.sys[1]}}"> GLS
-            <input type="checkbox" name="sys" value= 2 ng-checked="{{filter.sys[2]}}"> BDS
+
             <input type="checkbox" name="sys" value= 3 ng-checked="{{filter.sys[3]}}"> 组合
         </div>
 

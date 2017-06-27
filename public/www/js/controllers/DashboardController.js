@@ -50,24 +50,23 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
 
     function getStationInfo(staId, limit) {
-
         try {
-            loadStationStatus(staId, limit,function(){
+            loadStationStatus($rootScope.stationId, limit,function(){
                 if(listenRootCurrentStationStatus !== true){
-                    getStationInfo(staId, limit)
+                    getStationInfo($rootScope.stationId, limit)
                 }
 
             })
         } catch (err) {
-
+            console.log(err)
         }
     }
 
     function loadStationStatus(staId, limit, cb) {
 
         getStationStatus.getStationStatus(staId, limit, function (data) {
-            if (limit == 10 && data.stationData != false && data.stationData != undefined) {
-                if (data.stationData.length < 50) {
+            if (limit == 10 ) {
+                if (data.stationData.length < 300) {
                     return cb()
                 }
 
@@ -80,7 +79,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             showDxDy(data.stationData, 'bdsDxDy');
                             showDxDy(data.stationData, 'groupDxDy');
                             showH(data.stationData, 'H');
-                            //
+
                             settingSys(data.stationData[i]);
                             StarMapChart.starMap((data.stationData[i]).satpos);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
@@ -108,10 +107,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
 
         }
-        if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
-            $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
-
-        }
+        //if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
+        //    $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
+        //
+        //}
         if (staInfo.posR[3]&&getDxDy(staInfo.posR[3])) {
             $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
         }
@@ -124,10 +123,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.seriesList.gpsDH.addPoint([staInfo.posR[0].H], true, true);
 
         }
-        if (staInfo.posR[1]) {
-            $scope.seriesList.glsDH.addPoint([staInfo.posR[1].H], true, true);
 
-        }
         if (staInfo.posR[2]) {
             $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
 
@@ -204,7 +200,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             glsSNY:['R1','R2'],
             bdsSNY:['B1','B2']
 
-        }
+        };
         var showData = data[type];
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -525,7 +521,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             },
             xAxis: {
                 categories: xAxis
+<<<<<<< HEAD
             },yAxis:{
+=======
+            }
+            ,yAxis:{
+>>>>>>> e1b4b99c8a4e900afc04b4793b11a2562fb75d85
                 formatter:function(){
                     return this.value+'m';
                 }

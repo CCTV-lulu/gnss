@@ -56,6 +56,8 @@ function hist_create() {
     this.HAL = opt.HAL;
     this.Her = opt.HAL;
 }
+var UPMINVPL = 556;
+var UPMINHPL = 126;
 function option_init(option, myOption) {
     option.sat_hist = myOption.sat_hist || 0;
     option.err_hist = myOption.err_hist || 0;
@@ -63,10 +65,10 @@ function option_init(option, myOption) {
     option.PL_hist = myOption.PL_hist || 0;
     option.acc95 = 1;
     option.up_slice.hpl_num.flag = myOption.hpl_num || 0;
-    option.up_slice.hpl_num.up_min = 200;
+    option.up_slice.hpl_num.up_min = UPMINVPL;
     option.up_slice.hpl_num.up_len = 30;
     option.up_slice.vpl_num.flag = myOption.vpl_num || 0;
-    option.up_slice.vpl_num.up_min = 200;
+    option.up_slice.vpl_num.up_min = UPMINHPL;
     option.up_slice.vpl_num.up_len = 30;
 }
 function satis_init(para, filter) {
@@ -128,7 +130,7 @@ function batch_process(batchProcessFiler) {
 
 
     var files = getFollowDatePath(batchProcessFiler);
-    if (files.allTime == 0) {
+    if (files.allTime == 30) {
         return process.send({status: 301, effectiveTime: files.allTime});
     }
     process.send({status: 300, effectiveTime: files.allTime});
@@ -140,7 +142,7 @@ function batch_process(batchProcessFiler) {
     processOneDay(files.allFilesData, 0, function (data) {
 
 
-        createImage(data,batchProcessFiler).then(function(){
+        createImage(data,batchProcessFiler).then(function(results){
             exporter.killPool()
             for(var sys in data){
                 data[sys].up_slice = {
@@ -148,7 +150,7 @@ function batch_process(batchProcessFiler) {
                     vpl_num: batchProcessFiler.options.vpl_num
                 }
             }
-            fs.writeFile('./public/json/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+            fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
                 if (err) throw err;
                 process.send({status: 200, username: batchProcessFiler.username});
             });
@@ -269,7 +271,7 @@ function chartImage(chartInfo,username) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
         fs.writeFile( "./public/chartImage/"+username+'/'+ chartInfo.fileName+".png", res.data, 'base64', function (err) {
-            defer.resolve()
+            defer.resolve(chartInfo.fileName)
         });
 
     })
@@ -285,7 +287,9 @@ function handleDate(data,filter) {
             filter.sys.forEach(function(sys){
                 var singalIndex = parseInt(sys);
                 var singal = signals[singalIndex];
-                chartDateArray.push(getTimeLine(singal+lineType, data, singalIndex, lineType))
+                var line = getTimeLine(singal+lineType, data, singalIndex, lineType)
+                if(line === false) return ;
+                chartDateArray.push(line)
             })
         }
     });
@@ -310,11 +314,15 @@ function getTimeLine(name, data, sys, type) {
             startTime = new Date(up_slice[type].X[i]).getTime();
         }
         if (time - startTime > 24 * 60 * 60 * 1000) break;
-
+        var currentTime = time
         info.data.push([time, up_slice[type].Y[i]])
     }
-
-    return {fileName:fileName, series: [info]}
+    var warn = type =='hpl_num'? UPMINHPL : UPMINVPL
+    var warningLine = {"type": "line", name: '警告线', data: [[startTime,warn],[currentTime,warn]], color: 'yellow'}
+    if(info.data.length == 0){
+        return false
+    }
+    return {fileName:fileName, series: [info,warningLine]}
 }
 
 //function getLineDate(type, data, showType,sysArr) {

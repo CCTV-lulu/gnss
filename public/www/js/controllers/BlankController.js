@@ -1,8 +1,9 @@
-angular.module('MetronicApp').controller('BlankController', function ($scope, Mongodb, $location, Prompt, getStationStatus,
+angular.module('MetronicApp').controller('BlankController', function ($http,$rootScope,$scope, Mongodb, $location, Prompt, getStationStatus,
                                                                       DateTable, DataAnalyseChart, EventData, $timeout, $interval, BatchProcess) {
     //var getBatchDataPolling;
     //var timeDelay;
-    init()
+    init();
+
 
     function init() {
         $(".loading").animate({"width": "0%"}, 0);
@@ -18,6 +19,32 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
                 hpl_num: false,
                 vpl_num: false
             }
+        };
+        initResult()
+
+        $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
+            $scope.isAdmin=rootIsAdmin;
+            getStation($scope.isAdmin)
+        });
+        getStation($scope.isAdmin)
+    }
+
+    function getStation(isAdmin){
+        if(isAdmin){
+            $scope.allStations = $rootScope.allStations;
+
+            $rootScope.$watch('allStations',function(allStations){
+                if(allStations==undefined) return;
+                $scope.allStations = allStations;
+                $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
+
+            });
+
+        }else{
+            $scope.station =$rootScope.stationId;
+            $scope.stationInfoId= $rootScope.stationId;
+            $scope.stationInfoName = $rootScope.stationName;
+
         }
     }
 
@@ -45,7 +72,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
     $scope.findData = function () {
         var startDate = $('#searchDateRange').html();
-        var stationId = $('#single').val();
+        var stationId = $('#station').val();
         if (stationId) {
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
@@ -117,12 +144,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             if (data.result.isRunning === -1) {
                 return batchProcessErr();
             }
+            var username = data.result.userName
             //$interval.cancel(getBatchDataPolling);
+            $http.get('/chartImage/' + $rootScope.rootUserInfo.username+'/'+$rootScope.rootUserInfo.username + '.json').success(function ( data) {
+                showProcessResult(data, username)
 
-            $.getJSON('/json/' + data.result.userName + '.json', function (data) {
+            })
 
-                showProcessResult(data)
-            });
 
         })
     }
@@ -133,22 +161,10 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         Prompt.promptBox("warning", "处理异常请再次请求")
     }
 
-    function showProcessResult(data) {
+    function showProcessResult(data, username) {
         $('.loading').hide();
         Prompt.promptBox("success", "数据处理完毕");
-        $('#dataStatisticsChartLoding').hide();
-        $("#dataStatisticsChart").css("opacity", 1);
-        console.log('startTime')
-        console.log(new Date())
-        showErrHist('HErrHist', data,'herr_hist');
-        showErrHist('VErrHist', data,'verr_hist');
-        showDop('Hdop', data, 'vdop_hist');
-        showDop('Vdop', data, 'hdop_hist');
-        showPL('VPL', data, 'vpl_hist');
-        showPL('HPL', data, 'hpl_hist');
-        showTime(data);
-        showStaNum('StaNum', data);
-        showAvailability('content', data);
+        showResult(data,username)
 
         //$scope.integritys = EventData.table(data.result.data);
         //if (data.result.data.continuity && data.result.data.availability) {
@@ -159,6 +175,21 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
     }
 
 
+    function showResult(data, username){
+        $('#dataStatisticsChartLoding').hide();
+        $("#dataStatisticsChart").css("opacity", 1);
+        showTime(data,username);
+        showErrHist('HErrHist', data,'herr_hist');
+        showErrHist('VErrHist', data,'verr_hist');
+        showDop('Hdop', data, 'vdop_hist');
+        showDop('Vdop', data, 'hdop_hist');
+        showPL('VPL', data, 'vpl_hist');
+        showPL('HPL', data, 'hpl_hist');
+        showAvailability('content', data);
+        showStaNum('StaNum', data);
+
+    }
+
     function showErrHist(type, data,showType) {
 
         $('#' + type + '_loading').hide();
@@ -167,10 +198,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
         var series = [];
         Object.keys(data).forEach(function (key) {
+
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
+            var currentRate = 0
             data[key][showType].Y.forEach(function (y, index) {
-                info.data.push([data[key][showType].X[index], y])
+                currentRate += y;
+                info.data.push([data[key][showType].X[index], currentRate])
             });
             if (info.data.length > 0) {
                 series.push(info)
@@ -230,35 +264,20 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
-            //xAxis: {
-            //    categories: xAxis
-            //},
+            xAxis: {
+                labels:{
+                    formatter:function(){
+                        return this.value+'m';
+                    }
+                }
+            },
             series: series
         })
     }
 
 
-    function showAvailability(type, result) {
-        var newResult = {};
 
-        Object.keys(result).forEach(function (key) {
-            var value = result[key];
-            newResult[key] = {};
-            newResult[key].availability = value.availability;
-            newResult[key].continuity = value.continuity;
-            newResult[key].acc95_h = value.acc95_h;
-            newResult[key].acc95_v = value.acc95_v;
-            newResult[key].integrity = value.integrity
-        });
-
-        $scope.processResult = newResult;
-        $('#' + type + '_loading').hide();
-        $('#' + type + '_content').show();
-        $('#' + type + '_container').show();
-
-    }
-
-    function showDop(type, data,showType) {
+    function showDop(type, data, showType) {
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -268,8 +287,10 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
+            var currentRate = 0
             data[key][showType].X.forEach(function (x, index) {
-                info.data.push([x, data[key][showType].Y[index]])
+                currentRate += data[key][showType].Y[index];
+                info.data.push([x, currentRate])
             });
             if (info.data.length > 0) {
                 series.push(info)
@@ -329,7 +350,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
-
+            xAxis: {
+                labels:{
+                    formatter:function(){
+                        return this.value+'m';
+                    }
+                }
+            },
             series: series
         })
     }
@@ -343,10 +370,12 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
         var series = [];
         Object.keys(data).forEach(function (key) {
+            var currentRate = 0
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
             data[key][showType].X.forEach(function (x, index) {
-                info.data.push([x, data[key][showType].Y[index]])
+                currentRate += data[key][showType].Y[index];
+                info.data.push([x, currentRate])
             });
             if (info.data.length > 0) {
                 series.push(info)
@@ -406,6 +435,13 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
             subtitle: {
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
+            xAxis: {
+                labels:{
+                    formatter:function(){
+                        return this.value+'m';
+                    }
+                }
+            },
             //xAxis: {
             //    type: 'category',
             //    tickWidth: 10
@@ -415,16 +451,16 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         })
     }
 
-    function showTime(data) {
+    function showTime(data,username) {
         var signals = ['GPS', 'GLS', 'BDS', 'Group'];
         for(var sys in data){
             var sysIndex = parseInt(sys)
             if(data[sys].up_slice.vpl_num ==1){
 
-                chartTimeLine(signals[sysIndex]+'VPLTime',signals[sysIndex]+'vpl_num.png')
+                chartTimeLine(signals[sysIndex]+'VPLTime',signals[sysIndex]+'vpl_num.png',username)
             }
             if(data[sys].up_slice.hpl_num ==1){
-                chartTimeLine(signals[sysIndex]+'HPLTime', signals[sysIndex]+'vpl_num.png')
+                chartTimeLine(signals[sysIndex]+'HPLTime', signals[sysIndex]+'hpl_num.png',username)
             }
 
         }
@@ -440,7 +476,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         console.log(new Date())
     }
 
-    function chartTimeLine(id, imageName) {
+    function chartTimeLine(id, imageName, username) {
 
         //var showData = data[type];
         //var series = [];
@@ -470,7 +506,7 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
         //}
         //return
         //if (series.length == 0) return;
-        $("#"+id+' img').attr('src','/chartImage/1/'+imageName)
+        $("#"+id+' img').attr('src','/chartImage/'+username+'/'+imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
@@ -611,10 +647,31 @@ angular.module('MetronicApp').controller('BlankController', function ($scope, Mo
 
         });
     }
+    function initResult(){
+        $http.get('/chartImage/' + $rootScope.rootUserInfo.username+'/'+$rootScope.rootUserInfo.username + '.json').success(function ( data) {
+            showResult(data,$rootScope.rootUserInfo.username)
 
-    //$.getJSON('/json/' +   '1.json', function (data) {
-    //
-    //    showProcessResult(data)
-    //});
+        })
+    }
+
+
+    function showAvailability(type, result) {
+        $scope.processResult = {};
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        $('#' + type + '_container').show();
+        Object.keys(result).forEach(function (key) {
+            var value = result[key];
+            $scope.processResult[key] = {};
+            $scope.processResult[key].availability = value.availability;
+            $scope.processResult[key].continuity = value.continuity;
+            $scope.processResult[key].acc95_h = value.acc95_h;
+            $scope.processResult[key].acc95_v = value.acc95_v;
+            $scope.processResult[key].integrity = value.integrity
+        });
+
+    }
+
+
 
 });

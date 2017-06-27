@@ -301,6 +301,7 @@ function deleteStation(req, res) {
         UserStationInfo.deleteByStationName(req.body.name).then(function (results) {
             UsersData.deleteUserStationList(req.body.name).then(function (results) {
                 StationConfig.deleteByStaName(req.body.name).then(function () {
+                    StationSocketStatus.initStationOpt(req.body.staId)
                     res.send({status: true})
                 });
             })
@@ -395,11 +396,11 @@ function setStaThreshold(req, res) {
 }
 
 function createWaring(req, res) {
-    var username = 1;
+    var username = req.user.username
     var path = CSVPath + "/" + username;
     var conditionInfo = req.body;
     var fileName = new Date().getTime() + ".csv";
-    settWarningStatus(username, fileName, true);
+    settWarningStatus(username, path+'/'+fileName, true);
     var condition = {
         "$and": [
             {"happendTime": {"$gt": new Date(conditionInfo.bt)}},
@@ -441,7 +442,7 @@ function settWarningStatus(username, path, boolean) {
 function checkWarningStatus(req, res) {
     var username = req.user.username;
     var filePath = FILEPATH + '/' + username + "/" + req.query.filename;
-    var path = CSVPath + '/' + username;
+    var path = CSVPath + '/' + username+ "/" + req.query.filename;
     if (!getWarningStatus(username, path)) {
         res.send({status: true, filePath: filePath})
 
@@ -475,7 +476,7 @@ function createCSV(warningInfos, path, fileName) {
         fs.writeFile(path + '/' + fileName, newCsv, function (err) {
             if (err) throw err;
             var username = path.split('/').pop()
-            settWarningStatus(username, path, false)
+            settWarningStatus(username, path + '/' + fileName, false)
             console.log('file saved');
         });
     });
