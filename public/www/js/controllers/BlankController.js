@@ -1,4 +1,4 @@
-angular.module('MetronicApp').controller('BlankController', function ($http,$rootScope,$scope, Mongodb, $location, Prompt, getStationStatus,
+angular.module('MetronicApp').controller('BlankController', function ($http, $rootScope, $scope, Mongodb, $location, Prompt, getStationStatus,
                                                                       DateTable, DataAnalyseChart, EventData, $timeout, $interval, BatchProcess) {
     //var getBatchDataPolling;
     //var timeDelay;
@@ -22,27 +22,27 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
         };
         initResult()
 
-        $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
-            $scope.isAdmin=rootIsAdmin;
+        $rootScope.$watch('rootIsAdmin', function (rootIsAdmin) {
+            $scope.isAdmin = rootIsAdmin;
             getStation($scope.isAdmin)
         });
         getStation($scope.isAdmin)
     }
 
-    function getStation(isAdmin){
-        if(isAdmin){
+    function getStation(isAdmin) {
+        if (isAdmin) {
             $scope.allStations = $rootScope.allStations;
 
-            $rootScope.$watch('allStations',function(allStations){
-                if(allStations==undefined) return;
+            $rootScope.$watch('allStations', function (allStations) {
+                if (allStations == undefined) return;
                 $scope.allStations = allStations;
                 $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
 
             });
 
-        }else{
-            $scope.station =$rootScope.stationId;
-            $scope.stationInfoId= $rootScope.stationId;
+        } else {
+            $scope.station = $rootScope.stationId;
+            $scope.stationInfoId = $rootScope.stationId;
             $scope.stationInfoName = $rootScope.stationName;
 
         }
@@ -69,11 +69,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
 
     }
 
-    function stop() {
-        if()
-        
-    }
+
     $scope.findData = function () {
+
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
         if (stationId) {
@@ -93,6 +91,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
             findData.options = filer.options
 
             BatchProcess.startBatchProcess(findData, function (data) {
+
                 startBatchProcess(data)
             })
 
@@ -102,6 +101,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
         }
     };
 
+    $scope.stopData = stopBatchProcess;
 
     function startBatchProcess(data) {
         //if (data.status == 201) {
@@ -112,6 +112,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
             $('#dataStatisticsChartLoding').hide();
             return Prompt.promptBox("warning", "选择的日期间隔中数据为空！")
         }
+
+
         waiting(data)
     }
 
@@ -120,7 +122,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
     function waiting(data) {
         var waitTime = parseInt(data.effectiveTime)
         if (!show_wait(waitTime)) return;
-        getResult();
+        $scope.mySwitch = true;
+        getResult(data.filePath);
 
     }
 
@@ -135,14 +138,17 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
         return true;
     }
 
-    function getResult() {
+    function getResult(filePath) {
         if ($location.path() != '/blank') return;
+
         BatchProcess.getBatchProcessResult(function (data) {
             if (data.status == 400) {
                 return batchProcessErr()
             }
             if (data.result.isRunning === 1) {
-                return setTimeout(getResult, 5000)
+                return setTimeout(function () {
+                    getResult(filePath)
+                }, 5000)
             }
             if (data.result.isRunning === -1) {
                 return batchProcessErr();
@@ -150,14 +156,29 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
 
             var username = data.result.userName
             //$interval.cancel(getBatchDataPolling);
-            $http.get('/chartImage/' + $rootScope.rootUserInfo.username+'/'+$rootScope.rootUserInfo.username + '.json').success(function ( data) {
+            $scope.mySwitch = false;
+            localStorage.setItem($rootScope.rootUserInfo.username + '_current_result_path', filePath)
+            $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + filePath + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
                 showProcessResult(data, username)
 
             })
 
-
         })
     }
+
+    function stopBatchProcess() {
+        BatchProcess.stopBatchProcess(function (result) {
+            console.log(result.message)
+            if (result.message == 'success') {
+                Prompt.promptBox("success", "进程已结束")
+            } else {
+                Prompt.promptBox("warning", "进程处理完毕")
+            }
+            $scope.mySwitch = false;
+            $('.loading').hide();
+        })
+    }
+
 
     function batchProcessErr() {
         $(".loading").hide();
@@ -168,7 +189,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
     function showProcessResult(data, username) {
         $('.loading').hide();
         Prompt.promptBox("success", "数据处理完毕");
-        showResult(data,username)
+        showResult(data, username)
 
         //$scope.integritys = EventData.table(data.result.data);
         //if (data.result.data.continuity && data.result.data.availability) {
@@ -179,12 +200,12 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
     }
 
 
-    function showResult(data, username){
+    function showResult(data, username) {
         $('#dataStatisticsChartLoding').hide();
         $("#dataStatisticsChart").css("opacity", 1);
-        showTime(data,username);
-        showErrHist('HErrHist', data,'herr_hist');
-        showErrHist('VErrHist', data,'verr_hist');
+        showTime(data, username);
+        showErrHist('HErrHist', data, 'herr_hist');
+        showErrHist('VErrHist', data, 'verr_hist');
         showDop('Hdop', data, 'vdop_hist');
         showDop('Vdop', data, 'hdop_hist');
         showPL('VPL', data, 'vpl_hist');
@@ -194,7 +215,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
 
     }
 
-    function showErrHist(type, data,showType) {
+    function showErrHist(type, data, showType) {
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -269,16 +290,15 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
-                labels:{
-                    formatter:function(){
-                        return this.value+'m';
+                labels: {
+                    formatter: function () {
+                        return this.value + 'm';
                     }
                 }
             },
             series: series
         })
     }
-
 
 
     function showDop(type, data, showType) {
@@ -355,9 +375,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
-                labels:{
-                    formatter:function(){
-                        return this.value+'m';
+                labels: {
+                    formatter: function () {
+                        return this.value + 'm';
                     }
                 }
             },
@@ -366,7 +386,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
     }
 
 
-    function showPL(type, data,showType) {
+    function showPL(type, data, showType) {
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
@@ -440,9 +460,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
                 text: '双击选中区域放大图标，按住shift点击拖动'
             },
             xAxis: {
-                labels:{
-                    formatter:function(){
-                        return this.value+'m';
+                labels: {
+                    formatter: function () {
+                        return this.value + 'm';
                     }
                 }
             },
@@ -455,16 +475,16 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
         })
     }
 
-    function showTime(data,username) {
+    function showTime(data, username) {
         var signals = ['GPS', 'GLS', 'BDS', 'Group'];
-        for(var sys in data){
+        for (var sys in data) {
             var sysIndex = parseInt(sys)
-            if(data[sys].up_slice.vpl_num ==1){
+            if (data[sys].up_slice.vpl_num == 1) {
 
-                chartTimeLine(signals[sysIndex]+'VPLTime',signals[sysIndex]+'vpl_num.png',username)
+                chartTimeLine(signals[sysIndex] + 'VPLTime', signals[sysIndex] + 'vpl_num.png', username)
             }
-            if(data[sys].up_slice.hpl_num ==1){
-                chartTimeLine(signals[sysIndex]+'HPLTime', signals[sysIndex]+'hpl_num.png',username)
+            if (data[sys].up_slice.hpl_num == 1) {
+                chartTimeLine(signals[sysIndex] + 'HPLTime', signals[sysIndex] + 'hpl_num.png', username)
             }
 
         }
@@ -510,7 +530,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
         //}
         //return
         //if (series.length == 0) return;
-        $("#"+id+' img').attr('src','/chartImage/'+username+'/'+imageName)
+        $("#" + id + ' img').attr('src', '/chartImage/' + username + '/' + imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
@@ -651,9 +671,13 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
 
         });
     }
-    function initResult(){
-        $http.get('/chartImage/' + $rootScope.rootUserInfo.username+'/'+$rootScope.rootUserInfo.username + '.json').success(function ( data) {
-            showResult(data,$rootScope.rootUserInfo.username)
+
+    function initResult() {
+        var path = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_path');
+        if (path === null) return;
+        //localStorage.setItem(key:1)
+        $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/'+path+'/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+            showResult(data, $rootScope.rootUserInfo.username)
 
         })
     }
@@ -675,7 +699,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
         });
 
     }
-
 
 
 });
