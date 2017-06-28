@@ -10,20 +10,24 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     var listenStationId = $rootScope.$watch('stationId',function(newStationId){
         if(newStationId == undefined || stationId == newStationId) return;
         stationId = newStationId;
-
+        $scope.starInfo = [];
         if(listenRootCurrentStationStatus){
             listenRootCurrentStationStatus()
         }
-        $scope.starInfo =[];
+
         init(newStationId)
     });
 
 
     var listerSingalType = $rootScope.$watch('rootSingalType',function(newRootSingalType){
+       show(newRootSingalType)
+    });
+
+    function show(newRootSingalType){
         if(newRootSingalType==undefined || rootSingalTypeId == newRootSingalType.staId) return;
         rootSingalTypeId = newRootSingalType.staId;
         $scope.starInfo = $scope.starsInfo ? $scope.starsInfo[newRootSingalType.staId]:[];
-    });
+    }
 
     $scope.$on('$destroy', function (event) {
         if(listenRootCurrentStationStatus){
@@ -45,6 +49,7 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     function init(stationId){
         if(stationId == undefined) return;
         getStationStatus.getStationStatus(stationId, 1, function (data) {
+            $scope.starsInfo =[]
             showStarInfo(data, function(){
                 if(listenRootCurrentStationStatus === true) return;
                 listenRootCurrentStationStatus = $rootScope.$watch('RootCurrentStationStatus',function(data){

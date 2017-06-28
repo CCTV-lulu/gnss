@@ -2,5 +2,5 @@
 public/json/*
 public/chartImage/*
 public/csv/*
-canavprocess/config/*
+server/canavprocess/config/*
 node_modules/*
