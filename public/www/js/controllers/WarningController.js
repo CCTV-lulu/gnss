@@ -102,7 +102,6 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
         if (stationId) {
-            showWait();
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
             var str = startDate.replace(new RegExp('-', 'gm'), '-')
@@ -119,10 +118,10 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
             findData.types = filer.types;
             WarningCSV.createWaring(findData, function (result) {
                 if (result.status) {
+                    showWait(result.time);
                     getWarningCSV(result.fileName)
                 }
             });
-            return;
 
         } else {
             Prompt.promptBox('warning', '请选择要查询的基站！！')

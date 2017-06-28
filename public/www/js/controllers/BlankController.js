@@ -147,6 +147,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
             if (data.result.isRunning === -1) {
                 return batchProcessErr();
             }
+
             var username = data.result.userName
             //$interval.cancel(getBatchDataPolling);
             $http.get('/chartImage/' + $rootScope.rootUserInfo.username+'/'+$rootScope.rootUserInfo.username + '.json').success(function ( data) {

@@ -151,6 +151,7 @@ MetronicApp.controller('HeaderController',
                 intervalGetCurrentStationStatus = $interval(function () {
                     if (!intervalStatus) return;
                     intervalStatus = false;
+
                     getCurrentStationStatus(stationId);
                 }, $scope.updateRate * 1000)
             }
@@ -349,9 +350,19 @@ MetronicApp.controller('HeaderController',
                     } else {
                         $scope.StationSocketStatus = '实时数据未连接'
                     }
-                    $rootScope.RootCurrentStationStatus = data;
+                    setCurrentStationStatus(stationId,data)
                     intervalStatus = true;
                 })
+            }
+
+            function setCurrentStationStatus (stationId,data){
+                console.log('-----setCurrentStationStatus')
+                console.log(stationId)
+                console.log($rootScope.stationId)
+                if(stationId == $rootScope.stationId){
+                    console.log('-----setsetCurrentStationStatus')
+                    $rootScope.RootCurrentStationStatus = data;
+                }
             }
 
             $scope.$on('$destroy', function () {

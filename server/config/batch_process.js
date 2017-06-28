@@ -56,8 +56,8 @@ function hist_create() {
     this.HAL = opt.HAL;
     this.Her = opt.HAL;
 }
-var UPMINVPL = 556;
-var UPMINHPL = 126;
+var UPMINVPL = 126;
+var UPMINHPL = 556;
 function option_init(option, myOption) {
     option.sat_hist = myOption.sat_hist || 0;
     option.err_hist = myOption.err_hist || 0;
@@ -65,10 +65,10 @@ function option_init(option, myOption) {
     option.PL_hist = myOption.PL_hist || 0;
     option.acc95 = 1;
     option.up_slice.hpl_num.flag = myOption.hpl_num || 0;
-    option.up_slice.hpl_num.up_min = UPMINVPL;
+    option.up_slice.hpl_num.up_min = UPMINHPL;
     option.up_slice.hpl_num.up_len = 30;
     option.up_slice.vpl_num.flag = myOption.vpl_num || 0;
-    option.up_slice.vpl_num.up_min = UPMINHPL;
+    option.up_slice.vpl_num.up_min = UPMINVPL;
     option.up_slice.vpl_num.up_len = 30;
 }
 function satis_init(para, filter) {
