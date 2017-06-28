@@ -521,8 +521,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             },
             xAxis: {
                 categories: xAxis
+<<<<<<< HEAD
+            },yAxis:{
+=======
             }
             ,yAxis:{
+>>>>>>> e1b4b99c8a4e900afc04b4793b11a2562fb75d85
                 formatter:function(){
                     return this.value+'m';
                 }

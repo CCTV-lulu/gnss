@@ -28,7 +28,8 @@
       margin: 0; }
       .page-content > .portlet > .portlet-body {
         padding: 0;
-        margin: 0; } }
+        margin: 0;
+      } }
 
 /***
 Page Header
@@ -581,6 +582,13 @@ Page Header
 /***
 Pace - Page Progress
 ***/
+
+@media screen and(min-width: 1000px){
+  .page-sidebar .navbar-collapse{
+    position: fixed;
+  }
+}
+
 .pace .pace-progress {
   z-index: 10000;
   top: 66px;
@@ -873,6 +881,12 @@ Page sidebar
     .page-sidebar .page-sidebar-menu.page-sidebar-menu-compact.page-sidebar-menu-hover-submenu > li > .sub-menu > li > a,
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu.page-sidebar-menu-compact.page-sidebar-menu-hover-submenu > li > .sub-menu > li > a {
       padding-left: 15px; }
+
+@media (min-width: 1000px) {
+  .page-sidebar{
+    background: red !important;
+  }
+}
 
 @media (min-width: 992px) {
   /* 992px */

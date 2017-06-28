@@ -7,20 +7,21 @@
         </div>
         <div class="portlet-body col-md-12">
             <div class="row">
-                <button class="btn green col-md-1 col-sm-1" style="margin-left: 20px" id="clear-info"
+                <button class="btn green col-md-1 col-sm-1" style="margin:5px 0 5px 20px" id="clear-info"
                         ng-click="addUser()"
                         style="margin-bottom: 10px">添加用户
                 </button>
                 <div class="col-md-offset-0 col-md-2 col-sm-2">
-                    <input ng-model="username" class="form-control" placeholder="用户名"
-                           id="name-info" type="text" value/></div>
-                <div class="col-md-offset-0 col-md-2 col-sm-2">
+                    <input ng-model="username" class="form-control" placeholder="用户名
+                           id="name-info" type="text" value style="margin: 5px 0 5px 0"/></div>
+                <div class="col-md-offset-0 col-md-2 col-sm-2" >
                     <input ng-model="password" class="form-control" placeholder="密码"
-                           id="pass-info" type="password" value/></div>
+                           id="pass-info" type="password" value style="margin: 5px 0 5px 0"/></div>
                 <!--<div class="form-group">-->
                     <div class="col-md-offset-0 col-md-2 col-sm-2 col-md-2">
-                        <select id='{{baseStation._id}}' class='form-control select2' ng-model="station">
-                            <option ng-show=false disabled value=''>请选择基站</option>
+                        <select id='{{baseStation._id}}' class='form-control select2' ng-model="station" style="margin-top: 4px;">
+                            <option ng-show=false disabled value='' >请选择基站</option>
+
                             <option ng-repeat='baseStation in allStations' value={{baseStation.name}}>
                                 {{baseStation.name}}
                             </option>
@@ -29,7 +30,7 @@
                 <!--</div>-->
                 <div class="col-md-offset-0  col-md-1 col-sm-1">
                     <label id="adminAuthority" class="col-md-offset-1"><input id="isAdmin" ng-model="isAdmin" name='admin' type="checkbox"
-                            >admin</label></div>
+                           style="margin-top: 12px" >admin</label></div>
 
 
             </div>
@@ -49,15 +50,17 @@
         <div class="portlet-body col-md-12">
             <div class="row">
                 <div id="reminds" style="position: absolute ; top:-1%;right:70px;z-index: 30 ;width: 300px"></div>
-                <button class="btn green col-md-1 col-sm-1" style="margin-left: 20px" ng-click="addStation()"
+                <button class="btn green col-md-1 col-sm-1" style="margin:0 0 5px 20px" ng-click="addStation()"
                         style="margin-bottom: 10px">添加基站
                 </button>
                 <div class="col-md-offset-1 col-md-2 col-sm-2">
                     <input ng-model="name" class="form-control" placeholder="基站名称"
-                           id="station-name" type="text" value/></div>
+
+                           id="station-name" type="text" value style="margin: 5px 0 5px 0"/></div>
+
                 <div class="col-md-offset-1 col-md-2 col-sm-2">
                     <input ng-model="staId" class="form-control" placeholder="基站ID"
-                           id="station-id" type="text" value/></div>
+                           id="station-id" type="text" value style="margin: 5px 0 5px 0"/></div>
                 <!--<div class="col-md-offset-1 col-md-2 col-sm-3">-->
                     <!--<input ng-model="stationName" class="form-control" placeholder="基站"-->
                            <!--id="station-info" type="text" value/></div>-->
