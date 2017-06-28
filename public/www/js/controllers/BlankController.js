@@ -69,7 +69,10 @@ angular.module('MetronicApp').controller('BlankController', function ($http,$roo
 
     }
 
-
+    function stop() {
+        if()
+        
+    }
     $scope.findData = function () {
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
