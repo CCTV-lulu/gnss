@@ -68,11 +68,17 @@ function pos_config(sta_id,prcopt) {
     return para;
 }
 
-module.exports.parser_pos=function(sta_id,data,opt) {
+module.exports.parser_pos=function(sta_id,data,opt_int) {
     var rtcm=rtcm_init(sta_id);
-    var para=pos_config(sta_id,opt);
+    var para=pos_config(sta_id,opt_int);
     var pos_list = [];
+    var navsys=[];
+    for(var i=0;i<para.prcopt.navsys.length;i++){
+        navsys[i]=para.prcopt.navsys[i];
+    }
+
     if(para!=0){
+        para.prcopt.navsys=[ca.SYS_GPS,ca.SYS_GLO,ca.SYS_CMP];
         var results=[];
         try{
             results = parse.datatype(rtcm, data);
@@ -91,7 +97,7 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    // console.log(err);
+                    console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_GLO)) {
@@ -100,51 +106,136 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    // console.log(err);
+                    console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
                         real_pos(para,para.obs[ca.SYS_CMP],para.nav, para.prcopt, para.sol[ca.SYS_CMP],ca.SYS_CMP,logjson);
                         /*if(para.nav.utc_cmp.stat==1){
-                            logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
-                        }
-                        else{
-                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
-                        }*/
+                         logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
+                         }
+                         else{
+                         logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
+                         }*/
                     }
                 }
                 catch(err){
-                    // console.log(err);
+                    console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_ALL)) {
                         if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
                             nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
                         }
+                        para.prcopt.navsys=navsys;
                         real_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
                         nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logjson);
                         nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
                         logjson.time=cmn.time2string_UTC(sta_data.time);
                         /*if(para.nav.utc_gps.stat==1){
-                            logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
-                        }
-                        else{
-                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
-                        }*/
+                         logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
+                         }
+                         else{
+                         logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
+                         }*/
                     }
                     if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
                         nodepos.middleSaveAll(sta_id, para);
                     }
                 }
                 catch(err){
-                    //console.log(err);
+                    console.log(err);
                 }
             }
             pos_list.push(logjson);
         });
+        para.prcopt.navsys=navsys;
     }
+
     return pos_list;
 };
+//module.exports.parser_pos=function(sta_id,data,opts) {
+//    var rtcm=rtcm_init(sta_id);
+//    var para=pos_config(sta_id,opts);
+//    var pos_list = [];
+//    if(para!=0){
+//        var results=[];
+//        try{
+//            results = parse.datatype(rtcm, data);
+//        }
+//        catch (err){
+//            rtcmParse[sta_id]=new parse.rtcm_create();
+//            rtcm=rtcmParse[sta_id];
+//            console.log('rtcm data decode error, and rtcm buff is reinitialize');
+//        }
+//        results.forEach(function (sta_data) {
+//            var logjson = new nodepos.showJson();
+//            if (nodepos.updateObsNav_show(sta_data, para, logjson)) {
+//                try {
+//                    if (para.obs.hasOwnProperty(ca.SYS_GPS)) {
+//                        real_pos(para,para.obs[ca.SYS_GPS],para.nav, para.prcopt, para.sol[ca.SYS_GPS],ca.SYS_GPS,logjson);
+//                    }
+//                }
+//                catch(err){
+//                    // console.log(err);
+//                }
+//                try{
+//                    if (para.obs.hasOwnProperty(ca.SYS_GLO)) {
+//                        real_pos(para,para.obs[ca.SYS_GLO],para.nav, para.prcopt, para.sol[ca.SYS_GLO],ca.SYS_GLO,logjson);
+//                        //logjson.time=cmn.time2string_UTC(cmn.gpst2utc(para.sol[ca.SYS_GLO].time));
+//                    }
+//                }
+//                catch(err){
+//                    // console.log(err);
+//                }
+//                try{
+//                    if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
+//                        real_pos(para,para.obs[ca.SYS_CMP],para.nav, para.prcopt, para.sol[ca.SYS_CMP],ca.SYS_CMP,logjson);
+//                        /*if(para.nav.utc_cmp.stat==1){
+//                            logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
+//                        }
+//                        else{
+//                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
+//                        }*/
+//                    }
+//                }
+//                catch(err){
+//                    // console.log(err);
+//                }
+//                try{
+//                    console.log('-------try')
+//                    if (para.obs.hasOwnProperty(ca.SYS_ALL)) {
+//                        console.log('-------')
+//                        if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
+//                            nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
+//                        }
+//                        real_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
+//                        nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logjson);
+//                        nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
+//                        logjson.time=cmn.time2string_UTC(sta_data.time);
+//                        /*if(para.nav.utc_gps.stat==1){
+//                            logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
+//                        }
+//                        else{
+//                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
+//                        }*/
+//                    }
+//                    console.log(math.mod(sta_data.time.time, opt.midd_time))
+//                    console.log(sta_data.time.time)
+//                    console.log(sta_data.time.time)
+//                    if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
+//                        nodepos.middleSaveAll(sta_id, para);
+//                    }
+//                }
+//                catch(err){
+//                    //console.log(err);
+//                }
+//            }
+//            pos_list.push(logjson);
+//        });
+//    }
+//    return pos_list;
+//};
 module.exports.procset=function (sta_id,prcopt) {
     try{
         if(stationPara.hasOwnProperty(sta_id)){

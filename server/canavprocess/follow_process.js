@@ -37,9 +37,15 @@ function getProopt(sta_id) {
     }
     return 0;
 }
+
 module.exports.parser_pos=function(data) {
     var pos_list = [];
     var results = parse.datatype(rtcm, data);
+    var navsys=[];
+    for(var i=0;i<para.prcopt.navsys.length;i++){
+        navsys[i]=para.prcopt.navsys[i];
+    }
+    para.prcopt.navsys=[ca.SYS_GPS,ca.SYS_GLO,ca.SYS_CMP];
     results.forEach(function (sta_data) {
         var logjson = new nodepos.logOutJson();
         //var logsat={};
@@ -76,6 +82,7 @@ module.exports.parser_pos=function(data) {
                     if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
                         nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
                     }
+                    para.prcopt.navsys=navsys;
                     follow_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
                     nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
                     //nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logsat);
@@ -88,8 +95,62 @@ module.exports.parser_pos=function(data) {
             pos_list.push(logjson);
         }
     });
+    para.prcopt.navsys=navsys;
     return pos_list;
 };
+//module.exports.parser_pos=function(data) {
+//    var pos_list = [];
+//    var results = parse.datatype(rtcm, data);
+//    results.forEach(function (sta_data) {
+//        var logjson = new nodepos.logOutJson();
+//        //var logsat={};
+//        //logsat.satR=[];
+//        if (nodepos.updateObsNav(sta_data, para, logjson)) {
+//            if(cmn.timediff(sta_data.time,prcopt.bt)<0 || cmn.timediff(sta_data.time,prcopt.et)>0)
+//                return false;
+//            try {
+//                if (para.obs.hasOwnProperty(ca.SYS_GPS)) {
+//                    follow_pos(para, para.obs[ca.SYS_GPS], para.nav, para.prcopt, para.sol[ca.SYS_GPS], ca.SYS_GPS, logjson);
+//                }
+//            }
+//            catch (err){
+//                console.log(err);
+//            }
+//            try {
+//                if(para.obs.hasOwnProperty(ca.SYS_GLO)){
+//                    follow_pos(para,para.obs[ca.SYS_GLO],para.nav, para.prcopt, para.sol[ca.SYS_GLO],ca.SYS_GLO,logjson);
+//                }
+//            }
+//            catch (err){
+//                console.log(err);
+//            }
+//            try{
+//                if(para.obs.hasOwnProperty(ca.SYS_CMP)){
+//                    follow_pos(para,para.obs[ca.SYS_CMP],para.nav, para.prcopt, para.sol[ca.SYS_CMP],ca.SYS_CMP,logjson);
+//                }
+//            }
+//            catch (err){
+//                console.log(err);
+//            }
+//            try{
+//                if(para.obs.hasOwnProperty(ca.SYS_ALL)){
+//                    if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
+//                        nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
+//                    }
+//                    follow_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
+//                    nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
+//                    //nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logsat);
+//                }
+//            }
+//            catch (err){
+//                console.log(err);
+//            }
+//            logjson.time=sta_data.time;
+//            pos_list.push(logjson);
+//        }
+//    });
+//    return pos_list;
+//};
 module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
     if(bt.length<6 || et.length<6){
         return 1;

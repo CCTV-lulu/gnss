@@ -5,7 +5,7 @@
   "rtcm_title":211,
   "buff_len":8192,
   "slip_time":3600,
-  "midd_time":600,
+  "midd_time":60,
   "obs_type":[1012,2004,2104,1074,1084,1124],
   "alertTime":10,
   "HAL":556,

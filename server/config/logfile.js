@@ -184,5 +184,7 @@ function followProcess(cwd, dataPath,cb){
      });*/
 
 }
-//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-27");
+followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-27",function(){
+
+});
 
