@@ -3,7 +3,7 @@ var StationConfig = require('mongoose').model('StationConfig');
 var config = {
     "mode": 0,
     "nf": 0,
-    "navsys": [0, 1, 2],
+    "navsys": [0, 2],
     "elmin": [10, 10, 10, 10],
     "snrmask": {
         "ena": [1, 0],
