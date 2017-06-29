@@ -270,33 +270,6 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
     //对数据分类处理
     //整理数据
 
-    function PosR() {
-        this.stat = 0;//定位结果状态
-        this.week = 0;//定位时间GPS周
-        this.tow = 0;//定位时间GPS周内秒
-        this.time = "";//定位结果对应的年月日时间
-        this.X = 0;//定位结果，ECEF坐标
-        this.Y = 0;
-        this.Z = 0;
-        this.dX = 0;//定位误差，本地坐标系下水平东向
-        this.dY = 0;//北向
-        this.dZ = 0;//垂向
-        this.Lat = 0;//定位结果纬度
-        this.Lon = 0;//定位结果经度
-        this.H = 0;//定位结果高程
-        this.GDOP = 0;//几何精度GDOP
-        this.PDOP = 0;//
-        this.HDOP = 0;
-        this.VDOP = 0;
-        this.VPL = 0;//定位垂直保护水平
-        this.HPL = 0;//定位水平保护水平
-        this.posNum = 0;//定位卫星数
-        this.trackNum = 0;//当前跟踪卫星数
-        this.exsats = "";//定位排除的卫星
-        this.minEl = 0;//最小卫星仰角
-        this.navsys = [];//定位卫星系统
-
-    }
 
     var mapping = function (logJSON, dataId, timestamp) {
         var algoIn = logJSON.satR,//原始数据[28]
@@ -388,9 +361,9 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
         return a - b
     }
 
+    var preID;
     var getStationStatus = function (staId, limit, cb) {
-        cb = cb || function () {
-            }
+        cb = cb || function () {}
         var getStationStatusUrl = "http://" + settingInfo.server + ":" + settingInfo.port + "/getStationStatus?staId=" + staId + "&limit=" + limit
         httpRequest.httpGet(getStationStatusUrl, function (req) {
             if (req.status == 400) {
@@ -400,10 +373,11 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 var stationData = [];
                 req.stationData.forEach(function (fileData) {
 
-                    var data = fileData
+                    var data = fileData;
                     //var data = JSON.parse(fileData);
-
-                    data = mapping(data.data, data._id, data.data.time)
+                    if(data._id == preID) return;
+                    preID =  data._id;
+                    data = mapping(data.data, data._id, data.data.time);
                     stationData.push(data)
                 });
                 var by = function (name) {
@@ -425,13 +399,14 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                         }
                     }
                 };
-                req.stationData = stationData.sort(by('timestamp'))//按照时间戳排序
+                req.stationData = stationData.sort(by('timestamp'));//按照时间戳排序
+
                 cb(req);
 
             } else {
                 cb(req);
             }
-        })
+        });
         var userName = localStorage.getItem('userName')
     };
     return {getStationStatus: getStationStatus};

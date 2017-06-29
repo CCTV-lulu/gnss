@@ -55,9 +55,8 @@ module.exports = function (app) {
 
         })
 
-        console.log(req.file.path);
-
         res.send("ok");
+
     });
 };
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
