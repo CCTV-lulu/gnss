@@ -456,6 +456,7 @@ function dops(ns, azel, elmin, dop){
         H[3][n++]=1.0;
     }
     if (n<4) return;
+
     Q=math.multiply(H,math.transpose(H));
     Q=math.inv(Q);
     dop[0]=math.sqrt(Q[0][0]+Q[1][1]+Q[2][2]+Q[3][3]); /* GDOP */

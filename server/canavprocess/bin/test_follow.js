@@ -3,7 +3,7 @@
 var fs = require('fs');
 var os=require('os');
 var parse=require('../follow_process');
-var test_file=  '/home/long/document/data/rover_20170611';
+var test_file=  '/home/long/document/data/rover_20170629.txt';
 var log_file= '/home/long/document/data/rover_20170611_log';
 console.log('test file:' + test_file);
 var stream;
@@ -14,7 +14,7 @@ stream = fs.createReadStream(test_file);
     //console.log('data event is strigger');
     parse.datatype(sta_id,data);
 });*/
-parse.procinit(0,[2017,5,11,0,0,0],[2017,5,12,23,59,59],400);
+parse.procinit(0,[2017,5,29,0,0,0],[2017,5,29,23,59,59],400);
 var fwrite=fs.createWriteStream(log_file);
 stream.on('readable',function () {
     var data;

@@ -54,7 +54,7 @@ function getProopt(sta_id) {
 function pos_config(sta_id,prcopt) {
     var para={};
     if (!stationPara.hasOwnProperty(sta_id)) {
-        //var prcopt = getProopt(sta_id);
+        //var prcopt =  getProopt(sta_id);
         if(prcopt!=0){
             stationPara[sta_id] = new nodepos.posPara_create(prcopt);
             nodepos.posParainit(sta_id, stationPara[sta_id]);
@@ -113,11 +113,11 @@ module.exports.parser_pos=function(sta_id,data,opt_int) {
                     if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
                         real_pos(para,para.obs[ca.SYS_CMP],para.nav, para.prcopt, para.sol[ca.SYS_CMP],ca.SYS_CMP,logjson);
                         /*if(para.nav.utc_cmp.stat==1){
-                         logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
-                         }
-                         else{
-                         logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
-                         }*/
+                            logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
+                        }
+                        else{
+                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
+                        }*/
                     }
                 }
                 catch(err){
@@ -134,11 +134,11 @@ module.exports.parser_pos=function(sta_id,data,opt_int) {
                         nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
                         logjson.time=cmn.time2string_UTC(sta_data.time);
                         /*if(para.nav.utc_gps.stat==1){
-                         logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
-                         }
-                         else{
-                         logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
-                         }*/
+                            logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
+                        }
+                        else{
+                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
+                        }*/
                     }
                     if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
                         nodepos.middleSaveAll(sta_id, para);
@@ -155,88 +155,6 @@ module.exports.parser_pos=function(sta_id,data,opt_int) {
 
     return pos_list;
 };
-//module.exports.parser_pos=function(sta_id,data,opts) {
-//    var rtcm=rtcm_init(sta_id);
-//    var para=pos_config(sta_id,opts);
-//    var pos_list = [];
-//    if(para!=0){
-//        var results=[];
-//        try{
-//            results = parse.datatype(rtcm, data);
-//        }
-//        catch (err){
-//            rtcmParse[sta_id]=new parse.rtcm_create();
-//            rtcm=rtcmParse[sta_id];
-//            console.log('rtcm data decode error, and rtcm buff is reinitialize');
-//        }
-//        results.forEach(function (sta_data) {
-//            var logjson = new nodepos.showJson();
-//            if (nodepos.updateObsNav_show(sta_data, para, logjson)) {
-//                try {
-//                    if (para.obs.hasOwnProperty(ca.SYS_GPS)) {
-//                        real_pos(para,para.obs[ca.SYS_GPS],para.nav, para.prcopt, para.sol[ca.SYS_GPS],ca.SYS_GPS,logjson);
-//                    }
-//                }
-//                catch(err){
-//                    // console.log(err);
-//                }
-//                try{
-//                    if (para.obs.hasOwnProperty(ca.SYS_GLO)) {
-//                        real_pos(para,para.obs[ca.SYS_GLO],para.nav, para.prcopt, para.sol[ca.SYS_GLO],ca.SYS_GLO,logjson);
-//                        //logjson.time=cmn.time2string_UTC(cmn.gpst2utc(para.sol[ca.SYS_GLO].time));
-//                    }
-//                }
-//                catch(err){
-//                    // console.log(err);
-//                }
-//                try{
-//                    if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
-//                        real_pos(para,para.obs[ca.SYS_CMP],para.nav, para.prcopt, para.sol[ca.SYS_CMP],ca.SYS_CMP,logjson);
-//                        /*if(para.nav.utc_cmp.stat==1){
-//                            logjson.time=cmn.time2string_UTC(cmn.bd2utc(para.sol[ca.SYS_CMP].time,para.nav.utc_cmp));
-//                        }
-//                        else{
-//                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_CMP].time);
-//                        }*/
-//                    }
-//                }
-//                catch(err){
-//                    // console.log(err);
-//                }
-//                try{
-//                    console.log('-------try')
-//                    if (para.obs.hasOwnProperty(ca.SYS_ALL)) {
-//                        console.log('-------')
-//                        if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
-//                            nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
-//                        }
-//                        real_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
-//                        nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logjson);
-//                        nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
-//                        logjson.time=cmn.time2string_UTC(sta_data.time);
-//                        /*if(para.nav.utc_gps.stat==1){
-//                            logjson.time=cmn.time2string_UTC(cmn.gps2utc(para.sol[ca.SYS_ALL].time,para.nav.utc_gps));
-//                        }
-//                        else{
-//                            logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
-//                        }*/
-//                    }
-//                    console.log(math.mod(sta_data.time.time, opt.midd_time))
-//                    console.log(sta_data.time.time)
-//                    console.log(sta_data.time.time)
-//                    if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
-//                        nodepos.middleSaveAll(sta_id, para);
-//                    }
-//                }
-//                catch(err){
-//                    //console.log(err);
-//                }
-//            }
-//            pos_list.push(logjson);
-//        });
-//    }
-//    return pos_list;
-//};
 module.exports.procset=function (sta_id,prcopt) {
     try{
         if(stationPara.hasOwnProperty(sta_id)){
@@ -305,5 +223,5 @@ function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //nodepos.eleUpdate(para);
-    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

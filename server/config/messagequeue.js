@@ -57,7 +57,9 @@ function saveStaInfo(data) {
         //updated_at: updated_at,
         data: data
     };
-    checkThreshold(data)
+    checkThreshold(data);
+    console.log('getdata');
+    console.log(data);
     if (!statInfo[data.station_id]) {
         statInfo[data.station_id] = []
     }
