@@ -1,6 +1,6 @@
 .idea/
-public/json/*
-public/chartImage/*
+public/json/
+public/chartImage/
 public/csv/*
-server/canavprocess/config/*
-node_modules/*
+server/canavprocess/config/
+node_modules/
