@@ -130,10 +130,12 @@ function batch_process(batchProcessFiler) {
 
 
     var files = getFollowDatePath(batchProcessFiler);
+    var startTime = new Date().getTime()
+    console.log(startTime)
     if (files.allTime == 30) {
-        return process.send({status: 301, effectiveTime: files.allTime});
+        return process.send({status: 301, effectiveTime: files.allTime,filePath:startTime });
     }
-    process.send({status: 300, effectiveTime: files.allTime});
+    process.send({status: 300, effectiveTime: files.allTime,filePath:startTime});
 
     var para = new statis_create();
     satis_init(para, batchProcessFiler);
@@ -142,7 +144,7 @@ function batch_process(batchProcessFiler) {
     processOneDay(files.allFilesData, 0, function (data) {
 
 
-        createImage(data,batchProcessFiler).then(function(results){
+        createImage(data,batchProcessFiler,startTime).then(function(results){
             exporter.killPool()
             for(var sys in data){
                 data[sys].up_slice = {
@@ -150,7 +152,8 @@ function batch_process(batchProcessFiler) {
                     vpl_num: batchProcessFiler.options.vpl_num
                 }
             }
-            fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+            fs.mkdir('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/')
+            fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/'+ batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
                 if (err) throw err;
                 process.send({status: 200, username: batchProcessFiler.username});
             });
@@ -245,7 +248,7 @@ function getAllFilePath(station, allDate) {
     return allFiles
 }
 
-function createImage(data, filter) {
+function createImage(data, filter,startTime) {
     //var data = require('../../public/json/1.json');
     //filter = {
     //    username: 1,
@@ -261,16 +264,17 @@ function createImage(data, filter) {
     var promises =[];
     exporter.initPool({reaper: false, maxWorkers: infos.length});
     for(var i = 0; i < infos.length; i++){
-        promises.push(chartImage(infos[i],filter.username))
+        promises.push(chartImage(infos[i],filter.username,startTime))
     }
 
     return promise.all(promises)
 }
 
-function chartImage(chartInfo,username) {
+function chartImage(chartInfo,username,startTime) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
-        fs.writeFile( "./public/chartImage/"+username+'/'+ chartInfo.fileName+".png", res.data, 'base64', function (err) {
+        fs.mkdir("./public/chartImage/"+username+'/'+startTime+'/')
+        fs.writeFile( "./public/chartImage/"+username+'/'+startTime+'/'+ chartInfo.fileName+".png", res.data, 'base64', function (err) {
             defer.resolve(chartInfo.fileName)
         });
 

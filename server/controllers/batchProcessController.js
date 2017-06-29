@@ -18,7 +18,7 @@ function forkBatchProcess(username, batchProcessInfo, cb) {
         if (batchProcessResult.status === 300) {
             AllUserBatchProcess[username] = batchChildProcess;
             saveBatchProcessStart(username, batchProcessResult).then(function (result) {
-                cb({status: 200, effectiveTime: batchProcessResult.effectiveTime});
+                cb({status: 200, effectiveTime: batchProcessResult.effectiveTime, filePath: batchProcessResult.filePath});
             })
         }
         if (batchProcessResult.status === 301) {
@@ -77,7 +77,7 @@ function startBatchProcess(req, res) {
     BatchProcessModel.findBatchProcess(user.username).then(function (userBatchProcessStatus) {
         var status = batchProcessStatus(userBatchProcessStatus);
         if (status === 0) {
-            killUserBatchProcess(user.username, function () {
+            killUserBatchProcess(false,user.username, function () {
                 forkBatchProcess(user.username, batchProcessInfo, function (result) {
                     res.send(result);
                 })
@@ -106,10 +106,18 @@ function getBatchProcess(req, res) {
     })
 }
 
-function killUserBatchProcess(username, cb) {
-
+function killUserBatchProcess(isremove,username, cb) {
+        if( isremove){
         rimraf("./public/chartImage/" + username, function (err) {
-            fs.mkdir("./public/chartImage/" + username, function (err) {
+            killBatchPricess()
+        })
+
+        }else{
+            killBatchPricess()
+        }
+
+        function killBatchPricess (){
+             fs.mkdir("./public/chartImage/" + username, function (err) {
                 if (AllUserBatchProcess[username]) {
                     AllUserBatchProcess[username].send({message: 'close'});
                     BatchProcessModel.deleteBatchProcess(username).then(function () {
@@ -124,16 +132,29 @@ function killUserBatchProcess(username, cb) {
                     }
                 }
             })
-        })
+        }
 
 
 
 
 }
 
+function stopBatchProcess(req,res){
+    var username=req.user.username;
+    if (AllUserBatchProcess[username]) {
+        AllUserBatchProcess[username].send({message: 'close'});
+        BatchProcessModel.deleteBatchProcess(username).then(function () {
+           res.send({message:'success'})
+        });
+        AllUserBatchProcess[username] = undefined;
+    } else {
+       res.send({message:'warning'})
+    }
+}
 
 module.exports = {
     startBatchProcess: startBatchProcess,
     getBatchProcess: getBatchProcess,
-    killUserBatchProcess: killUserBatchProcess
+    killUserBatchProcess: killUserBatchProcess,
+    stopBatchProcess:stopBatchProcess
 };
