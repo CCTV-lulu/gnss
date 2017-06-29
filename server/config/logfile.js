@@ -13,14 +13,24 @@ var readLine = require('linebyline');
 
 var parse=require('../canavprocess/follow_process.js');
 var os=require('os');
-
+var ISHANDLELOLOG = false;
 module.exports = function (app) {
+
     app.post('/logs', upload.single('log_file'), function (req, res, next) {
         var logPath = config.logPath.toString() + req.file.originalname;
         var logResolvePath = cwd+logPath;
+
+        if(ISHANDLELOLOG === true){
+           return  res.status(404)        // HTTP status 404: NotFound
+                .send('Not found');
+        }
+
         var name = fs.rename(req.file.path, logResolvePath,function(){
-            getStaData(cwd,logResolvePath,logPath);
+            getStaData(cwd, logResolvePath,logPath,function(){
+                ISHANDLELOLOG = false
+            });
         });
+
 
         fs.readdir(cwd+"/logs", function (err, files) {
             if (err) {
@@ -63,7 +73,7 @@ module.exports = function (app) {
 
 //getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-12","./logs/beijing-thu.log-2017-06-12")
 
-function getStaData(cwd,logResolvePath,log_path) {
+function getStaData(cwd,logResolvePath,log_path,cb) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');
     var allData = [];
     var rl = readLine(logResolvePath);
@@ -80,7 +90,7 @@ function getStaData(cwd,logResolvePath,log_path) {
         var buff = Buffer.concat(allData);
         fs.writeFile(dataPath, buff,function () {
             console.log('-------------------------------------------ok')
-            followProcess(cwd, dataPath)
+            followProcess(cwd, dataPath,cb)
 
         });
     });
@@ -117,7 +127,7 @@ function GetDateDiff(startTime, endTime, diffType) {
 
 
 
-function followProcess(cwd, dataPath){
+function followProcess(cwd, dataPath,cb){
     var stream;
     var len=300;
     var maxLen=400;
@@ -162,6 +172,7 @@ function followProcess(cwd, dataPath){
             stream.on("close", function () {
                 console.log('the file process close');
                 fwrite.close();
+                cb()
             });
         }
     });
