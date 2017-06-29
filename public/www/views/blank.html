@@ -10,14 +10,14 @@
         <div class="col-md-5 col-sm-5" >
 
             <div class="controls">
-                <div id="reportrange" class="pull-left dateRange" style="width:350px;margin: 0 5px 5px 0">
+                <div id="reportrange" class="pull-left dateRange" style="width:350px;margin-bottom:5px">
                     <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
                     <span id="searchDateRange"></span>
                     <b class="caret"></b>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-3" >
+        <div class="col-md-3 col-sm-3" style="margin:0;">
             <div class="form-group">
                 <select id='station' class='form-control select2'>
                     <option ng-if="!isAdmin" ng-model="station" value={{stationInfoId}} selected>{{stationInfoName}}</option>
@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <div class="col-md-2 col-sm-2 " >
+        <div class="col-md-2 col-sm-2 " style="margin-bottom: 5px" >
             <button class="col-md-8 btn btn-circle green" ng-click="findData()" ng-model="mySwitch"> 查 询</button>
         </div>
         <div class="col-md-2 col-sm-2 ">
