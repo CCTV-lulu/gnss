@@ -140,9 +140,6 @@ module.exports.parser_pos=function(sta_id,data,opt_int) {
                          logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
                          }*/
                     }
-                    console.log(math.mod(sta_data.time.time, opt.midd_time) == 0)
-                    console.log(sta_data.time.time)
-                    console.log(opt.midd_time)
                     if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
                         nodepos.middleSaveAll(sta_id, para);
                     }
