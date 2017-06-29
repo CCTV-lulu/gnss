@@ -143,21 +143,23 @@ function batch_process(batchProcessFiler) {
 
     processOneDay(files.allFilesData, 0, function (data) {
 
-
-        createImage(data,batchProcessFiler,startTime).then(function(results){
-            exporter.killPool()
-            for(var sys in data){
-                data[sys].up_slice = {
-                    hpl_num: batchProcessFiler.options.hpl_num,
-                    vpl_num: batchProcessFiler.options.vpl_num
+        fs.mkdir('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/',function(){
+            createImage(data,batchProcessFiler,startTime).then(function(results){
+                exporter.killPool()
+                for(var sys in data){
+                    data[sys].up_slice = {
+                        hpl_num: batchProcessFiler.options.hpl_num,
+                        vpl_num: batchProcessFiler.options.vpl_num
+                    }
                 }
-            }
-            fs.mkdir('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/')
-            fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/'+ batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
-                if (err) throw err;
-                process.send({status: 200, username: batchProcessFiler.username});
+
+                fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/'+ batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+                    if (err) throw err;
+                    process.send({status: 200, username: batchProcessFiler.username});
+                });
             });
-        });
+        })
+
 
 
     });
@@ -273,7 +275,6 @@ function createImage(data, filter,startTime) {
 function chartImage(chartInfo,username,startTime) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
-        fs.mkdir("./public/chartImage/"+username+'/'+startTime+'/')
         fs.writeFile( "./public/chartImage/"+username+'/'+startTime+'/'+ chartInfo.fileName+".png", res.data, 'base64', function (err) {
             defer.resolve(chartInfo.fileName)
         });
