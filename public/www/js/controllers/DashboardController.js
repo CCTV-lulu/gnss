@@ -418,7 +418,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         var types = {
             'gpsDH': 0,
             //'glsDH': 1,
-            'dbsDH': 2,
+            'bdsDH': 2,
             'groupDH': 3
         };
         var xAxis = [], gpsY = [], dbsY = [], groupY = [], glsY = [];
