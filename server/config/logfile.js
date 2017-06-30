@@ -13,17 +13,24 @@ var readLine = require('linebyline');
 
 var parse = require('../canavprocess/follow_process.js');
 var os = require('os');
+var lock = require('lockfile')
 
 
-function addLogResolve(cwd, logResolvePath, logPath) {
+function addLogResolve(cwd, logResolvePath, logPath,cb) {
+    lock.lock('logRecord.lock',{wait:100,retries:1,retryWait:100} ,function (err) {
+        if (err) return cb({status: false})
+        var logRecord = getLogRecord();
+        logRecord.infos.push({'cwd': cwd, 'logResolvePath': logResolvePath, 'logPath': logPath});
+        fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
+        lock.unlock('logRecord.lock',function(err){
+            if(err) return
+            cb({status: true})
+        })
 
-    var logRecord = getLogRecord();
+    })
 
-    logRecord.infos.push({'cwd': cwd, 'logResolvePath': logResolvePath, 'logPath': logPath});
-
-    fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
-    console.log(logResolvePath)
 }
+
 
 function saveStartLog(isHandle) {
     var logRecord = getLogRecord();
@@ -32,7 +39,13 @@ function saveStartLog(isHandle) {
     if (isHandle) {
         info = logRecord.infos.pop()
     }
-    fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
+    lock.lock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
+        if (err) return
+        fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
+        lock.unlock('firstLogRecord.lock',function (err) {
+        })
+    })
+    
     return info
 }
 
@@ -60,8 +73,15 @@ module.exports = function (app) {
 
         var name = fs.rename(req.file.path, logResolvePath, function () {
 
-            addLogResolve(cwd, logResolvePath, logPath)
-            res.send('ok')
+            addLogResolve(cwd, logResolvePath, logPath,function(result){
+                if(result.status){
+                 return res.send('ok')
+                }
+                res.status(404)
+                    .send('Not Found')
+
+            })
+
             // getStaData(cwd, logResolvePath,logPath,function(){
             //     ISHANDLELOLOG = false
             // });
@@ -75,6 +95,7 @@ module.exports = function (app) {
 startHandleLogFile()
 
 function startHandleLogFile() {
+    saveStartLog(false)
     setInterval(function () {
         handleLogFile()
     }, 1000 * 60 * 2)
@@ -87,6 +108,7 @@ function handleLogFile() {
     if (info) {
         removeOverTimeDate(info.logPath.split('/').pop())
         getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
+            console.log("+++++")
             saveStartLog(false)
         })
 
