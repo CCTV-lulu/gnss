@@ -79,7 +79,6 @@ MetronicApp.controller('SidebarController', ['$state', '$scope', '$location', 'M
         var width = $(this).width();
         if(width<1000){
             $scope.width=true;
-            console.log('=============')
         }
         else {
             $scope.width=false;
