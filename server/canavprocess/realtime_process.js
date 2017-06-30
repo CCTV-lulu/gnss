@@ -214,6 +214,7 @@ module.exports.delconfig=function (sta_id) {
 };
 
 function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
+
     prcopt.sys = sys;
     sol.ex="";
     sol.VPL=0;
@@ -223,5 +224,5 @@ function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //nodepos.eleUpdate(para);
-    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

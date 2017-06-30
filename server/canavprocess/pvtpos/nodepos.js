@@ -9,6 +9,7 @@ var cmn=require('../routes/comn.js');
 var pnt=require('./pntpos.js');
 var opt=require('../config/optcomm.json');
 var ephcalc=require('./ephemeris.js');
+var lockFile = require('lockfile')
 //bd 电离层数据对象构建
 function ioncreate_cmp() {
     var ion_cmp=new ca.ionM();
@@ -282,36 +283,50 @@ function posParainit(sta_id,para) {
 function middleSaveAll(sta_id,stationPara) {
     var cwd=path.resolve(__dirname,'..');
     var posave=path.join(cwd,'/config/posmidd.json');
+
     fs.exists(posave,function (exist) {
         if(exist){
-            fs.readFile(posave,function (err, data) {
-                if(err){
-                    console.log(err);
-                }
-                else{
-                    if(data.length==0)
-                        data={};
-                    else
-                        data=JSON.parse(data);
+            lockFile.lock('posmidd.lock', {wait: 100, retries: 1, retryWait: 100}, function (er) {
+                if(er) return
+                fs.readFile(posave, function (err, data) {
 
-                    if(!data.hasOwnProperty(sta_id)) {
-                        data[sta_id]=new posMiddle_create();
-                    }
-                    data[sta_id].rr[ca.SYS_GPS]=stationPara.sol[ca.SYS_GPS].rr;
-                    data[sta_id].rr[ca.SYS_GLO]=stationPara.sol[ca.SYS_GLO].rr;
-                    data[sta_id].rr[ca.SYS_CMP]=stationPara.sol[ca.SYS_CMP].rr;
-                    data[sta_id].rr[ca.SYS_ALL]=stationPara.sol[ca.SYS_ALL].rr;
-                    data[sta_id].count=stationPara.count;
-                    data[sta_id].mean=stationPara.mean;
-                    data[sta_id].sigma=stationPara.sigma;
-                }
-                fs.writeFile(posave,JSON.stringify(data),function (err) {
-                    if(err){
+                    if (err) {
                         console.log(err);
                     }
-                });
-                //fs.writeFileSync(posave,JSON.stringify(data));
-            });
+                    else {
+                        if (data.length == 0) {
+                            data = {};
+                        }
+
+                        else {
+                            data = JSON.parse(data);
+                        }
+
+
+                        if (!data.hasOwnProperty(sta_id)) {
+                            data[sta_id] = new posMiddle_create();
+                        }
+
+                        data[sta_id].rr[ca.SYS_GPS] = stationPara.sol[ca.SYS_GPS].rr;
+                        data[sta_id].rr[ca.SYS_GLO] = stationPara.sol[ca.SYS_GLO].rr;
+                        data[sta_id].rr[ca.SYS_CMP] = stationPara.sol[ca.SYS_CMP].rr;
+                        data[sta_id].rr[ca.SYS_ALL] = stationPara.sol[ca.SYS_ALL].rr;
+                        data[sta_id].count = stationPara.count;
+                        data[sta_id].mean = stationPara.mean;
+                        data[sta_id].sigma = stationPara.sigma;
+                    }
+                    fs.writeFile(posave, JSON.stringify(data), function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        lockFile.unlock('posmidd.lock', function (er) {
+                            // er means that an error happened, and is probably bad.
+                            //})
+                        });
+                        //fs.writeFileSync(posave,JSON.stringify(data));
+                    });
+                })
+            })
         }
         else{
             var data={};
@@ -323,11 +338,19 @@ function middleSaveAll(sta_id,stationPara) {
             data[sta_id].count=stationPara.count;
             data[sta_id].mean=stationPara.mean;
             data[sta_id].sigma=stationPara.sigma;
-            fs.writeFile(posave,JSON.stringify(data),function (err) {
-                if(err){
-                    console.log(err);
-                }
-            });
+            lockFile.check('posmidd.lock', {wait: 100, retries: 1, retryWait: 100}, function(){
+                lockFile.lock('posmidd.lock', {wait: 100, retries: 1, retryWait: 100}, function (er) {
+                    fs.writeFile(posave, JSON.stringify(data), function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        lockFile.unlock('posmidd.lock', function (er) {
+                            // er means that an error happened, and is probably bad.
+                        })
+                    });
+                })
+            })
+
             //fs.writeFileSync(posave,JSON.stringify(data));
         }
     });
