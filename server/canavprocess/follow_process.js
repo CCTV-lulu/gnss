@@ -134,5 +134,5 @@ function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     //nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //logjson.time=sol.time;
-    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    // console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

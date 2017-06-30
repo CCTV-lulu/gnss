@@ -5,80 +5,139 @@ var multer = require('multer'); // v1.0.5
 var path = require('path');
 var cwd = config.cwd;
 
-var upload = multer({dest:cwd+ '/uploads/'}); // for parsing multipart/form-data，
+var upload = multer({dest: cwd + '/uploads/'}); // for parsing multipart/form-data，
 var StationConfig = require('../data/stationConfig.js');
 
 var fs = require('fs');
 var readLine = require('linebyline');
 
-var parse=require('../canavprocess/follow_process.js');
-var os=require('os');
-var ISHANDLELOLOG = false;
+var parse = require('../canavprocess/follow_process.js');
+var os = require('os');
+
+
+function addLogResolve(cwd, logResolvePath, logPath) {
+
+    var logRecord = getLogRecord();
+
+    logRecord.infos.push({'cwd': cwd, 'logResolvePath': logResolvePath, 'logPath': logPath});
+
+    fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
+    console.log(logResolvePath)
+}
+
+function saveStartLog(isHandle) {
+    var logRecord = getLogRecord();
+    logRecord.status = isHandle;
+    var info;
+    if (isHandle) {
+        info = logRecord.infos.pop()
+    }
+    fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
+    return info
+}
+
+function getLogRecord() {
+    try {
+        return JSON.parse(fs.readFileSync('server/config/logRecord.json', {flag: 'r+', encoding: 'utf8'}))
+
+
+    } catch (err) {
+        return {"status": false, "infos": []}
+    }
+
+
+}
+
+
 module.exports = function (app) {
 
     app.post('/logs', upload.single('log_file'), function (req, res, next) {
+
+
         var logPath = config.logPath.toString() + req.file.originalname;
-        var logResolvePath = cwd+logPath;
+        var logResolvePath = cwd + logPath;
 
-        console.log('-------------get log')
 
-        if(ISHANDLELOLOG === true){
-           return  res.status(404)        // HTTP status 404: NotFound
-                .send('Not found');
-        }
+        var name = fs.rename(req.file.path, logResolvePath, function () {
 
-        ISHANDLELOLOG = true;
-        console.log(ISHANDLELOLOG)
+            addLogResolve(cwd, logResolvePath, logPath)
+            res.send('ok')
+            // getStaData(cwd, logResolvePath,logPath,function(){
+            //     ISHANDLELOLOG = false
+            // });
 
-        var name = fs.rename(req.file.path, logResolvePath,function(){
-            getStaData(cwd, logResolvePath,logPath,function(){
-                ISHANDLELOLOG = false
-            });
         });
 
 
-        fs.readdir(cwd+"/logs", function (err, files) {
-            if (err) {
-                return
-            }
-            files.forEach(function (fileName) {
-                var startDate = fileName.slice(-10);
-                var endDate = req.file.originalname.slice(-10);
-                var resultDays = GetDateDiff(startDate, endDate, "day");
-                if (resultDays > 180) {
-                    fs.unlink(cwd+"/logs" + '/' + fileName, function (err) {
-                        if (err) throw err;
-                    })//删除logs
-                }
-            })
-
-        })
-        fs.readdir(cwd+"/data", function (err, files) {
-            if (err) {
-                return
-            }
-            files.forEach(function (fileName) {
-                var startDate = fileName.slice(-10);
-                var endDate = req.file.originalname.slice(-10);
-                var resultDays = GetDateDiff(startDate, endDate, "day");//半年删除一次log,data
-                if (resultDays > 180) {
-                    fs.unlink(cwd+"/data" + '/' + fileName, function (err) {
-                        if (err) throw err;
-                    })//删除data
-                }
-            })
-
-        })
-
-        res.send("ok");
-
     });
 };
+
+startHandleLogFile()
+
+function startHandleLogFile() {
+    setInterval(function () {
+        handleLogFile()
+    }, 1000 * 60 * 2)
+}
+
+function handleLogFile() {
+    var logRecord = getLogRecord();
+    if (logRecord.status)  return;
+    var info = saveStartLog(true)
+    if (info) {
+        removeOverTimeDate(info.logPath.split('/').pop())
+        getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
+            saveStartLog(false)
+        })
+
+    }
+
+}
+
+// removeOverTimeDate(req.file.originalname)
+
+
+function removeOverTimeDate(originalname) {
+    fs.readdir(cwd + "/logs", function (err, files) {
+        if (err) {
+            return
+        }
+        files.forEach(function (fileName) {
+            var startDate = fileName.slice(-10);
+            var endDate = originalname.slice(-10);//todo
+            var resultDays = GetDateDiff(startDate, endDate, "day");
+            if (resultDays > 180) {
+                fs.unlink(cwd + "/logs" + '/' + fileName, function (err) {
+                    if (err) throw err;
+                })//删除logs
+            }
+        })
+
+    })
+    fs.readdir(cwd + "/data", function (err, files) {
+        if (err) {
+            return
+        }
+        files.forEach(function (fileName) {
+            var startDate = fileName.slice(-10);
+            var endDate = originalname.slice(-10); //todo
+            var resultDays = GetDateDiff(startDate, endDate, "day");//半年删除一次log,data
+            if (resultDays > 180) {
+                fs.unlink(cwd + "/data" + '/' + fileName, function (err) {
+                    if (err) throw err;
+                })//删除data
+            }
+        })
+
+    })
+
+
+}
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
 
 //getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-12","./logs/beijing-thu.log-2017-06-12")
 
-function getStaData(cwd,logResolvePath,log_path,cb) {
+function getStaData(cwd, logResolvePath, log_path, cb) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');
     var allData = [];
     var rl = readLine(logResolvePath);
@@ -93,9 +152,9 @@ function getStaData(cwd,logResolvePath,log_path,cb) {
     });
     rl.on('end', function () {
         var buff = Buffer.concat(allData);
-        fs.writeFile(dataPath, buff,function () {
+        fs.writeFile(dataPath, buff, function () {
             console.log('-------------------------------------------ok')
-            followProcess(cwd, dataPath,cb)
+            followProcess(cwd, dataPath, cb)
 
         });
     });
@@ -131,47 +190,46 @@ function GetDateDiff(startTime, endTime, diffType) {
 }
 
 
-
-function followProcess(cwd, dataPath,cb){
+function followProcess(cwd, dataPath, cb) {
     var stream;
-    var len=300;
-    var maxLen=400;
+    var len = 300;
+    var maxLen = 400;
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
     var stationId = fileName.split('.data-')[0];
-    var timeInfo = fileName.replace("data-",'');
+    var timeInfo = fileName.replace("data-", '');
     var startTime;
     var endTime;
     var now = new Date(timeInfo);
     startTime = [
-            now.getYear() + 1900,
-            now.getMonth(),
-            now.getDate(), 0, 0, 0
+        now.getYear() + 1900,
+        now.getMonth(),
+        now.getDate(), 0, 0, 0
     ];
-    endTime =  [
+    endTime = [
         now.getYear() + 1900,
         now.getMonth(),
         now.getDate(), 23, 59, 59
     ];
 
     //
-    StationConfig.findByStaId(stationId).then(function(result){
+    StationConfig.findByStaId(stationId).then(function (result) {
 
-        if(result.status){
+        if (result.status) {
             stream = fs.createReadStream(dataPath);
-            parse.procinit(stationId, startTime, endTime ,maxLen, result.stationConfig.config);
-            var fwrite=fs.createWriteStream(followDataPath);
-            stream.on('readable',function () {
+            parse.procinit(stationId, startTime, endTime, maxLen, result.stationConfig.config);
+            var fwrite = fs.createWriteStream(followDataPath);
+            stream.on('readable', function () {
                 var data;
                 while (null != (data = stream.read(len))) {
-                    var logpos=parse.parser_pos(data);
+                    var logpos = parse.parser_pos(data);
                     logpos.forEach(function (log) {
-                        var obj={"time":log.time,"data":log.posR};
-                        fwrite.write(JSON.stringify(obj)+os.EOL);
+                        var obj = {"time": log.time, "data": log.posR};
+                        fwrite.write(JSON.stringify(obj) + os.EOL);
                     });
                 }
             });
-            stream.on("end",function () {
+            stream.on("end", function () {
                 console.log('the file process end');
             });
             stream.on("close", function () {
