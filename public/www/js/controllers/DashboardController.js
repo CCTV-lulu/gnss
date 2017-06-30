@@ -125,7 +125,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         }
 
         if (staInfo.posR[2]) {
-            $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
+            $scope.seriesList.bdsDH.addPoint([ staInfo.posR[2].H], true, true);
 
         }
         if (staInfo.posR[3]) {
