@@ -537,7 +537,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 //    data: glsY
                 //}
                 , {
-                    name: 'dbsDH',
+                    name: 'bdsDH',
                     data: dbsY
                 }, {
                     name: 'groupDH',

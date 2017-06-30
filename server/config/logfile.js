@@ -98,20 +98,23 @@ function startHandleLogFile() {
     saveStartLog(false)
     setInterval(function () {
         handleLogFile()
-    }, 1000 * 60 * 2)
+    }, 1000 * 60 * 5)
 }
 
 function handleLogFile() {
     var logRecord = getLogRecord();
-    if (logRecord.status)  return;
-    var info = saveStartLog(true)
+    if (logRecord.status || logRecord.infos.length === 0)  return;
+
+    var info = saveStartLog(true);
     if (info) {
-        removeOverTimeDate(info.logPath.split('/').pop())
+        removeOverTimeDate(info.logPath.split('/').pop());
         getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
-            console.log("+++++")
+            console.log("+++++");
             saveStartLog(false)
         })
 
+    }else{
+        saveStartLog(false)
     }
 
 }
