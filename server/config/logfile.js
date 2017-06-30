@@ -20,10 +20,15 @@ module.exports = function (app) {
         var logPath = config.logPath.toString() + req.file.originalname;
         var logResolvePath = cwd+logPath;
 
+        console.log('-------------get log')
+
         if(ISHANDLELOLOG === true){
            return  res.status(404)        // HTTP status 404: NotFound
                 .send('Not found');
         }
+
+        ISHANDLELOLOG = true;
+        console.log(ISHANDLELOLOG)
 
         var name = fs.rename(req.file.path, logResolvePath,function(){
             getStaData(cwd, logResolvePath,logPath,function(){
@@ -184,5 +189,7 @@ function followProcess(cwd, dataPath,cb){
      });*/
 
 }
-//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-27");
+//followProcess(cwd,cwd+"/data/beijing-thu.data-2017-06-27",function(){
+//
+//});
 

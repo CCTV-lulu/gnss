@@ -40,6 +40,11 @@ function getProopt(sta_id) {
 module.exports.parser_pos=function(data) {
     var pos_list = [];
     var results = parse.datatype(rtcm, data);
+    var navsys=[];
+    for(var i=0;i<para.prcopt.navsys.length;i++){
+        navsys[i]=para.prcopt.navsys[i];
+    }
+    para.prcopt.navsys=[ca.SYS_GPS,ca.SYS_GLO,ca.SYS_CMP];
     results.forEach(function (sta_data) {
         var logjson = new nodepos.logOutJson();
         //var logsat={};
@@ -76,6 +81,7 @@ module.exports.parser_pos=function(data) {
                     if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
                         nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
                     }
+                    para.prcopt.navsys=navsys;
                     follow_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
                     nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
                     //nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logsat);
@@ -88,9 +94,10 @@ module.exports.parser_pos=function(data) {
             pos_list.push(logjson);
         }
     });
+    para.prcopt.navsys=navsys;
     return pos_list;
 };
-module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
+module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
     if(bt.length<6 || et.length<6){
         return 1;
     }
@@ -127,5 +134,5 @@ function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     //nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //logjson.time=sol.time;
-    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

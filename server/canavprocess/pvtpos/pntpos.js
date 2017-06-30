@@ -198,6 +198,7 @@ function estpos(obs, rs, dts,vars, svh, nav,opt,NX ,sol, vsat,azel,vare,H,v,sst)
             for(k=0;k<Ht[j].length;k++)
                 H[j][k]=Ht[j][k];
         }*/
+
         for(j=0;j<Ht.length;j++)H[j]=Ht[j];
         if (nv<nx) {
             break;
@@ -369,6 +370,7 @@ function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
         }
         if(VPL_t>VPL)
             VPL = VPL_t;
+        var x=10;
     }
     sol.VPL=pbiasB*VPL;
     sol.HPL=pbiasB*HPL;

@@ -54,7 +54,7 @@ function getProopt(sta_id) {
 function pos_config(sta_id,prcopt) {
     var para={};
     if (!stationPara.hasOwnProperty(sta_id)) {
-        //var prcopt = getProopt(sta_id);
+        //var prcopt =  getProopt(sta_id);
         if(prcopt!=0){
             stationPara[sta_id] = new nodepos.posPara_create(prcopt);
             nodepos.posParainit(sta_id, stationPara[sta_id]);
@@ -68,11 +68,18 @@ function pos_config(sta_id,prcopt) {
     return para;
 }
 
-module.exports.parser_pos=function(sta_id,data,opt) {
+module.exports.parser_pos=function(sta_id,data,opt_int) {
     var rtcm=rtcm_init(sta_id);
-    var para=pos_config(sta_id,opt);
+    var para=pos_config(sta_id,opt_int);
     var pos_list = [];
+    var navsys=[];
+
+
     if(para!=0){
+        for(var i=0;i<para.prcopt.navsys.length;i++){
+            navsys[i]=para.prcopt.navsys[i];
+        }
+        para.prcopt.navsys=[ca.SYS_GPS,ca.SYS_GLO,ca.SYS_CMP];
         var results=[];
         try{
             results = parse.datatype(rtcm, data);
@@ -91,7 +98,7 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    // console.log(err);
+                    console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_GLO)) {
@@ -100,7 +107,7 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    // console.log(err);
+                    console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_CMP)) {
@@ -114,13 +121,14 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    // console.log(err);
+                    console.log(err);
                 }
                 try{
                     if (para.obs.hasOwnProperty(ca.SYS_ALL)) {
                         if (!nodepos.obsTimeConsistent(sta_data.time, para.obs[ca.SYS_ALL])) {
                             nodepos.obsMostNumber(para.obs[ca.SYS_ALL]);
                         }
+                        para.prcopt.navsys=navsys;
                         real_pos(para,para.obs[ca.SYS_ALL],para.nav, para.prcopt, para.sol[ca.SYS_ALL],ca.SYS_ALL,logjson);
                         nodepos.satShowStruct(para.obs[ca.SYS_ALL],para.nav,para.sol[ca.SYS_ALL],logjson);
                         nodepos.eleUpdate(para.sol[ca.SYS_ALL], para.obs[ca.SYS_ALL], para.ele);
@@ -137,12 +145,14 @@ module.exports.parser_pos=function(sta_id,data,opt) {
                     }
                 }
                 catch(err){
-                    //console.log(err);
+                    console.log(err);
                 }
             }
             pos_list.push(logjson);
         });
+        para.prcopt.navsys=navsys;
     }
+
     return pos_list;
 };
 module.exports.procset=function (sta_id,prcopt) {
@@ -213,5 +223,5 @@ function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //nodepos.eleUpdate(para);
-    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos, logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }
