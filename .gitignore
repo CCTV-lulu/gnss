@@ -2,5 +2,7 @@
 public/json/
 public/chartImage/
 public/csv/*
+
 node_modules/
 server/canavprocess/config/posmidd.json
+

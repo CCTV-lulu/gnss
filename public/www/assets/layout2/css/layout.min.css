@@ -2766,14 +2766,23 @@
 }
 
 @media (min-width: 1000px) {
-  .page-sidebar{
-    position: fixed !important;
-  }
+    .page-sidebar{
+        position: fixed !important;
+    }
+    .page-content{
+        min-height: 850px!important;
+    }
 }
 
 @media (max-width: 1000px) {
     .page-header  {
-    position: fixed !important;
+        position: fixed !important;
+    }
+    .page-sidebar{
+        position: fixed !important;
+        z-index: 99;
+        margin-left:inherit !important;
+        width: 121px;
     }
     .fade-in-up{
         position: relative !important;
@@ -2782,14 +2791,23 @@
     .page-sidebar-menu{
         padding-top: 55px!important;
     }
+    .page-content{
+        min-height: 850px!important;
+    }
+
 }
 @media (max-width: 765px) {
     .fade-in-up{
         padding-top: 140px !important;
     }
+    .page-sidebar{
+        padding-top: 50px;
+        margin-left:inherit !important;
+    }
     .page-sidebar-menu{
         padding-top: 130px!important;
     }
+
 }
 @media (max-width: 400px) {
     .page-header-inner{
