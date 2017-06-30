@@ -2782,7 +2782,7 @@
         position: fixed !important;
         z-index: 99;
         margin-left:inherit !important;
-        width: 122px;
+        width: 121px;
     }
     .fade-in-up{
         position: relative !important;
@@ -2800,9 +2800,14 @@
     .fade-in-up{
         padding-top: 140px !important;
     }
+    .page-sidebar{
+        padding-top: 50px;
+        margin-left:inherit !important;
+    }
     .page-sidebar-menu{
         padding-top: 130px!important;
     }
+
 }
 @media (max-width: 400px) {
     .page-header-inner{

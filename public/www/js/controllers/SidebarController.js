@@ -71,8 +71,22 @@ MetronicApp.controller('SidebarController', ['$state', '$scope', '$location', 'M
             if (sideBarClass == 'nav-item active') {
                 $('#' + sideBarArr[i]).attr('class', 'nav-item');
             }
+
         }
     }
+
+    $(window).resize(function() {
+        var width = $(this).width();
+        if(width<1000){
+            $scope.width=true;
+            console.log('=============')
+        }
+        else {
+            $scope.width=false;
+        }
+
+    })
+
 
     //function dashboardBar(url) {
     //

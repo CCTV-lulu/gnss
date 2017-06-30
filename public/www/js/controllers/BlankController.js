@@ -530,7 +530,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         //}
         //return
         //if (series.length == 0) return;
-        $("#" + id + ' img').attr('src', '/chartImage/' + username + '/' + imageName)
+        var path = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_path');
+        $("#" + id + ' img').attr('src', '/chartImage/' + username +'/'+path+ '/' + imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();

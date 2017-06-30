@@ -151,6 +151,8 @@ function initSockectServer() {
         socket.on('disconnect', function () {
             StationSocketStatus[stationName] = false
         });
+        console.log('------------------')
+        console.log(stationName)
         StationSocketStatus[stationName] = true;
         socket.on('' + stationName, function (data) {
             if (!StationSocketStatus[stationName]) {
