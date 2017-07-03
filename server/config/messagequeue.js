@@ -158,8 +158,6 @@ function initSockectServer() {
         socket.on('disconnect', function () {
             StationSocketStatus[stationName] = false
         });
-        console.log('------------------')
-        console.log(stationName)
         StationSocketStatus[stationName] = true;
         socket.on('' + stationName, function (data) {
             if (!StationSocketStatus[stationName]) {
@@ -240,7 +238,7 @@ function onMessage(data) {
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
     if(data.station == 'hangkeyuan-03'){
-        console.log('-------------')
+        console.log('-----------hangkeyuan-03--')
     }
     var optJson = getStationConfig([data.station]).config
     var results = parse.parser_pos(data.station, buf, optJson);
@@ -249,6 +247,9 @@ function onMessage(data) {
         try {
             sta_data.station_id = message.station;
             saveStaInfo(sta_data)
+            if(message.station == 'hangkeyuan-03'){
+                console.log('get hangkeyuan-03')
+            }
         } catch (err) {
             console.log(err.message);
         }
