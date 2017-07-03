@@ -47,7 +47,14 @@ Date.prototype.Format = function (fmt) { //author: meizz
 //}
 
 function saveStaInfo(data) {
+    if(data.station_id == 'hangkeyuan-03'){
+        console.log(data)
+    }
     if (data.posR && data.posR.Lat == 0 && data.posR.Lon == 0) return 0;
+    if(data.station_id == 'hangkeyuan-03'){
+        console.log('-------------sfasdf')
+        console.log(data)
+    }
     //var updated_at = changeTimestamp(data);
     var staInfoId = Math.random().toString(36).substr(2) + Date.parse(new Date());
     var staInfo = {
@@ -151,8 +158,6 @@ function initSockectServer() {
         socket.on('disconnect', function () {
             StationSocketStatus[stationName] = false
         });
-        console.log('------------------')
-        console.log(stationName)
         StationSocketStatus[stationName] = true;
         socket.on('' + stationName, function (data) {
             if (!StationSocketStatus[stationName]) {
@@ -232,7 +237,9 @@ function onMessage(data) {
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-
+    if(data.station == 'hangkeyuan-03'){
+        console.log('-----------hangkeyuan-03--')
+    }
     var optJson = getStationConfig([data.station]).config
     var results = parse.parser_pos(data.station, buf, optJson);
     //releaseCacheBuffer(message.station);
@@ -240,6 +247,9 @@ function onMessage(data) {
         try {
             sta_data.station_id = message.station;
             saveStaInfo(sta_data)
+            if(message.station == 'hangkeyuan-03'){
+                console.log('get hangkeyuan-03')
+            }
         } catch (err) {
             console.log(err.message);
         }

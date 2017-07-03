@@ -125,7 +125,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         }
 
         if (staInfo.posR[2]) {
-            $scope.seriesList.dbsDH.addPoint([ staInfo.posR[2].H], true, true);
+            $scope.seriesList.bdsDH.addPoint([ staInfo.posR[2].H], true, true);
 
         }
         if (staInfo.posR[3]) {
@@ -418,7 +418,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         var types = {
             'gpsDH': 0,
             //'glsDH': 1,
-            'dbsDH': 2,
+            'bdsDH': 2,
             'groupDH': 3
         };
         var xAxis = [], gpsY = [], dbsY = [], groupY = [], glsY = [];
@@ -537,7 +537,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 //    data: glsY
                 //}
                 , {
-                    name: 'dbsDH',
+                    name: 'bdsDH',
                     data: dbsY
                 }, {
                     name: 'groupDH',
