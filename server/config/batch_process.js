@@ -14,7 +14,6 @@ var cwdData = path.resolve('../');
 var exporter = require('highcharts-export-server');
 
 
-
 function statis_create() {
     this.id = 0;
     this.bt = cmn.timenow();
@@ -23,7 +22,7 @@ function statis_create() {
     this.option = {};//new statis_option_create();
 }
 
-function statis_option_create() {
+function statis_option_create(threshold) {
     this.sat_hist = 0;
     this.err_hist = 0;
     this.dop_hist = 0;
@@ -39,13 +38,13 @@ function statis_option_create() {
         this.vpl_num = {"flag": 0, "extre_min": 0, "extre_max": 0};
     };
     this.up_slice = new function () {
-        this.sat_num = {"flag": 0, "up_min": 0, "up_len": 0};
-        this.her_num = {"flag": 0, "up_min": 0, "up_len": 0};
-        this.ver_num = {"flag": 0, "up_min": 0, "up_len": 0};
-        this.hdop_num = {"flag": 0, "up_min": 0, "up_len": 0};
-        this.vdop_num = {"flag": 0, "up_min": 0, "up_len": 0};
-        this.hpl_num = {"flag": 0, "up_min": 0, "up_len": 0};
-        this.vpl_num = {"flag": 0, "up_min": 0, "up_len": 0};
+        this.sat_num = {"flag": 0, "up_min": 0, "up_len": 30};
+        this.her_num = {"flag": 0, "up_min": threshold.dH || 0, "up_len": 30};
+        this.ver_num = {"flag": 0, "up_min": threshold.dV || 0, "up_len": 30};
+        this.hdop_num = {"flag": 0, "up_min": threshold.HDOP || 0, "up_len": 30};
+        this.vdop_num = {"flag": 0, "up_min": threshold.VDOP || 0, "up_len": 30};
+        this.hpl_num = {"flag": 0, "up_min": threshold.HPL || 0, "up_len": 30};
+        this.vpl_num = {"flag": 0, "up_min": threshold.VPL || 0, "up_len": 30};
     };
 }
 function hist_create() {
@@ -65,18 +64,14 @@ function option_init(option, myOption) {
     option.PL_hist = myOption.PL_hist || 0;
     option.acc95 = 1;
     option.up_slice.hpl_num.flag = myOption.hpl_num || 0;
-    option.up_slice.hpl_num.up_min = UPMINHPL;
-    option.up_slice.hpl_num.up_len = 30;
     option.up_slice.vpl_num.flag = myOption.vpl_num || 0;
-    option.up_slice.vpl_num.up_min = UPMINVPL;
-    option.up_slice.vpl_num.up_len = 30;
 }
-function satis_init(para, filter) {
+function satis_init(para, filter, config) {
 
     var startTimeInfo = filter.allDate[0].split('-');
-    var startTime = [startTimeInfo[0], Number(startTimeInfo[1]) - 1, startTimeInfo[2], 0, 0, 0]
-    var endTimeInfo = filter.allDate[filter.allDate.length - 1].split('-')
-    var endTime = [endTimeInfo[0], Number(endTimeInfo[1]) - 1, endTimeInfo[2], 23, 59, 59]
+    var startTime = [startTimeInfo[0], Number(startTimeInfo[1]) - 1, startTimeInfo[2], 0, 0, 0];
+    var endTimeInfo = filter.allDate[filter.allDate.length - 1].split('-');
+    var endTime = [endTimeInfo[0], Number(endTimeInfo[1]) - 1, endTimeInfo[2], 23, 59, 59];
     para.id = 0;
     para.bt = cmn.epoch2time(startTime);
     para.et = cmn.epoch2time(endTime);
@@ -91,7 +86,8 @@ function satis_init(para, filter) {
     //para.option[ca.SYS_ALL]=new statis_option_create();
     filter.sys.forEach(function (sys) {
         para.hist[sys] = new hist_create();
-        para.option[sys] = new statis_option_create();
+        var threshold = config.threshold ? config.threshold[sys]:{}
+        para.option[sys] = new statis_option_create(threshold||{});
         option_init(para.option[sys], filter.options);
     });
     //option_init(para.option[ca.SYS_GPS]);
@@ -126,40 +122,39 @@ function getFollowDatePath(batchProcessFiler) {
 }
 
 
-function batch_process(batchProcessFiler) {
+function batch_process(batchProcessFiler, config) {
 
 
     var files = getFollowDatePath(batchProcessFiler);
     var startTime = new Date().getTime()
     console.log(startTime)
     if (files.allTime == 30) {
-        return process.send({status: 301, effectiveTime: files.allTime,filePath:startTime });
+        return process.send({status: 301, effectiveTime: files.allTime, filePath: startTime});
     }
-    process.send({status: 300, effectiveTime: files.allTime,filePath:startTime});
+    process.send({status: 300, effectiveTime: files.allTime, filePath: startTime});
 
     var para = new statis_create();
-    satis_init(para, batchProcessFiler);
+    satis_init(para, batchProcessFiler, config);
     statis.option_set(para);
 
     processOneDay(files.allFilesData, 0, function (data) {
 
-        fs.mkdir('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/',function(){
-            createImage(data,batchProcessFiler,startTime).then(function(results){
+        fs.mkdir('./public/chartImage/' + batchProcessFiler.username + '/' + startTime + '/', function () {
+            createImage(data, batchProcessFiler, startTime, config).then(function (results) {
                 exporter.killPool()
-                for(var sys in data){
+                for (var sys in data) {
                     data[sys].up_slice = {
                         hpl_num: batchProcessFiler.options.hpl_num,
                         vpl_num: batchProcessFiler.options.vpl_num
                     }
                 }
 
-                fs.writeFile('./public/chartImage/'+batchProcessFiler.username+'/' +startTime+'/'+ batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+                fs.writeFile('./public/chartImage/' + batchProcessFiler.username + '/' + startTime + '/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
                     if (err) throw err;
                     process.send({status: 200, username: batchProcessFiler.username});
                 });
             });
         })
-
 
 
     });
@@ -181,12 +176,12 @@ function processOneDay(files, index, cb) {
 }
 
 
-process.on('message', function (batchProcessFiler) {
-    if (batchProcessFiler.message == 'close') {
+process.on('message', function (info) {
+    if (info.message == 'close') {
         process.exit()
     }
     //try{
-    batch_process(batchProcessFiler)
+    batch_process(info.filter, info.config)
     //}catch(data){
     //    process.send({status:404, username: batchProcessFiler.username});
     //}
@@ -246,11 +241,11 @@ function getAllFilePath(station, allDate) {
         }
     });
     allFiles.allFilesData = allFilesData;
-    allFiles.allTime = allFileSize / 2+30;
+    allFiles.allTime = allFileSize / 2 + 30;
     return allFiles
 }
 
-function createImage(data, filter,startTime) {
+function createImage(data, filter, startTime,config) {
     //var data = require('../../public/json/1.json');
     //filter = {
     //    username: 1,
@@ -262,50 +257,53 @@ function createImage(data, filter,startTime) {
     //
     //}
 
-    var infos = handleDate(data,filter);
-    var promises =[];
+    var infos = handleDate(data, filter, config);
+    var promises = [];
     exporter.initPool({reaper: false, maxWorkers: infos.length});
-    for(var i = 0; i < infos.length; i++){
-        promises.push(chartImage(infos[i],filter.username,startTime))
+    for (var i = 0; i < infos.length; i++) {
+        promises.push(chartImage(infos[i], filter.username, startTime))
     }
 
     return promise.all(promises)
 }
 
-function chartImage(chartInfo,username,startTime) {
+function chartImage(chartInfo, username, startTime) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
-        fs.writeFile( "./public/chartImage/"+username+'/'+startTime+'/'+ chartInfo.fileName+".png", res.data, 'base64', function (err) {
+        fs.writeFile("./public/chartImage/" + username + '/' + startTime + '/' + chartInfo.fileName + ".png", res.data, 'base64', function (err) {
             defer.resolve(chartInfo.fileName)
         });
 
     })
     return defer.promise
 }
-function handleDate(data,filter) {
-    var chartDateArray =[];
-    var lines = ['hpl_num','vpl_num'];
+function handleDate(data, filter,config) {
+    var chartDateArray = [];
+    var lines = ['hpl_num', 'vpl_num'];
     var signals = ['GPS', 'GLS', 'BDS', 'Group'];
 
-    lines.forEach(function(lineType){
-        if(filter.options[lineType] ===1 ){
-            filter.sys.forEach(function(sys){
+    lines.forEach(function (lineType) {
+        if (filter.options[lineType] === 1) {
+            filter.sys.forEach(function (sys) {
                 var singalIndex = parseInt(sys);
                 var singal = signals[singalIndex];
-                var line = getTimeLine(singal+lineType, data, singalIndex, lineType)
-                if(line === false) return ;
+                var threshold =  config.threshold ||{};
+                var limit = threshold[sys]||{};
+                var lineLimit = lineType == 'hpl_num' ? limit['HPL'] : limit['VPL'];
+                var line = getTimeLine(singal + lineType, data, singalIndex, lineType, lineLimit);
+                if (line === false) return;
                 chartDateArray.push(line)
             })
         }
     });
 
 
-   return chartDateArray;
+    return chartDateArray;
 
 
 }
 
-function getTimeLine(name, data, sys, type) {
+function getTimeLine(name, data, sys, type,lineLimit) {
     var fileName = name;
     var info = {"type": "column", name: fileName, data: [], color: 'red'};
     var startTime;
@@ -322,12 +320,12 @@ function getTimeLine(name, data, sys, type) {
         var currentTime = time
         info.data.push([time, up_slice[type].Y[i]])
     }
-    var warn = type =='hpl_num'? UPMINHPL : UPMINVPL
-    var warningLine = {"type": "line", name: '警告线', data: [[startTime,warn],[currentTime,warn]], color: 'yellow'}
-    if(info.data.length == 0){
+
+    var warningLine = {"type": "line", name: '警告线', data: [[startTime, lineLimit], [currentTime, lineLimit]], color: 'yellow'}
+    if (info.data.length == 0) {
         return false
     }
-    return {fileName:fileName, series: [info,warningLine]}
+    return {fileName: fileName, series: [info, warningLine]}
 }
 
 //function getLineDate(type, data, showType,sysArr) {
@@ -369,7 +367,7 @@ function setTimeLine(series) {
         type: 'png',
 
         options: {
-            title:"",
+            title: "",
             xAxis: {
                 type: 'datetime',
                 dateTimeLabelFormats: {
@@ -382,7 +380,7 @@ function setTimeLine(series) {
                     year: '%Y'
                 }
             },
-            chart: { width: 1000, height: 350 },
+            chart: {width: 1000, height: 350},
             series: series
         }
     }

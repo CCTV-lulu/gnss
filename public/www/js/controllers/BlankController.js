@@ -1,8 +1,19 @@
 angular.module('MetronicApp').controller('BlankController', function ($http, $rootScope, $scope, Mongodb, $location, Prompt, getStationStatus,
-                                                                      DateTable, DataAnalyseChart, EventData, $timeout, $interval, BatchProcess) {
+                                                                      DateTable, DataAnalyseChart, EventData, $timeout, $interval, BatchProcess, Threshold) {
     //var getBatchDataPolling;
     //var timeDelay;
     init();
+
+    Threshold.setThreshold(data,function(allThreshold){
+        if(allThreshold.status){
+            $scope.allThreshold = allThreshold.allThreshold;
+            showThreshold()
+        }else{
+            Prompt.promptBox('warnning',allThreshold.message)
+        }
+
+    });
+
 
 
     function init() {
