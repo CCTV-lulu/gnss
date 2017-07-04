@@ -2,45 +2,112 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                                                                       DateTable, DataAnalyseChart, EventData, $timeout, $interval, BatchProcess, Threshold) {
     //var getBatchDataPolling;
     //var timeDelay;
+    var currentStation;
+    var isAdmin;
+
+    //getStation($rootScope.rootIsAdmin);
+
     init();
 
-    Threshold.setThreshold(data,function(allThreshold){
-        if(allThreshold.status){
-            $scope.allThreshold = allThreshold.allThreshold;
-            showThreshold()
-        }else{
-            Prompt.promptBox('warnning',allThreshold.message)
-        }
+    function getSingal() {
+        var indexs = [];
+        $('input[name=sys]').each(function () {
+            if (this.checked) {
+                indexs.push(Number(this.value))
+            }
+        });
+        return indexs
+    }
 
-    });
+    function setOptions() {
+        Threshold.getThreshold(function (allThreshold) {
+            if (allThreshold.status) {
+                var threshold = allThreshold.allThreshold[$scope.station];
+
+                var indexs = getSingal();
+                var hpl_num_is_able = false;
+                var vpl_num_is_able = false;
+                for (var i = 0; i < indexs.length; i++) {
+
+                    if (!threshold[indexs[i]] || !threshold[indexs[i]].threshold || threshold[indexs[i]].threshold.HPL === undefined) {
+                        hpl_num_is_able = true;
+                        $('input[name=hpl_num]')[0].checked = false;
+                    }
+                    if (!threshold[indexs[i]] || !threshold[indexs[i]].threshold || threshold[indexs[i]].threshold.VPL === undefined) {
+                        vpl_num_is_able = true;
+                        $('input[name=vpl_num]')[0].checked = false;
+                    }
+                }
 
 
+            } else {
+
+            }
+
+            $scope.optionsAble = {
+                vpl_num_is_able: vpl_num_is_able,
+                hpl_num_is_able: hpl_num_is_able
+            }
+
+
+        });
+
+    }
 
     function init() {
+        var isAdmin = $rootScope.rootIsAdmin;
         $(".loading").animate({"width": "0%"}, 0);
         DateTable.dateTable();
         $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
-        $scope.filter = {
-            sys: [true, true, true, true],
-            option: {
-                sat_hist: true,
-                err_hist: true,
-                dop_hist: true,
-                PL_hist: true,
-                hpl_num: false,
-                vpl_num: false
-            }
+        $scope.option = {
+            sat_hist: true,
+            err_hist: true,
+            dop_hist: true,
+            PL_hist: true,
+            hpl_num: false,
+            vpl_num: false
         };
-        initResult()
 
+        $scope.sys = {
+            'GPS': true,
+            'GLS': true,
+            'BDS': true,
+            'GROUP': true
+        };
+        $scope.setOptions = setOptions;
+        $scope.optionsAble = {};
+        initResult();
+        initStation();
+        initOption()
+
+    }
+
+    function initStation() {
         $rootScope.$watch('rootIsAdmin', function (rootIsAdmin) {
+            if (isAdmin == rootIsAdmin || rootIsAdmin == undefined) return
+            isAdmin = rootIsAdmin;
             $scope.isAdmin = rootIsAdmin;
             getStation($scope.isAdmin)
         });
-        getStation($scope.isAdmin)
+        $scope.$watch('sys', function (filter) {
+            getStation($scope.isAdmin)
+        });
+        getStation($rootScope.rootIsAdmin);
     }
 
+    function initOption() {
+        setOptions();
+        $scope.$watch('station', function (station) {
+            if (station == undefined || currentStation == station) return;
+            currentStation = station;
+            setOptions()
+        })
+
+    }
+
+
     function getStation(isAdmin) {
+
         if (isAdmin) {
             $scope.allStations = $rootScope.allStations;
 
@@ -48,7 +115,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 if (allStations == undefined) return;
                 $scope.allStations = allStations;
                 $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
-
             });
 
         } else {
@@ -489,7 +555,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function showTime(data, username) {
         var signals = ['GPS', 'GLS', 'BDS', 'Group'];
         for (var sys in data) {
-            var sysIndex = parseInt(sys)
+            var sysIndex = parseInt(sys);
             if (data[sys].up_slice.vpl_num == 1) {
 
                 chartTimeLine(signals[sysIndex] + 'VPLTime', signals[sysIndex] + 'vpl_num.png', username)
@@ -499,131 +565,21 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
 
         }
-        //chartTimeLine('GPSVPLTime', data, 3, 'vpl_num');
-        //chartTimeLine('GPSHPLTime', data, 3, 'hpl_num');
-        //chartTimeLine('GLSVPLTime', data, 3, 'vpl_num');
-        //chartTimeLine('GLSHPLTime', data, 3, 'hpl_num');
-        //chartTimeLine('BDSVPLTime', data, 3, 'vpl_num');
-        //chartTimeLine('BDSHPLTime', data, 3, 'hpl_num');
-        //chartTimeLine('GroupVPLTime', data, 3, 'vpl_num');
-        //chartTimeLine('GroupHPLTime', data, 3, 'hpl_num');
         console.log('endTime')
         console.log(new Date())
     }
 
     function chartTimeLine(id, imageName, username) {
 
-        //var showData = data[type];
-        //var series = [];
-        //var name = id.replace('Time', '');
-        //var info = {name: name, data: [],color: 'red'};
-        //var startTime;
-        //sys = sys.toString();
-        //if (!data[sys]) return;
-        //var up_slice = data[sys].up_slice;
-        //up_slice[type].X.forEach(function (x, index) {
-        //    var time = new Date(x).getTime();
-        //    if (index == 0) {
-        //
-        //        startTime = new Date(x).getTime();
-        //        //console.log(startTime)
-        //    }
-        //    if (time - startTime <= 24 * 60 * 60 * 1000) {
-        //        info.data.push([time, 500])
-        //    } else {
-        //        //console.log(time)
-        //    }
-        //
-        //
-        //});
-        //if (info.data.length > 0) {
-        //    series.push(info)
-        //}
-        //return
-        //if (series.length == 0) return;
+
         var path = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_path');
-        $("#" + id + ' img').attr('src', '/chartImage/' + username +'/'+path+ '/' + imageName)
+        $("#" + id + ' img').attr('src', '/chartImage/' + username + '/' + path + '/' + imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
 
 
-        //Highcharts.setOptions({
-        //    lang: {
-        //        resetZoom: '重置',
-        //        resetZoomTitle: '重置缩放比例'
-        //    },
-        //    global: {
-        //        useUTC: false<div class="col-md-12 col-xs-12 col-sm-12 display-none" id="GroupVPLTime_container" style="display: none;">…</div>
-        //    }
-        //});
-        //$('#' + id).highcharts({
-        //    chart: {
-        //        type: 'column',
-        //        zoomType: 'x',
-        //        panning: true,
-        //        panKey: 'shift',
-        //        selectionMarkerFill: 'rgba(0,0,0, 0.2)',
-        //        resetZoomButton: {
-        //            position: {
-        //                align: 'right',
-        //                verticalAlign: 'top',
-        //                x: 0,
-        //                y: 0
-        //            },
-        //            theme: {
-        //                fill: 'white',
-        //                stroke: 'silver',
-        //                r: 0,
-        //                states: {
-        //                    hover: {
-        //                        fill: '#41739D',
-        //                        style: {
-        //                            color: 'white'
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        },
-        //        events: {
-        //            load: function () {
-        //                //// set up the updating of the chart each second
-        //                console.log('----end-----type'+type)
-        //                console.log(new Date())
-        //
-        //
-        //
-        //            }
-        //        }
-        //
-        //
-        //    },
-        //    xAxis: {
-        //        type: 'datetime',
-        //        dateTimeLabelFormats: {
-        //            second: '%H:%M:%S',
-        //            minute: '%e. %m %H:%M',
-        //            hour: '%m/%e %H:%M',
-        //            day: '%m/%e %H:%M',
-        //            week: '%e. %m',
-        //            month: '%b %y',
-        //            year: '%Y'
-        //        }
-        //
-        //    },
-        //    plotOptions: {
-        //        series: {
-        //            animation: false
-        //        }
-        //    },
-        //
-        //    legend: {
-        //        enabled: true
-        //    },
-        //    //图例开关,默认是：true
-        //    series: series
-        //
-        //});
+
     }
 
     function showStaNum(type, data) {
@@ -688,7 +644,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         var path = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_path');
         if (path === null) return;
         //localStorage.setItem(key:1)
-        $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/'+path+'/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+        $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + path + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
             showResult(data, $rootScope.rootUserInfo.username)
 
         })

@@ -128,6 +128,7 @@ function batch_process(batchProcessFiler, config) {
     var files = getFollowDatePath(batchProcessFiler);
     var startTime = new Date().getTime()
     console.log(startTime)
+    console.log(files.allTime)
     if (files.allTime == 30) {
         return process.send({status: 301, effectiveTime: files.allTime, filePath: startTime});
     }
@@ -226,7 +227,10 @@ Date.prototype.Format = function (fmt) { //author: meizz
 function getAllFilePath(station, allDate) {
     var filesData = getFilesData();
     var allFilesData = [];
-    var allFiles = {};
+    var allFiles = {
+        allTime: 30,
+        allFilesData: []
+    };
     var allFileSize = 0;
 
     if (filesData[station] === undefined) return allFiles;
