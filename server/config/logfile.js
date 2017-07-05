@@ -100,7 +100,7 @@ function startHandleLogFile() {
         saveStartLog(false);
         setInterval(function () {
             handleLogFile()
-        }, 1000 * 60 * 5)
+        }, 1000 * 60 * 2)
     })
 
 }
