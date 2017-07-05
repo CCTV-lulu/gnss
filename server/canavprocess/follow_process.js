@@ -44,11 +44,11 @@ module.exports.parser_pos=function(data) {
     for(var i=0;i<para.prcopt.navsys.length;i++){
         navsys[i]=para.prcopt.navsys[i];
     }
-    para.prcopt.navsys=[ca.SYS_GPS,ca.SYS_GLO,ca.SYS_CMP];
+    para.prcopt.navsys=ca.navsys;
     results.forEach(function (sta_data) {
         var logjson = new nodepos.logOutJson();
-        //var logsat={};
-        //logsat.satR=[];
+        var logsat={};
+        logsat.satR=[];
         if (nodepos.updateObsNav(sta_data, para, logjson)) {
             if(cmn.timediff(sta_data.time,prcopt.bt)<0 || cmn.timediff(sta_data.time,prcopt.et)>0)
                 return false;
@@ -134,5 +134,5 @@ function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     //nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //logjson.time=sol.time;
-    // console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }

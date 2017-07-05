@@ -9,7 +9,6 @@ var cmn=require('../routes/comn.js');
 var pnt=require('./pntpos.js');
 var opt=require('../config/optcomm.json');
 var ephcalc=require('./ephemeris.js');
-var lockFile = require('lockfile')
 //bd 电离层数据对象构建
 function ioncreate_cmp() {
     var ion_cmp=new ca.ionM();
@@ -202,11 +201,7 @@ function posPara_create(prcopt) {
     this.ele=new ele_create();
     this.prcopt=new prcopt_create(prcopt);
     this.sol={};
-    this.bootc={};
-    this.count={};
-    this.mean={};
-    this.rb=prcopt.rb;
-    this.sigma={};
+    this.lowpass={};
 };module.exports.posPara_create=posPara_create;
 //实时定位中间结果暂存对象构建
 function posMiddle_create() {
@@ -243,13 +238,21 @@ function midd_init(posInit,sta_id) {
     posInit[sta_id].sigma[ca.SYS_GLO]=[0,0,0,0];
     posInit[sta_id].sigma[ca.SYS_CMP]=[0,0,0,0];
 }
+function lowpass_create() {
+    this.X=new ca.stats_t();
+    this.Y=new ca.stats_t();
+    this.Z=new ca.stats_t();
+    this.Xa=[];
+    this.Ya=[];
+    this.Za=[];
+}
 //使用暂存过程对象初始化定位参数
 function posParainit(sta_id,para) {
-    var cwd=path.resolve(__dirname,'..');
+    /*var cwd=path.resolve(__dirname,'..');
     var posave=path.join(cwd,'/config/posmidd.json');
-    var posInit={};
+    var posInit={};*/
     try{
-        if(fs.existsSync(posave)){
+        /*if(fs.existsSync(posave)){
             posInit=JSON.parse(fs.readFileSync(posave));
             if(!posInit.hasOwnProperty(sta_id)){
                 midd_init(posInit,sta_id);
@@ -257,23 +260,20 @@ function posParainit(sta_id,para) {
         }
         else{
             midd_init(posInit,sta_id);
-        }
+        }*/
         //fs.writeFileSync(posave,JSON.stringify(posInit));
         para.sol[ca.SYS_GPS]=new sol_create();
         para.sol[ca.SYS_GLO]=new sol_create();
         para.sol[ca.SYS_CMP]=new sol_create();
         para.sol[ca.SYS_ALL]=new sol_create();
-        para.bootc[ca.SYS_GPS]=0;
-        para.bootc[ca.SYS_GLO]=0;
-        para.bootc[ca.SYS_CMP]=0;
-        para.bootc[ca.SYS_ALL]=0;
-        para.sol[ca.SYS_GPS].rr=posInit[sta_id].rr[ca.SYS_GPS];
+        /*para.sol[ca.SYS_GPS].rr=posInit[sta_id].rr[ca.SYS_GPS];
         para.sol[ca.SYS_GLO].rr=posInit[sta_id].rr[ca.SYS_GLO];
         para.sol[ca.SYS_CMP].rr=posInit[sta_id].rr[ca.SYS_CMP];
-        para.sol[ca.SYS_ALL].rr=posInit[sta_id].rr[ca.SYS_ALL];
-        para.count=posInit[sta_id].count;
-        para.mean=posInit[sta_id].mean;
-        para.sigma=posInit[sta_id].sigma;
+        para.sol[ca.SYS_ALL].rr=posInit[sta_id].rr[ca.SYS_ALL];*/
+        para.lowpass[ca.SYS_GPS]=new lowpass_create();
+        para.lowpass[ca.SYS_GLO]=new lowpass_create();
+        para.lowpass[ca.SYS_CMP]=new lowpass_create();
+        para.lowpass[ca.SYS_ALL]=new lowpass_create();
     }
     catch(err) {
         console.log(err);
@@ -283,50 +283,36 @@ function posParainit(sta_id,para) {
 function middleSaveAll(sta_id,stationPara) {
     var cwd=path.resolve(__dirname,'..');
     var posave=path.join(cwd,'/config/posmidd.json');
-
     fs.exists(posave,function (exist) {
         if(exist){
-            lockFile.lock('posmidd.lock', {wait: 100, retries: 1, retryWait: 100}, function (er) {
-                if(er) return
-                fs.readFile(posave, function (err, data) {
+            fs.readFile(posave,function (err, data) {
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    if(data.length==0)
+                        data={};
+                    else
+                        data=JSON.parse(data);
 
-                    if (err) {
+                    if(!data.hasOwnProperty(sta_id)) {
+                        data[sta_id]=new posMiddle_create();
+                    }
+                    data[sta_id].rr[ca.SYS_GPS]=stationPara.sol[ca.SYS_GPS].rr;
+                    data[sta_id].rr[ca.SYS_GLO]=stationPara.sol[ca.SYS_GLO].rr;
+                    data[sta_id].rr[ca.SYS_CMP]=stationPara.sol[ca.SYS_CMP].rr;
+                    data[sta_id].rr[ca.SYS_ALL]=stationPara.sol[ca.SYS_ALL].rr;
+                    data[sta_id].count=stationPara.count;
+                    data[sta_id].mean=stationPara.mean;
+                    data[sta_id].sigma=stationPara.sigma;
+                }
+                fs.writeFile(posave,JSON.stringify(data),function (err) {
+                    if(err){
                         console.log(err);
                     }
-                    else {
-                        if (data.length == 0) {
-                            data = {};
-                        }
-
-                        else {
-                            data = JSON.parse(data);
-                        }
-
-
-                        if (!data.hasOwnProperty(sta_id)) {
-                            data[sta_id] = new posMiddle_create();
-                        }
-
-                        data[sta_id].rr[ca.SYS_GPS] = stationPara.sol[ca.SYS_GPS].rr;
-                        data[sta_id].rr[ca.SYS_GLO] = stationPara.sol[ca.SYS_GLO].rr;
-                        data[sta_id].rr[ca.SYS_CMP] = stationPara.sol[ca.SYS_CMP].rr;
-                        data[sta_id].rr[ca.SYS_ALL] = stationPara.sol[ca.SYS_ALL].rr;
-                        data[sta_id].count = stationPara.count;
-                        data[sta_id].mean = stationPara.mean;
-                        data[sta_id].sigma = stationPara.sigma;
-                    }
-                    fs.writeFile(posave, JSON.stringify(data), function (err) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        lockFile.unlock('posmidd.lock', function (er) {
-                            // er means that an error happened, and is probably bad.
-                            //})
-                        });
-                        //fs.writeFileSync(posave,JSON.stringify(data));
-                    });
-                })
-            })
+                });
+                //fs.writeFileSync(posave,JSON.stringify(data));
+            });
         }
         else{
             var data={};
@@ -338,19 +324,11 @@ function middleSaveAll(sta_id,stationPara) {
             data[sta_id].count=stationPara.count;
             data[sta_id].mean=stationPara.mean;
             data[sta_id].sigma=stationPara.sigma;
-            lockFile.check('posmidd.lock', {wait: 100, retries: 1, retryWait: 100}, function(){
-                lockFile.lock('posmidd.lock', {wait: 100, retries: 1, retryWait: 100}, function (er) {
-                    fs.writeFile(posave, JSON.stringify(data), function (err) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        lockFile.unlock('posmidd.lock', function (er) {
-                            // er means that an error happened, and is probably bad.
-                        })
-                    });
-                })
-            })
-
+            fs.writeFile(posave,JSON.stringify(data),function (err) {
+                if(err){
+                    console.log(err);
+                }
+            });
             //fs.writeFileSync(posave,JSON.stringify(data));
         }
     });
@@ -860,15 +838,11 @@ function posShowStruct(para,sys,logjson) {
     var i,j;
     var time;
     var ws=[0,0];
-    var pos=new Array(3);
-    var enu=new Array(3);
-    var rd=new Array(3);
-    var utc=new Array(2);
-    var count=para.count[sys];
-    var bootc=para.bootc[sys];
-    var mean=para.mean[sys];
-    var sigma=para.sigma[sys];
-    var rb=para.rb[sys];
+    var pos=[0,0,0];
+    var enu=[0,0,0];
+    var rd=[0,0,0];
+    var rb=[0,0,0];
+    var lowpass=para.lowpass[sys];
     var sol=para.sol[sys];
     var obs=para.obs[sys];
     var prcopt=para.prcopt;
@@ -890,51 +864,42 @@ function posShowStruct(para,sys,logjson) {
     posR.tow = ws[1];
     posR.time = time;
     if(sol.stat) {
-        if(bootc<prcopt.rbinit[sys] && count<prcopt.rbinit[sys]){
-            mean[0] = sol.rr[0];
-            mean[1] = sol.rr[1];
-            mean[2] = sol.rr[2];
-            mean[3] = mean[4] = mean[5] = 0;
-            sigma[0]=sigma[1]=sigma[2]=sigma[3]=0;
-        }
-        else if(count>prcopt.rbinit[sys]){
-            if((math.abs(sol.rr[0]-mean[0]) <= prcopt.mul_vare*math.sqrt(mean[3])) &&
-                (math.abs(sol.rr[1]-mean[1]) <= prcopt.mul_vare*math.sqrt(mean[4])) &&
-                (math.abs(sol.rr[2]-mean[2]) <= prcopt.mul_vare*math.sqrt(mean[5])) ) {
-                mean_rr(mean,sol.rr,count);
-                count++;
-            }
-        }
-        if (prcopt.isrb[sys]) {
+        if(prcopt.isrb[sys]){
             rb[0] = prcopt.rb[sys][0];
             rb[1] = prcopt.rb[sys][1];
             rb[2] = prcopt.rb[sys][2];
         }
         else{
-            rb[0] = mean[0];
-            rb[1] = mean[1];
-            rb[2] = mean[2];
+            if(sol.HPL<opt.HAL){
+                calc_lowpass(lowpass,prcopt.rbinit[sys],sol.rr);
+                rb[0]=lowpass.X.ave;
+                rb[1]=lowpass.Y.ave;
+                rb[2]=lowpass.Z.ave;
+            }
+            else if(lowpass.Xa.length==0){
+                rb[0]=sol.rr[0];
+                rb[1]=sol.rr[1];
+                rb[2]=sol.rr[2];
+            }
+            else{
+                rb[0]=lowpass.X.ave;
+                rb[1]=lowpass.Y.ave;
+                rb[2]=lowpass.Z.ave;
+            }
         }
-        cmn.ecef2pos(rb, pos);
-        rd[0] = sol.rr[0] - rb[0];
-        rd[1] = sol.rr[1] - rb[1];
-        rd[2] = sol.rr[2] - rb[2];
-        cmn.ecef2enu(pos, rd, enu);
-        posR.dX =enu[0];
-        posR.dY =enu[1];
-        posR.dZ =enu[2];
-        if(math.sqrt(enu[0]*enu[0]+enu[1]*enu[1])<opt.HAL)
-            mean_enu(sigma,enu,count);
-        posR.dH=sigma[0]+ math.sqrt(sigma[2])*1.96;
-        posR.dV=sigma[1]+ math.sqrt(sigma[3])*1.96;
-
-        bootc++;
-        para.count[sys]=count;
-        para.bootc[sys]=bootc;
-        posR.VPL = sol.VPL;
-        posR.HPL = sol.HPL;
-        posR.exsats = sol.ex;
     }
+    cmn.ecef2pos(rb, pos);
+    rd[0] = sol.rr[0] - rb[0];
+    rd[1] = sol.rr[1] - rb[1];
+    rd[2] = sol.rr[2] - rb[2];
+    cmn.ecef2enu(pos, rd, enu);
+    posR.dX =enu[0];
+    posR.dY =enu[1];
+    posR.dZ =enu[2];
+
+    posR.VPL = sol.VPL;
+    posR.HPL = sol.HPL;
+    posR.exsats = sol.ex;
     cmn.ecef2pos(sol.rr, pos);
     posR.Lat = pos[0]*ca.R2D;
     posR.Lon = pos[1]*ca.R2D;
@@ -1008,11 +973,11 @@ function  posOutStruct(para,sys,logjson) {
     var i,j;
     var time;
     var ws=[0,0];
-    var pos=new Array(3);
-    var enu=new Array(3);
-    var rd=new Array(3);
-    var mean=para.mean[sys];
-    var rb=para.rb[sys];
+    var pos=[0,0,0];
+    var enu=[0,0,0];
+    var rd=[0,0,0];
+    var rb=[0,0,0];
+    var lowpass=para.lowpass[sys];
     var sol=para.sol[sys];
     var obs=para.obs[sys];
     var prcopt=para.prcopt;
@@ -1033,19 +998,43 @@ function  posOutStruct(para,sys,logjson) {
     posR.week = ws[0];
     posR.tow = ws[1];
     posR.time =time;
-    if (prcopt.isrb[sys]) {
-        rb[0] = prcopt.rb[sys][0];
-        rb[1] = prcopt.rb[sys][1];
-        rb[2] = prcopt.rb[sys][2];
-    }
-    else{
-        rb[0] = mean[0];
-        rb[1] = mean[1];
-        rb[2] = mean[2];
-    }
     posR.X = sol.rr[0];
     posR.Y = sol.rr[1];
     posR.Z = sol.rr[2];
+    posR.Lat = pos[0]*ca.R2D;
+    posR.Lon = pos[1]*ca.R2D;
+    posR.H = pos[2];
+    posR.GDOP = sol.dop[0];
+    posR.PDOP = sol.dop[1];
+    posR.HDOP = sol.dop[2];
+    posR.VDOP = sol.dop[3];
+    posR.stat=sol.stat;
+    posR.minEl=prcopt.elmin[sys];
+    if(sol.stat) {
+        if(prcopt.isrb[sys]){
+            rb[0] = prcopt.rb[sys][0];
+            rb[1] = prcopt.rb[sys][1];
+            rb[2] = prcopt.rb[sys][2];
+        }
+        else{
+            if(sol.HPL<opt.HAL){
+                calc_lowpass(lowpass,prcopt.rbinit[sys],sol.rr);
+                rb[0]=lowpass.X.ave;
+                rb[1]=lowpass.Y.ave;
+                rb[2]=lowpass.Z.ave;
+            }
+            else if(lowpass.Xa.length==0){
+                rb[0]=sol.rr[0];
+                rb[1]=sol.rr[1];
+                rb[2]=sol.rr[2];
+            }
+            else{
+                rb[0]=lowpass.X.ave;
+                rb[1]=lowpass.Y.ave;
+                rb[2]=lowpass.Z.ave;
+            }
+        }
+    }
     cmn.ecef2pos(rb, pos);
     rd[0] = sol.rr[0] - rb[0];
     rd[1] = sol.rr[1] - rb[1];
@@ -1055,22 +1044,12 @@ function  posOutStruct(para,sys,logjson) {
     posR.dY = enu[1];
     posR.dZ = enu[2];
     cmn.ecef2pos(sol.rr, pos);
-    posR.Lat = pos[0]*ca.R2D;
-    posR.Lon = pos[1]*ca.R2D;
-    posR.H = pos[2];
-    posR.GDOP = sol.dop[0];
-    posR.PDOP = sol.dop[1];
-    posR.HDOP = sol.dop[2];
-    posR.VDOP = sol.dop[3];
+
     posR.posNum = sol.ns;
     posR.navsys=sol.navsys;
-    if(sol.stat) {
-        posR.VPL = sol.VPL;
-        posR.HPL = sol.HPL;
-        posR.exsats = sol.ex;
-    }
-    posR.stat=sol.stat;
-    posR.minEl=prcopt.elmin[sys];
+    posR.VPL = sol.VPL;
+    posR.HPL = sol.HPL;
+    posR.exsats = sol.ex;
     if(sys==ca.SYS_ALL){
         for(i=0;i<obs.length;i++){
             var rt=new obscreate();
@@ -1166,6 +1145,23 @@ function obsBySys(obs,sta_obs) {
         }
     });
     obs[ca.SYS_ALL]=sta_obs;
+}
+function calc_lowpass(lowpass,len,rr) {
+
+    cmn.lowpass_add(lowpass.X,rr[0]);
+    cmn.lowpass_add(lowpass.Y,rr[1]);
+    cmn.lowpass_add(lowpass.Z,rr[2]);
+    lowpass.Xa.push(rr[0]);
+    lowpass.Ya.push(rr[1]);
+    lowpass.Za.push(rr[2]);
+    if(lowpass.Xa.length>len){
+        cmn.lowpass_sub(lowpass.X,lowpass.Xa[0]);
+        cmn.lowpass_sub(lowpass.Y,lowpass.Ya[0]);
+        cmn.lowpass_sub(lowpass.Z,lowpass.Za[0]);
+        lowpass.Xa.shift();
+        lowpass.Ya.shift();
+        lowpass.Za.shift();
+    }
 }
 //服务系统定义时间格式转换到年月日形式
 function time2string(time) {

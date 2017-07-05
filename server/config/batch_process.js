@@ -127,8 +127,6 @@ function batch_process(batchProcessFiler, config) {
 
     var files = getFollowDatePath(batchProcessFiler);
     var startTime = new Date().getTime()
-    console.log(startTime)
-    console.log(files.allTime)
     if (files.allTime == 30) {
         return process.send({status: 301, effectiveTime: files.allTime, filePath: startTime});
     }

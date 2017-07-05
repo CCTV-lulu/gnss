@@ -5,7 +5,7 @@ var cmn=require('../routes/comn');
 var opt=require('../config/optcomm.json');
 var readline=require('readline');
 var statis=require('../statistics_process');
-var test_file='/home/long/document/data/rover_20170606_log';
+var test_file='/home/long/document/data/rover_20170704_log';
 
 var stream=fs.createReadStream(test_file);
 var readfile=new create_filestream(test_file);
@@ -101,8 +101,8 @@ function option_init(option) {
 }
 function satis_init(para) {
     para.id=0;
-    para.bt=cmn.epoch2time([2017,4,28,11,45,0]);
-    para.et=cmn.epoch2time([2017,4,28,13,10,30]);
+    para.bt=cmn.epoch2time([2017,6,4,0,0,0]);
+    para.et=cmn.epoch2time([2017,6,4,23,59,59]);
     para.hist[ca.SYS_GPS]=new hist_create();
     para.hist[ca.SYS_GLO]=new hist_create();
     para.hist[ca.SYS_CMP]=new hist_create();

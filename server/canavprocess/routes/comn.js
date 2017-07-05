@@ -473,6 +473,28 @@ function vare(x,vare,n,xn){
         return 0;
     return n*vare/(n+1)+(x-xn)*(x-xn)/n;
 };module.exports.vare=vare;
+function lowpass_add(pass,x) {
+    if(pass.N==0){
+        pass.ave=x;
+        pass.vare=0;
+    }
+    else{
+        pass.ave=pass.ave+(x-pass.ave)/(pass.N+1);
+        pass.vare=pass.N*pass.vare/(pass.N+1)+(x-pass.ave)*(x-pass.ave)/pass.N;
+    }
+    pass.N=pass.N+1;
+};module.exports.lowpass_add=lowpass_add;
+function lowpass_sub(pass,x) {
+    if(pass.N==0)return;
+    if(pass.N > 1){
+        pass.vare = (pass.vare - (x-pass.ave)*(x-pass.ave)/(pass.N-1))*pass.N/(pass.N-1);
+    }
+    else{
+        pass.vare=0;
+    }
+    pass.ave = pass.N*(pass.ave - x/pass.N)/(pass.N-1);
+    pass.N=pass.N-1;
+};module.exports.lowpass_sub=lowpass_sub;
 function getbitu(buff, pos, len){
     var bits=0;
     var i;
@@ -491,4 +513,5 @@ function crc24q(buff, len){
     for (i=0;i<len;i++) crc=((crc<<8)&0xFFFFFF)^tbl_CRC24Q[(crc>>16)^buff[i]];
     return crc;
 };module.exports.crc24q=crc24q;
+
 

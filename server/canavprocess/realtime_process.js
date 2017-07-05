@@ -51,10 +51,10 @@ function getProopt(sta_id) {
     }
     return 0;
 }
-function pos_config(sta_id,prcopt) {
+function pos_config(sta_id, prcopt) {
     var para={};
     if (!stationPara.hasOwnProperty(sta_id)) {
-        //var prcopt =  getProopt(sta_id);
+        //var prcopt = getProopt(sta_id);
         if(prcopt!=0){
             stationPara[sta_id] = new nodepos.posPara_create(prcopt);
             nodepos.posParainit(sta_id, stationPara[sta_id]);
@@ -68,19 +68,20 @@ function pos_config(sta_id,prcopt) {
     return para;
 }
 
-module.exports.parser_pos=function(sta_id,data,opt_int) {
+module.exports.parser_pos=function(sta_id,data, prcopt ) {
     var rtcm=rtcm_init(sta_id);
-    var para=pos_config(sta_id,opt_int);
+    var para=pos_config(sta_id,prcopt);
     var pos_list = [];
-    var navsys=[];
 
 
     if(para!=0){
+        var navsys=[];
+        var results=[];
         for(var i=0;i<para.prcopt.navsys.length;i++){
             navsys[i]=para.prcopt.navsys[i];
         }
-        para.prcopt.navsys=[ca.SYS_GPS,ca.SYS_GLO,ca.SYS_CMP];
-        var results=[];
+        para.prcopt.navsys=ca.navsys;
+
         try{
             results = parse.datatype(rtcm, data);
         }
@@ -140,9 +141,9 @@ module.exports.parser_pos=function(sta_id,data,opt_int) {
                             logjson.time=cmn.time2string_UTC(para.sol[ca.SYS_ALL].time);
                         }*/
                     }
-                    if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
+                    /*if (math.mod(sta_data.time.time, opt.midd_time) == 0) {
                         nodepos.middleSaveAll(sta_id, para);
-                    }
+                    }*/
                 }
                 catch(err){
                     console.log(err);
@@ -214,7 +215,6 @@ module.exports.delconfig=function (sta_id) {
 };
 
 function real_pos(para,obs,nav,prcopt,sol,sys,logjson) {
-
     prcopt.sys = sys;
     sol.ex="";
     sol.VPL=0;

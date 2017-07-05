@@ -142,27 +142,61 @@ function integrity_strunt(posR,hist,para,cont) {
     if(fail.type.length>0){
         cont.integrity.push(fail);
     }
-    if(haserr>0){
+    /*if(haserr>0){
         return ;
-    }
+    }*/
     if(para.err_hist>0){
-        accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, dH);
-        accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, dV);
+        if(dH>opt.HAL){
+            accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, opt.HAL);
+        }
+         else{
+            accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, dH);
+        }
+        if(dV>opt.VAL){
+            accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, opt.VAL);
+        }
+        else{
+            accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, dV);
+        }
+
     }
     if(para.dop_hist>0){
-        arrayUpdate(cont.hdop_hist.X, cont.hdop_hist.Y,hist.section, posR.HDOP);
-        arrayUpdate(cont.vdop_hist.X, cont.vdop_hist.Y,hist.section, posR.VDOP);
+        if(posR.HDOP>opt.HDOP){
+            arrayUpdate(cont.hdop_hist.X, cont.hdop_hist.Y,hist.section, opt.HDOP);
+        }
+        else{
+            arrayUpdate(cont.hdop_hist.X, cont.hdop_hist.Y,hist.section, posR.HDOP);
+        }
+        if(posR.VDOP>opt.VDOP){
+            arrayUpdate(cont.vdop_hist.X, cont.vdop_hist.Y,hist.section, opt.VDOP);
+        }
+        else{
+            arrayUpdate(cont.vdop_hist.X, cont.vdop_hist.Y,hist.section, posR.VDOP);
+        }
+
     }
     if(para.sat_hist>0){
         arrayUpdate(cont.sat_hist.X, cont.sat_hist.Y,1, posR.posNum);
     }
     if(para.acc95>0){
-        acc95_postUpdate(cont.acc95_h, dH);
-        acc95_postUpdate(cont.acc95_v, dV);
+        cont.acc95_h.push(dH);
+        cont.acc95_v.push(dV);
+        //acc95_postUpdate(cont.acc95_h, dH);
+        //acc95_postUpdate(cont.acc95_v, dV);
     }
     if(para.PL_hist>0){
-        arrayUpdate(cont.hpl_hist.X, cont.hpl_hist.Y,hist.section, posR.HPL);
-        arrayUpdate(cont.vpl_hist.X, cont.vpl_hist.Y,hist.section, posR.VPL);
+        if(posR.HPL>opt.HAL){
+            arrayUpdate(cont.hpl_hist.X, cont.hpl_hist.Y,hist.section, opt.HAL);
+        }
+        else{
+            arrayUpdate(cont.hpl_hist.X, cont.hpl_hist.Y,hist.section, posR.HPL)
+        }
+        if(posR.VPL>opt.VAL){
+            arrayUpdate(cont.vpl_hist.X, cont.vpl_hist.Y,hist.section, opt.VAL);
+        }
+        else{
+            arrayUpdate(cont.vpl_hist.X, cont.vpl_hist.Y,hist.section, posR.VPL);
+        }
     }
 
     if(para.slice.sat_num.flag>0 && cont.slice.sat_num.X.length<=hist.lastlen){
