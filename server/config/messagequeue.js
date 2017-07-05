@@ -240,7 +240,7 @@ function onMessage(data) {
         try {
             sta_data.station_id = message.station;
             saveStaInfo(sta_data)
-            
+
         } catch (err) {
             console.log(err.message);
         }
