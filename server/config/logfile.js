@@ -120,6 +120,8 @@ function handleLogFile() {
     var info = saveStartLog(true);
     if (info) {
         removeOverTimeDate(info.logPath.split('/').pop());
+        console.log('----------------------')
+        console.log(info)
         getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
             console.log("+++++");
             saveStartLog(false)
