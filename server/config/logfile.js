@@ -73,8 +73,6 @@ module.exports = function (app) {
 
 
         var name = fs.rename(req.file.path, logResolvePath, function () {
-            console.log(logResolvePath);
-            console.log(logPath)
             addLogResolve(cwd, logResolvePath, logPath,function(result){
                 if(result.status){
                  return res.send('ok')
@@ -98,7 +96,7 @@ startHandleLogFile();
 
 function startHandleLogFile() {
 
-    unlock(function(){
+    initLock(function(){
         saveStartLog(false);
         setInterval(function () {
             handleLogFile()
@@ -107,9 +105,10 @@ function startHandleLogFile() {
 
 }
 
-function unlock(cb){
-    lock.unlock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
-        if(err) return unlock(cb);
+function initLock(cb){
+    lock.unlock('firstLogRecord.lock', function (err) {
+
+        if(err) return initLock(cb);
         cb()
     });
 }
