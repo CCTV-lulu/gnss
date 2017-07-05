@@ -113,6 +113,8 @@ module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
     //var opt_init = getProopt(sta_id);
     if(opt_init!=0){
         para = new nodepos.posPara_create(opt_init);
+
+
         nodepos.posParainit(sta_id, para);
         return 0;
     }

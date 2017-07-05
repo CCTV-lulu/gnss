@@ -35,17 +35,17 @@ function addLogResolve(cwd, logResolvePath, logPath,cb) {
 
 function saveStartLog(isHandle) {
     var logRecord = getLogRecord();
-    logRecord.status = isHandle;
-    var info;
-    if (isHandle) {
+    logRecord.status = isHandle||false;
+    var info = logRecord.infos[logRecord.infos.length-1];
+    if (isHandle === false) {
         info = logRecord.infos.pop()
     }
     lock.lock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
-        if (err) return
+        if (err) return;
         fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
         lock.unlock('firstLogRecord.lock',function (err) {
         })
-    })
+    });
     
     return info
 }
@@ -97,10 +97,10 @@ startHandleLogFile();
 function startHandleLogFile() {
 
     initLock(function(){
-        saveStartLog(false);
+        saveStartLog();
         setInterval(function () {
             handleLogFile()
-        }, 1000 * 60 * 2)
+        }, 1000 * 30)
     })
 
 }
@@ -120,8 +120,6 @@ function handleLogFile() {
     var info = saveStartLog(true);
     if (info) {
         removeOverTimeDate(info.logPath.split('/').pop());
-        console.log('----------------------')
-        console.log(info)
         getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
             console.log("+++++");
             saveStartLog(false)
@@ -236,7 +234,8 @@ function followProcess(cwd, dataPath, cb) {
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
     var stationId = fileName.split('.data-')[0];
-    var timeInfo = fileName.replace("data-", '');
+
+    var timeInfo = fileName.split('.data-')[1];
     var startTime;
     var endTime;
     var now = new Date(timeInfo);
@@ -257,6 +256,7 @@ function followProcess(cwd, dataPath, cb) {
         if (result.status) {
             stream = fs.createReadStream(dataPath);
             parse.procinit(stationId, startTime, endTime, maxLen, result.stationConfig.config);
+
             var fwrite = fs.createWriteStream(followDataPath);
             stream.on('readable', function () {
                 var data;
