@@ -94,13 +94,24 @@ module.exports = function (app) {
     });
 };
 
-startHandleLogFile()
+startHandleLogFile();
 
 function startHandleLogFile() {
-    saveStartLog(false)
-    setInterval(function () {
-        handleLogFile()
-    }, 1000 * 60 * 5)
+
+    unlock(function(){
+        saveStartLog(false);
+        setInterval(function () {
+            handleLogFile()
+        }, 1000 * 60 * 5)
+    })
+
+}
+
+function unlock(cb){
+    lock.unlock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
+        if(err) return unlock(cb);
+        cb()
+    });
 }
 
 function handleLogFile() {
