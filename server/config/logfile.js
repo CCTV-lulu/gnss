@@ -35,17 +35,17 @@ function addLogResolve(cwd, logResolvePath, logPath,cb) {
 
 function saveStartLog(isHandle) {
     var logRecord = getLogRecord();
-    logRecord.status = isHandle;
-    var info;
-    if (isHandle) {
+    logRecord.status = isHandle||false;
+    var info = logRecord.infos[logRecord.infos.length-1];
+    if (isHandle === false) {
         info = logRecord.infos.pop()
     }
     lock.lock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
-        if (err) return
+        if (err) return;
         fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
         lock.unlock('firstLogRecord.lock',function (err) {
         })
-    })
+    });
     
     return info
 }
@@ -73,8 +73,6 @@ module.exports = function (app) {
 
 
         var name = fs.rename(req.file.path, logResolvePath, function () {
-            console.log(logResolvePath);
-            console.log(logPath)
             addLogResolve(cwd, logResolvePath, logPath,function(result){
                 if(result.status){
                  return res.send('ok')
@@ -94,13 +92,25 @@ module.exports = function (app) {
     });
 };
 
-startHandleLogFile()
+startHandleLogFile();
 
 function startHandleLogFile() {
-    saveStartLog(false)
-    setInterval(function () {
-        handleLogFile()
-    }, 1000 * 60 * 5)
+
+    initLock(function(){
+        saveStartLog();
+        setInterval(function () {
+            handleLogFile()
+        }, 1000 * 30)
+    })
+
+}
+
+function initLock(cb){
+    lock.unlock('firstLogRecord.lock', function (err) {
+
+        if(err) return initLock(cb);
+        cb()
+    });
 }
 
 function handleLogFile() {
@@ -160,6 +170,7 @@ function removeOverTimeDate(originalname) {
 
 }
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
+
 
 // getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-07","./logs/beijing-thu.log-2017-06-07")
 
@@ -223,6 +234,7 @@ function followProcess(cwd, dataPath, cb) {
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
     var stationId = fileName.split('.data-')[0];
+
     var timeInfo = fileName.split('.data-')[1];
     var startTime;
     var endTime;
@@ -244,6 +256,7 @@ function followProcess(cwd, dataPath, cb) {
         if (result.status) {
             stream = fs.createReadStream(dataPath);
             parse.procinit(stationId, startTime, endTime, maxLen, result.stationConfig.config);
+
             var fwrite = fs.createWriteStream(followDataPath);
             stream.on('readable', function () {
                 var data;

@@ -47,7 +47,7 @@ exports.SYS_GPS  =   opt.sys[0];                /* navigation system: GPS */
 exports.SYS_GLO  =   opt.sys[1];                /* navigation system: GLONASS */
 exports.SYS_CMP  =   opt.sys[2];                /* navigation system: BeiDou */
 exports.SYS_ALL  =   opt.sys[3];                /* navigation system: all */
-
+exports.navsys=[exports.SYS_GPS,exports.SYS_GLO,exports.SYS_CMP];
 exports.NEXOBS=0;
 
 
@@ -372,6 +372,13 @@ function msm_h_t() {
     this.sigs=new Array(32);         /* signals */
     this.cellmask=new Array(64);     /* cell mask */
 };module.exports.msm_h_t=msm_h_t;
+
+//均值方差
+function stats_t() {
+    this.N=0;
+    this.ave=0;
+    this.vare=0;
+};module.exports.stats_t=stats_t;
 
 
 

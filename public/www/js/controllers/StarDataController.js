@@ -84,7 +84,9 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
             sucFuc()
         }
     }
-
+    $scope.parseInt = function(number) {
+        return parseInt(number)
+    }
 
 
     $scope.showDataloading = true;

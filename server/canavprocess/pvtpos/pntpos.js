@@ -312,6 +312,7 @@ function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
                 FSat = sst[i];
             }
         }
+        sol.ex+=FSat;
         sys=cmn.str2sys(FSat.substr(0,1));
         sat=parseInt(FSat.substr(1,FSat.length-1));
 
@@ -374,7 +375,7 @@ function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
     }
     sol.VPL=pbiasB*VPL;
     sol.HPL=pbiasB*HPL;
-    sol.ex=FSat;
+    //sol.ex=FSat;
     sol.svh=svh_r;
     return 0;
 }

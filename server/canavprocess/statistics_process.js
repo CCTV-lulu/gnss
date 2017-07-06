@@ -24,8 +24,8 @@ function sta_result() {
     this.vdop_hist={"X":[],"Y":[]};
     this.hpl_hist={"X":[],"Y":[]};
     this.vpl_hist={"X":[],"Y":[]};
-    this.acc95_h=new acc95_create();
-    this.acc95_v=new acc95_create();
+    this.acc95_h=[];//new acc95_create();
+    this.acc95_v=[];//new acc95_create();
     this.integrity=[];
     this.continuity=1.0;
     this.availability=1.0;
@@ -82,7 +82,8 @@ module.exports.statistic_get=function () {
         var fails=outage_event(cont.integrity,hist);
         cont.continuity=get_continuity(fails,statistic_result[sys]);
         cont.availability=get_availability(fails,statistic_result[sys]);
-        cont.integrity=(cont.acc95_h.count-fails[1])/cont.acc95_h.count;
+        cont.integrity=(cont.acc95_h.length-cont.integrity.length)/cont.acc95_h.length;
+
         if(para.sat_hist>0){
             for(var i=0;i<cont.sat_hist.X.length;i++){
                 if(cont.sat_hist.X[i]==undefined){
@@ -90,21 +91,21 @@ module.exports.statistic_get=function () {
                     cont.sat_hist.Y[i]=0;
                 }
                 if(hist.vert_axis>0){
-                    cont.sat_hist.Y[i]=cont.sat_hist.Y[i]/cont.acc95_h.count;
+                    cont.sat_hist.Y[i]=cont.sat_hist.Y[i]/cont.acc95_h.length;
                 }
             }
         }
         if(para.err_hist>0){
-            histUpdate(cont.herr_hist,hist,cont.acc95_h.count);
-            histUpdate(cont.verr_hist,hist,cont.acc95_h.count);
+            histUpdate(cont.herr_hist,hist,cont.acc95_h.length);
+            histUpdate(cont.verr_hist,hist,cont.acc95_h.length);
         }
         if(para.dop_hist>0){
-            histUpdate(cont.hdop_hist,hist,cont.acc95_h.count);
-            histUpdate(cont.vdop_hist,hist,cont.acc95_h.count);
+            histUpdate(cont.hdop_hist,hist,cont.acc95_h.length);
+            histUpdate(cont.vdop_hist,hist,cont.acc95_h.length);
         }
         if(para.PL_hist>0){
-            histUpdate(cont.hpl_hist,hist,cont.acc95_h.count);
-            histUpdate(cont.vpl_hist,hist,cont.acc95_h.count);
+            histUpdate(cont.hpl_hist,hist,cont.acc95_h.length);
+            histUpdate(cont.vpl_hist,hist,cont.acc95_h.length);
         }
         cont.slice.sat_num.flag=para.slice.sat_num.flag;
         cont.slice.her_num.flag=para.slice.her_num.flag;
@@ -141,9 +142,28 @@ module.exports.statistic_get=function () {
         if(cont.up_slice.vpl_num.flag){
             upslice(cont.up_slice.vpl_num,statistic_para.option[sys].up_slice.vpl_num.up_len);
         }
+
+        cont.acc95_h=get_acc95(cont.acc95_h);
+        cont.acc95_v=get_acc95(cont.acc95_v);
     }
     return statistic_result;
 };
+function get_acc95(acc95) {
+    var acc=math.round(acc95.length*0.95);
+    acc95.sort(function (a,b) {
+        return a-b;
+    });
+    if(acc95.length>0){
+        if(acc<acc95.length){
+            return acc95[acc];
+        }
+        else{
+            return acc95[acc95.length-1];
+        }
+    }
+    else
+        return 0;
+}
 function histUpdate(stas,hist,count) {
     for(var i=0;i<stas.X.length;i++){
         if(stas.X[i]==undefined){

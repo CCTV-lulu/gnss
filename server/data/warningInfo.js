@@ -1,7 +1,6 @@
 var WarningInfo = require('mongoose').model('WarningInfo');
 module.exports = {
     create: function (warning) {
-        console.log(warning)
         var defer = Promise.defer();
         var newWarningInfo = {
             happendTime:warning.happendTime,
