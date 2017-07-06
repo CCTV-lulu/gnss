@@ -168,8 +168,12 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             findData.options = filer.options
 
             BatchProcess.startBatchProcess(findData, function (data) {
+                if(data.status=='chechkStop'){
+                   Prompt.promptBox("warning", "正在进行预处理，请等待")
+                }else {
+                    startBatchProcess(data)
+                }
 
-                startBatchProcess(data)
             })
 
 
@@ -245,7 +249,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function stopBatchProcess() {
         BatchProcess.stopBatchProcess(function (result) {
-            console.log(result.message)
+
             if (result.message == 'success') {
                 Prompt.promptBox("success", "进程已结束")
             } else {

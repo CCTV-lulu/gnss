@@ -1,6 +1,7 @@
 var child_process = require('child_process');
 var BatchProcessModel = require('../data/batchProcess');
 var StationConfig = require('../data/stationConfig');
+var FollowData = require('../data/followData');
 var fs = require('fs')
 var rimraf = require('rimraf')
 
@@ -73,30 +74,38 @@ function batchProcessStatus(userBatchProcessStatus) {
 function startBatchProcess(req, res) {
     var batchProcessInfo = req.body;
     var user = req.user;
-    BatchProcessModel.findBatchProcess(user.username).then(function (userBatchProcessStatus) {
-        StationConfig.findByStaId(batchProcessInfo.sta_id)
-            .then(function(result){
-                batchProcessInfo.username = user.username
-                var info = {filter:batchProcessInfo, config: result.stationConfig}
-                var status = batchProcessStatus(userBatchProcessStatus);
-                if (status === 0) {
-                    killUserBatchProcess(false,user.username, function () {
-                        forkBatchProcess(user.username, info, function (result) {
-                            res.send(result);
-                        })
-                    })
-                }
+    FollowData.getHandleInfoByStaionName(batchProcessInfo.sta_id)
+        .then(function (result) {
+            if(result!==null){
+                res.send({status:'chechkStop'})
+            }else {
+                BatchProcessModel.findBatchProcess(user.username).then(function (userBatchProcessStatus) {
+                    StationConfig.findByStaId(batchProcessInfo.sta_id)
+                        .then(function(result){
+                            batchProcessInfo.username = user.username
+                            var info = {filter:batchProcessInfo, config: result.stationConfig}
+                            var status = batchProcessStatus(userBatchProcessStatus);
+                            if (status === 0) {
+                                killUserBatchProcess(false,user.username, function () {
+                                    forkBatchProcess(user.username, info, function (result) {
+                                        res.send(result);
+                                    })
+                                })
+                            }
 
-                if (status === 1) {
-                    forkBatchProcess(user.username, info, function (result) {
-                        res.send(result);
-                    })
-                }
+                            if (status === 1) {
+                                forkBatchProcess(user.username, info, function (result) {
+                                    res.send(result);
+                                })
+                            }
 
-            });
+                        });
 
 
-    })
+                })
+            }
+        })
+
 }
 
 

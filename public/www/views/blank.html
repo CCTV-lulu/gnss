@@ -27,7 +27,7 @@
         </div>
 
         <div class="col-md-2 col-sm-2 " style="margin-bottom: 5px" >
-            <button class="col-md-8 btn btn-circle green" ng-click="findData()" ng-model="mySwitch"> 查 询</button>
+            <button class="col-md-8 btn btn-circle green" ng-click="findData()" ng-model="mySwitch" ng-disabled="handleStop"> 查 询</button>
         </div>
         <div class="col-md-2 col-sm-2 ">
             <button class="col-md-8 btn btn-circle green"  ng-disabled="!mySwitch" ng-click="stopData()"> 暂 停</button>
