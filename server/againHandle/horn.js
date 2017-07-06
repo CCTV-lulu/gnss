@@ -230,7 +230,7 @@ function followProcess(cwd, dataPath, cb) {
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
     var stationId = fileName.split('.data-')[0];
-    var timeInfo = fileName.replace("data-", '');
+    var timeInfo = fileName.split('.data-')[1];
     var startTime;
     var endTime;
     var now = new Date(timeInfo);

@@ -111,7 +111,6 @@ function handleLogFile() {
     if (info) {
         removeOverTimeDate(info.logPath.split('/').pop());
         getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
-            console.log("+++++");
             saveStartLog(false)
         })
 
@@ -162,7 +161,7 @@ function removeOverTimeDate(originalname) {
 }
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
 
-//getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-12","./logs/beijing-thu.log-2017-06-12")
+// getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-07","./logs/beijing-thu.log-2017-06-07")
 
 function getStaData(cwd, logResolvePath, log_path, cb) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');
@@ -224,7 +223,7 @@ function followProcess(cwd, dataPath, cb) {
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
     var stationId = fileName.split('.data-')[0];
-    var timeInfo = fileName.replace("data-", '');
+    var timeInfo = fileName.split('.data-')[1];
     var startTime;
     var endTime;
     var now = new Date(timeInfo);
@@ -262,7 +261,7 @@ function followProcess(cwd, dataPath, cb) {
             stream.on("close", function () {
                 console.log('the file process close');
                 fwrite.close();
-                cb()
+                // cb()
             });
         }
     });

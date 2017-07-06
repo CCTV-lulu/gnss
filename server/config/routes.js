@@ -52,6 +52,6 @@ module.exports = function (app) {
     app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold);
     /*====================Warning*/
     app.get('/getWarningInfo' ,auth.isInRole('user'),controllers.station.checkWarningStatus);
-    app.post('/createWaring', auth.isInRole('user'), controllers.station.createWaring)
+    app.post('/createWaring', auth.isInRole('user'), controllers.station.createWaring);
 
 };

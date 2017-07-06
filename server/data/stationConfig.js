@@ -110,6 +110,7 @@ module.exports = {
             if (err) {
                 defer.resolve({status: false, message: '拉取数据失败'})
             } else {
+
                 var allThreshold = handleAllThreshold(AllStationConfig);
                 defer.resolve({status: true, allThreshold: allThreshold})
             }
@@ -121,6 +122,7 @@ module.exports = {
 
         var self = this;
         var defer = Promise.defer();
+        var isNeedRrHandle =  false;
         StationConfig.findOne({staId: staId}).exec(function (err, stationConfig) {
             if (err) {
                 return defer.resolve({status: false, message: '拉取数据失败'})
@@ -132,20 +134,32 @@ module.exports = {
             var newThreshold = stationConfig.threshold || {};
             newThreshold[singal] = threshold;
             var newConfig = stationConfig.config||{};
+
+            // console.log(newConfig.elmin[parseInt(singal)])
+            // console.log(config.elmin)
+            if (newConfig.elmin[parseInt(singal)]!==config.elmin){
+                isNeedRrHandle = true
+            }
+            if(newConfig.rb[parseInt(singal)].toString() !== config.rb.toString()){
+                isNeedRrHandle = true
+            }
+
             newConfig.elmin[parseInt(singal)] = config.elmin;
             newConfig.rb[parseInt(singal)]=config.rb;
+
             StationConfig.update({staId: staId}, {$set: {threshold:newThreshold,config: newConfig}}, function (err, result) {
 
                 if (err) {
-                    return defer.resolve({status: false, message: '保存失败'})
+                    return defer.resolve({status: false, message: '保存失败',isNeedRrHandle: isNeedRrHandle})
                 } else {
-                    self.getAllStationThreshold().then(function (allThreshold) {
+                    self.getAllStationThreshold().then(function (allThreshold){
+                        allThreshold.isNeedRrHandle = isNeedRrHandle;
                         return defer.resolve(allThreshold)
                     })
                 }
             })
 
-        })
+        });
         return defer.promise;
     }
 
