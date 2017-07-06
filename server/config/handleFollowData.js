@@ -1,46 +1,38 @@
-
 var mongoose = require('mongoose');
 var stationConfig = require('../data/Models/StationConfig');
-var followData = require('../data/Models/followData');
 mongoose.Promise = global.Promise;
 var env = process.argv[2] || process.env.NODE_ENV || 'development';
 var config = require('./config')[env];
 
-
-mongoose.connect(config.db);
-var db = mongoose.connection;
-
-db.once('open', function (err) {
-    if (err) {
-        console.log('Database could not be opened: ' + err);
-        return;
-    }
-    console.log('Database up and running...')
-});
-
-db.on('error', function (err) {
-    console.log('Database error: ' + err);
-});
-
-stationConfig.init();
-followData.init()
-
-var FollowDate = require('../data/followData');
-var StationConfig = require('../data/stationConfig.js');
-
 var fs = require('fs');
 var os = require('os');
-var config = require('./config')[env];
 var cwd = config.cwd;
-var parse = require('../canavprocess/follow_process.js')
+var parse = require('../canavprocess/follow_process.js');
+var readLine = require('linebyline');
 
-function HandleData(stationName,filePath,cb) {
-    followProcess(cwd, filePath, function (err) {
-        console.log('------------------------')
-        cb()
-    })
+//initMongoose();
+//function initMongoose() {
+    mongoose.connect(config.db);
+    var db = mongoose.connection;
 
-}
+    db.once('open', function (err) {
+        if (err) {
+            console.log('Database could not be opened: ' + err);
+            return;
+        }
+        console.log('Database up and running...')
+    });
+
+    db.on('error', function (err) {
+        console.log('Database error: ' + err);
+    });
+
+    stationConfig.init();
+//}
+var StationConfig = require('../data/stationConfig.js');
+
+
+
 
 function followProcess(cwd, dataPath, cb) {
     var stream;
@@ -68,8 +60,6 @@ function followProcess(cwd, dataPath, cb) {
 
         if (result.status) {
             stream = fs.createReadStream(dataPath);
-            console.log(startTime)
-            console.log(endTime)
             parse.procinit(stationId, startTime, endTime, maxLen, result.stationConfig.config);
             var fwrite = fs.createWriteStream(followDataPath);
             stream.on('readable', function () {
@@ -95,22 +85,46 @@ function followProcess(cwd, dataPath, cb) {
     });
 }
 
-function startHandleData(stationName,filePath, cb) {
 
-        HandleData(stationName,filePath,function () {
-        console.log("-=-=-=-==-==-=")
-        cb()
-    })
 
+function getDateFromLog(cwd, logResolvePath, cb){
+        var dataPath = cwd + '/data/' + logResolvePath.split('/').pop().replace('log-', 'data-');
+        var allData = [];
+        var rl = readLine(logResolvePath);
+        rl.on('line', function (line, idx) {
+            var send = line.replace(/" "/g, "").replace(/:/g, "");
+            var sendInfo = send.split("'");
+            if (sendInfo[0].indexOf('data') > -1) {
+                var info = sendInfo[1];
+                var data = Buffer.from(info, 'base64');
+                allData.push(data)
+            }
+        });
+        rl.on('end', function () {
+            var buff = Buffer.concat(allData);
+            fs.writeFile(dataPath, buff, function () {
+                cb({filePath: dataPath})
+            });
+        });
 }
+
 
 process.on('message', function (message) {
     if (message == 'close') {
         return process.exit()
     }
-    startHandleData(message.stationName,message.filePath, function () {
-        process.send({status: 'endOne',stationName: message.stationName,filePath:message.filePath})
-    })
+    if (message.status === 'handleData') {
+        followProcess(message.cwd, message.filePath, function () {
+            process.send({status: 'endOne', stationName: message.stationName, filePath: message.filePath})
+        })
+    }
+    if (message.status === 'handleLog') {
+        getDateFromLog(message.cwd, message.logPath,function(result){
+            followProcess(message.cwd,result.filePath , function () {
+                process.send({status: 'endOne', stationName: message.stationName, logPath: message.logPath})
+            })
+        })
+    }
 });
 
 
