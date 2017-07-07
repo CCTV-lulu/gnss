@@ -45,7 +45,7 @@ function startBatchFollwData(stationName) {
             }
         }, function (err) {
             console.log(err)
-        })
+        })                                                                                                                                      
 
     });
 
@@ -110,7 +110,6 @@ function getNeedHandleFiles(stationName, cb) {
 function reBatchHandleFollow() {
     FollowDate.all()
         .then(function (allNeedHandleFollowData) {
-            console.log(allNeedHandleFollowData)
             for (var i = 0; i < allNeedHandleFollowData.length; i++) {
                 var needHandleInfo = allNeedHandleFollowData[i];
                 startBatchFollwData(needHandleInfo.stationName)

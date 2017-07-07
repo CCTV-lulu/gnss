@@ -167,21 +167,23 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             findData.sys = filer.sys;
             findData.options = filer.options
 
-            BatchProcess.startBatchProcess(findData, function (data) {
-                if(data.status=='chechkStop'){
-                   Prompt.promptBox("warning", "正在进行预处理，请等待")
-                }else {
-                    startBatchProcess(data)
-                }
-
-            })
-
+            beStartBatchProcess(findData)
 
         } else {
             Prompt.promptBox('warning', '请选择要查询的基站！！')
         }
     };
+    function beStartBatchProcess(findData) {
+        BatchProcess.startBatchProcess(findData, function (data) {
+                if(data.status=='chechkStop'){
+                    Prompt.promptBox("warning", "正在进行预处理，请等待")
+                }else {
+                    startBatchProcess(data)
+                }
 
+            })
+    }
+    
     $scope.stopData = stopBatchProcess;
 
     function startBatchProcess(data) {
@@ -569,8 +571,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
 
         }
-        console.log('endTime')
-        console.log(new Date())
+
     }
 
     function chartTimeLine(id, imageName, username) {

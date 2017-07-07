@@ -63,12 +63,10 @@ function saveBatchProcessStart(username, batchProcessStatus) {
 function batchProcessStatus(userBatchProcessStatus) {
     if (!userBatchProcessStatus || userBatchProcessStatus.isRunning === 0) return 1;
 
-
     if (userBatchProcessStatus.isRunning === 1) {
         return 0
     }
     return 1
-
 }
 
 function startBatchProcess(req, res) {
@@ -100,12 +98,9 @@ function startBatchProcess(req, res) {
                             }
 
                         });
-
-
                 })
             }
         })
-
 }
 
 
@@ -147,10 +142,6 @@ function killUserBatchProcess(isremove,username, cb) {
                 }
             })
         }
-
-
-
-
 }
 
 function stopBatchProcess(req,res){

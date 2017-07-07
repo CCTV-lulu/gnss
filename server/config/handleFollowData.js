@@ -10,8 +10,6 @@ var cwd = config.cwd;
 var parse = require('../canavprocess/follow_process.js');
 var readLine = require('linebyline');
 
-//initMongoose();
-//function initMongoose() {
     mongoose.connect(config.db);
     var db = mongoose.connection;
 
@@ -28,7 +26,7 @@ var readLine = require('linebyline');
     });
 
     stationConfig.init();
-//}
+
 var StationConfig = require('../data/stationConfig.js');
 
 
