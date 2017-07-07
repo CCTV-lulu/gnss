@@ -230,7 +230,7 @@ function GetDateDiff(startTime, endTime, diffType) {
 function followProcess(cwd, dataPath, cb) {
     var stream;
     var len = 300;
-    var maxLen = 500;
+    var maxLen = 400;
     var followDataPath = cwd + '/followData/' + dataPath.split('/').pop();
     var fileName = followDataPath.split('/').pop();
     var stationId = fileName.split('.data-')[0];
