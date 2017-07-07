@@ -3,7 +3,8 @@ var BatchProcessModel = require('../data/batchProcess');
 var StationConfig = require('../data/stationConfig');
 var FollowData = require('../data/followData');
 var fs = require('fs')
-var rimraf = require('rimraf')
+var rimraf = require('rimraf');
+
 
 var AllUserBatchProcess = {};
 

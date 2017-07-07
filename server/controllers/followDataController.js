@@ -2,30 +2,21 @@ var child_process = require('child_process');
 var FollowDate = require('../data/followData');
 var fs = require('fs');
 var followHandleProcess = {};
- var env = process.argv[2] || process.env.NODE_ENV || 'development';
- var config = require('../config/config')[env];
- var cwd = config.cwd;
+var path = require('path');
+var taskManagement = require('../service/taskManagement.js');
+var dataRootPath = path.resolve('../')
+var StationConfig = require('../data/stationConfig.js');
+
 function saveFollowProcess(stationName, child) {
-    followHandleProcess[stationName] = child;
-}
-function getFollowProcess(stationName) {
-    return followHandleProcess[stationName]
+    var processId = taskManagement.addProcess({stationName: stationName, process: child})
 }
 
 
 function initProcess(stationName) {
-    if (getFollowProcess(stationName)) {
-        try {
-            getFollowProcess(stationName).send('close')
-        } catch (err) {
-            saveFollowProcess(stationName, undefined)
-        }
-
-    }
+    taskManagement.stopProcessByUsername(stationName);
 }
-function startBatchFollwData(stationName) {
+function startBatchFollwData(stationName, config) {
     initProcess(stationName);
-    console.log('--------start')
 
     var child = child_process.fork('./server/config/handleFollowData');
     child.on('message', function (message) {
@@ -34,6 +25,10 @@ function startBatchFollwData(stationName) {
         }
     });
     child.on('close', function () {
+        checkIsClose(stationName, processId)
+    });
+
+    function checkIsClose() {
         FollowDate.getHandleInfoByStaionName(stationName).then(function (handleInfo) {
             if (handleInfo == null)  return;
             if (handleInfo.filePath.length > 0) {
@@ -41,21 +36,26 @@ function startBatchFollwData(stationName) {
                     startBatchFollwData(stationName)
                 }, 3000)
             } else {
-                saveFollowProcess(stationName, undefined)
+                taskManagement.stopProcessById(processId)
             }
         }, function (err) {
             console.log(err)
         })
+    }
 
-    });
-
-    saveFollowProcess(stationName, child);
+    var processId = saveFollowProcess(stationName, child);
     startHandle();
 
     function startHandle() {
         FollowDate.getHandleInfoByStaionName(stationName).then(function (result) {
             if (result.filePath.length > 0) {
-                child.send({status: 'handleData',cwd:cwd, stationName: result.stationName, filePath: result.filePath[0]})
+                child.send({
+                    status: 'handleData',
+                    cwd: dataRootPath,
+                    stationName: result.stationName,
+                    filePath: result.filePath[0],
+                    config: config
+                })
             } else {
                 FollowDate.clearByStationName(stationName)
                     .then(function () {
@@ -78,20 +78,18 @@ function startBatchFollwData(stationName) {
             });
     }
 
-
-    // child.send({stationName: stationName, filePath: filePath})
 }
 
 
 function getNeedHandleFiles(stationName, cb) {
-    var fileList = fs.readdirSync(cwd + "/data");
+    var fileList = fs.readdirSync(dataRootPath + "/data");
     FollowDate.clearByStationName(stationName)
         .then(function () {
             var needHandleinfo = [];
             for (var i = 0; i < fileList.length; i++) {
                 var fileStationName = fileList[i].split('.')[0];
                 if (stationName === fileStationName) {
-                    var logResolvePath = cwd + '/data/' + fileList[i];
+                    var logResolvePath = dataRootPath + '/data/' + fileList[i];
                     needHandleinfo.push(logResolvePath)
                 }
             }
@@ -110,10 +108,13 @@ function getNeedHandleFiles(stationName, cb) {
 function reBatchHandleFollow() {
     FollowDate.all()
         .then(function (allNeedHandleFollowData) {
-            console.log(allNeedHandleFollowData)
             for (var i = 0; i < allNeedHandleFollowData.length; i++) {
                 var needHandleInfo = allNeedHandleFollowData[i];
-                startBatchFollwData(needHandleInfo.stationName)
+                StationConfig.findByStaId(needHandleInfo.stationName).then(function (result) {
+                    if (result.status) {
+                        startBatchFollwData(needHandleInfo.stationName, result.stationConfig.config)
+                    }
+                })
             }
 
         }, function (err) {
@@ -123,7 +124,12 @@ function reBatchHandleFollow() {
 
 function batchHandleFollow(stationName) {
     getNeedHandleFiles(stationName, function () {
-        startBatchFollwData(stationName)
+        StationConfig.findByStaId(stationName).then(function (result) {
+            if (result.status) {
+                startBatchFollwData(stationName, result.stationConfig.config)
+            }
+        })
+
     })
 }
 reBatchHandleFollow();

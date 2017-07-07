@@ -16,7 +16,7 @@ app.use(function (req, res, next) {
 require('./server/config/express')(app, config);
 require('./server/config/mongoose')(config);
 require('./server/config/passport')();
-require('./server/config/routes')(app);
+require('./server/config/routes')(app,config);
 require('./server/config/logfile')(app);
 var messagequeue = require('./server/config/messagequeue');
 messagequeue.initSockectServer();
