@@ -79,12 +79,14 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
             config:$scope.config
         };
         Threshold.setThreshold(data,function(allThreshold){
+
             if(allThreshold.status){
                 $scope.allThreshold = allThreshold.allThreshold;
                 showThreshold()
                 Prompt.promptBox('success','保存成功')
             }else{
-                Prompt.promptBox('warnning',allThreshold.message)
+
+                Prompt.promptBox('warning','请刷新')
             }
 
         })

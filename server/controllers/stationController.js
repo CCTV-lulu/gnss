@@ -402,33 +402,39 @@ function setStaThreshold(req, res) {
 }
 
 function createWaring(req, res) {
-    var username = req.user.username
-    var path = CSVPath + "/" + username;
-    var conditionInfo = req.body;
-    var fileName = new Date().getTime() + ".csv";
-    settWarningStatus(username, path+'/'+fileName, true);
-    var condition = {
-        "$and": [
-            {"happendTime": {"$gt": new Date(conditionInfo.bt)}},
-            {"happendTime": {"$lt": new Date(conditionInfo.et)}},
-            {staId: conditionInfo.staId},
-            {sys: {$in: conditionInfo.sys}},
-            {warningContent: {$in: conditionInfo.types}}
-
-        ]
-    }
-
-    WarningInfo.where(condition).then(function (warningInfo) {
-        if (!warningInfo.status) {
-            res.send(warningInfo)
-        } else {
-            fs.mkdir(path, function (err) {
-                var time  =warningInfo.result.length/10000;
-                createCSV(warningInfo.result, path, fileName);
-                return res.send({status: true, fileName: fileName, time:time})
-            })
+    Station.findByStaId(req.body.staId).then(function (result) {
+        if(!result){
+            return res.send({status:false})
         }
+        var username = req.user.username
+        var path = CSVPath + "/" + username;
+        var conditionInfo = req.body;
+        var fileName = new Date().getTime() + ".csv";
+        settWarningStatus(username, path+'/'+fileName, true);
+        var condition = {
+            "$and": [
+                {"happendTime": {"$gt": new Date(conditionInfo.bt)}},
+                {"happendTime": {"$lt": new Date(conditionInfo.et)}},
+                {staId: conditionInfo.staId},
+                {sys: {$in: conditionInfo.sys}},
+                {warningContent: {$in: conditionInfo.types}}
+
+            ]
+        }
+
+        WarningInfo.where(condition).then(function (warningInfo) {
+            if (!warningInfo.status) {
+                res.send(warningInfo)
+            } else {
+                fs.mkdir(path, function (err) {
+                    var time  =warningInfo.result.length/10000;
+                    createCSV(warningInfo.result, path, fileName);
+                    return res.send({status: true, fileName: fileName, time:time})
+                })
+            }
+        })
     })
+
 }
 
 var WarningStatus = {};
@@ -464,6 +470,7 @@ function createCSV(warningInfos, path, fileName) {
     var fields = ['时间', '基站名称', '系统模式', '告警内容', '告警数值', '当前阈值'];
     var sys = ['GPS', 'GLS', 'BDS', 'Group'];
     warningInfos.forEach(function (info) {
+
         data.push({
             '时间': info.happendTime,
             '基站名称': info.stationName,
@@ -476,7 +483,7 @@ function createCSV(warningInfos, path, fileName) {
     });
 
     json2csv({data: data, fields: fields}, function (err, csv) {
-        if (err)  console.log(err);
+        // if (err)  console.log(err);
         var newCsv = iconv.encode(csv, 'GBK'); // 转编码
 
         fs.writeFile(path + '/' + fileName, newCsv, function (err) {

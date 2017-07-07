@@ -86,7 +86,13 @@ function satis_init(para, filter, config) {
     //para.option[ca.SYS_ALL]=new statis_option_create();
     filter.sys.forEach(function (sys) {
         para.hist[sys] = new hist_create();
-        var threshold = config.threshold ? config.threshold[sys]:{}
+
+        if(config){
+           var threshold = config.threshold ? config.threshold[sys]:{}
+        }
+        else {
+            threshold={}
+        }
         para.option[sys] = new statis_option_create(threshold||{});
         option_init(para.option[sys], filter.options);
     });

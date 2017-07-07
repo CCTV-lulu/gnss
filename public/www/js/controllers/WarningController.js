@@ -120,6 +120,8 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
                 if (result.status) {
                     showWait(result.time);
                     getWarningCSV(result.fileName)
+                }else {
+                    Prompt.promptBox('warning', '查询基站被删除，请刷新')
                 }
             });
 

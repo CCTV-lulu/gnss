@@ -81,20 +81,24 @@ function startBatchProcess(req, res) {
                     StationConfig.findByStaId(batchProcessInfo.sta_id)
                         .then(function(result){
                             batchProcessInfo.username = user.username
-                            var info = {filter:batchProcessInfo, config: result.stationConfig}
-                            var status = batchProcessStatus(userBatchProcessStatus);
-                            if (status === 0) {
-                                killUserBatchProcess(false,user.username, function () {
+                            if(result.stationConfig==undefined){
+                                res.send({status:'unFind'})
+                            }else{
+                                var info = {filter:batchProcessInfo, config: result.stationConfig}
+                                var status = batchProcessStatus(userBatchProcessStatus);
+                                if (status === 0) {
+                                    killUserBatchProcess(false,user.username, function () {
+                                        forkBatchProcess(user.username, info, function (result) {
+                                            res.send(result);
+                                        })
+                                    })
+                                }
+
+                                if (status === 1) {
                                     forkBatchProcess(user.username, info, function (result) {
                                         res.send(result);
                                     })
-                                })
-                            }
-
-                            if (status === 1) {
-                                forkBatchProcess(user.username, info, function (result) {
-                                    res.send(result);
-                                })
+                                }
                             }
 
                         });

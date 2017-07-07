@@ -176,8 +176,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function beStartBatchProcess(findData) {
         BatchProcess.startBatchProcess(findData, function (data) {
                 if(data.status=='chechkStop'){
-                    Prompt.promptBox("warning", "正在进行预处理，请等待")
-                }else {
+                    $('#dataStatisticsChartLoding').hide();
+                    Prompt.promptBox("warning", "正在进行预处理，请等待...")
+                }
+                if(data.status == 'unFind'){
+                     $('#dataStatisticsChartLoding').hide();
+                    Prompt.promptBox("warning", "查询基站被删除,请刷新页面")
+                }
+                else {
                     startBatchProcess(data)
                 }
 
