@@ -34,16 +34,17 @@ module.exports = {
     getAllUser: function (req, res) {
         User.all().then(function (users) {
             res.send(users)
-        }, function (error) {
+        }, function (
+            error) {
             res.send({
                 status: false,
                 message: error
+
             })
         })
     },
 
     addUser: function (req, res) {
-        //console.log(req.body.station)
         var user = {
             username: req.body.username,
             password: req.body.password,
@@ -55,7 +56,6 @@ module.exports = {
         user.salt = encryption.generateSalt();
         user.hashPass = encryption.generateHashedPassword(user.salt, user.password);
 
-
         Station.findOne({name: req.body.station})
             .then(function (station) {
 
@@ -63,9 +63,12 @@ module.exports = {
                     return res.send({status: false, message: "基站不存在！"})
                 }
 
-                User.createUser(user, function (err, user) {
+                User.createUser(user, function (err, result) {
                     if (err) {
                         return res.send({status: false, message: '添加用户失败'})
+                    }
+                    if(result.status===false){
+                        return res.send({status: false, message: '用户已存在'})
                     }
                     if(req.body.type === 'true'){
                       return  res.send({status:true})

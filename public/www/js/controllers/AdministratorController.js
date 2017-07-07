@@ -59,27 +59,28 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
     $scope.addUser = function(){
         var station = $scope.station;
         var isAdmin = $scope.isAdmin;
+        var userName = $scope.username;
+        var passWord = $scope.password;
+        if(!userName||!passWord){
+            return Prompt.promptBox('warning', '请输入用户名或密码！')
+        }
         if(!station&&!isAdmin){
             return Prompt.promptBox('warning', '普通用户需要绑定基站！')
         }
         if(station&&isAdmin){
-
             return Prompt.promptBox('warning', '管理员不能绑定基站！')
         }
         if ($scope.username && $scope.password ) {
             UserService.addUser($scope.username, $scope.password, station,isAdmin, function (data) {
-
                 if(!data.status){
                     return Prompt.promptBox('warning', data.message)
                 }
                 initUsers();
                 Prompt.promptBox('success', "添加用户成功！");
                 clearInput()
+                $scope.station = undefined
 
             })
-        } else {
-            Prompt.promptBox('warning', '请输入用户名或密码！')
-
         }
 
     };

@@ -27,6 +27,7 @@ module.exports = {
         User.update(query, user, callback);
     },
 
+
     where: function (condition, limit) {
         return User.where(condition).limit(limit).exec()
     },

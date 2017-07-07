@@ -2765,6 +2765,10 @@
 
 }
 
+.page-sidebar{
+    z-index: 99;
+}
+
 @media (min-width: 1000px) {
     .page-sidebar{
         position: fixed !important;
