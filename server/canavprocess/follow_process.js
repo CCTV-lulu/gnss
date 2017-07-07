@@ -107,7 +107,8 @@ module.exports.procinit=function (sta_id,bt,et,len, opt_init) {
         return 2;
     }
     prcopt=new init_create(bt,et);
-    rtcm.buff=new Buffer(len*5);
+    rtcm.buff=new Buffer(len*6);
+    opt.buff_len=len*6;
     rtcm.time=prcopt.bt;
     rtcm.realtime=1;
     //var opt_init = getProopt(sta_id);

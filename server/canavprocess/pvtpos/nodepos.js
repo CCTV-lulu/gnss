@@ -896,7 +896,8 @@ function posShowStruct(para,sys,logjson) {
     posR.dX =enu[0];
     posR.dY =enu[1];
     posR.dZ =enu[2];
-
+    posR.dH=math.sqrt(enu[0]*enu[0]+enu[1]*enu[1]);
+    posR.dV=math.abs(enu[2]);
     posR.VPL = sol.VPL;
     posR.HPL = sol.HPL;
     posR.exsats = sol.ex;

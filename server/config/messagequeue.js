@@ -51,7 +51,6 @@ function saveStaInfo(data) {
     if (data.posR && data.posR.Lat == 0 && data.posR.Lon == 0) return 0;
 
     //var updated_at = changeTimestamp(data);
-    console.log('----------------------get')
     var staInfoId = Math.random().toString(36).substr(2) + Date.parse(new Date());
     var staInfo = {
         _id: staInfoId,
@@ -235,9 +234,7 @@ function onMessage(data) {
     var buf = Buffer.from(message.data, 'base64');
 
     var optJson = getStationConfig([data.station]).config
-    console.log(optJson)
     var results = parse.parser_pos(data.station, buf, optJson);
-    console.log(results)
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
