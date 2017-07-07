@@ -75,7 +75,7 @@ function batchProcessStatus(userBatchProcessStatus) {
 function startBatchProcess(req, res) {
     var batchProcessInfo = req.body;
     var user = req.user;
-    FollowData.getHandleInfoByStaionName(batchProcessInfo.sta_id)
+    FollowData.getHandleInfoByStationId(batchProcessInfo.sta_id)
         .then(function (result) {
             if(result!==null){
                 res.send({status:'chechkStop'})

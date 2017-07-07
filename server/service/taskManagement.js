@@ -19,11 +19,13 @@ function addProcess(chlid){
     return processId
 }
 
+
 function stopProcessById(processId){
     var process = getProcessById(processId);
     if(process){
         try{
             process.process.send("break")
+
             clearProcessById(processId)
         }catch(err){
             clearProcessById(processId)
@@ -54,5 +56,6 @@ module.exports = {
     stopProcessByStation: stopProcessByStation,
     stopProcessById: stopProcessById,
     clearProcessById: clearProcessById,
-    stopProcessByUsername: stopProcessByUsername
-}
+    stopProcessByUsername: stopProcessByUsername,
+    getProcessById: getProcessById
+};

@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 
 module.exports.init = function () {
     var stationSchema = new mongoose.Schema({
-        stationName:String,
+        stationId:String,
         filePath:Object
     });
 

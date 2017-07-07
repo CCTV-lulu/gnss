@@ -2,20 +2,20 @@ var FollowData = require('mongoose').model('FollowData');
 
 
 module.exports = {
-    getHandleInfoByStaionName:function (stationName) {
+    getHandleInfoByStationId:function (stationId) {
         var defer = Promise.defer();
-        FollowData.findOne({stationName:stationName}).exec(function (err,data) {
+        FollowData.findOne({stationId:stationId}).exec(function (err,data) {
             if(err){
-                return defer.reject('find stationName error')
+                return defer.reject('find stationId error')
             }
 
             defer.resolve(data)
         });
         return defer.promise
     },
-    removeFilePath:function (stationName,logResolvePath) {
+    removeFilePath:function (stationId,logResolvePath) {
         var defer = Promise.defer();
-        FollowData.findOne({stationName:stationName}).exec(function (err,data) {
+        FollowData.findOne({stationId:stationId}).exec(function (err,data) {
             if(err){
                 return defer.reject({status: false})
             }
@@ -24,7 +24,7 @@ module.exports = {
                 data.filePath.splice(index,1);
             }
 
-            FollowData.update({stationName:stationName},{$set:{filePath: data.filePath}},function (err,result) {
+            FollowData.update({stationId:stationId},{$set:{filePath: data.filePath}},function (err,result) {
                 if(err){
                     return defer.resolve({status: false, message: '保存失败'})
                 }
@@ -35,20 +35,20 @@ module.exports = {
         });
         return defer.promise;
     },
-    clearByStationName:function (stationName) {
+    clearByStationId:function (stationId) {
         var defer = Promise.defer();
-        FollowData.remove({stationName:stationName}).exec(function (err,data) {
+        FollowData.remove({stationId:stationId}).exec(function (err,data) {
             if (err){
-                return defer.reject('find stationName error')
+                return defer.reject('find stationId error')
             }
             defer.resolve({status:true})
         });
         return defer.promise;
     },
-    saveStationNeedHandleInfo:function (stationName,needHandleinfo) {
+    saveStationNeedHandleInfo:function (stationId,needHandleinfo) {
         var defer = Promise.defer();
         var newFolloeData = {
-            stationName: stationName,
+            stationId: stationId,
             filePath:needHandleinfo
         };
         FollowData.create(newFolloeData, function (err, data) {
@@ -63,7 +63,7 @@ module.exports = {
         var defer = Promise.defer();
         FollowData.where().exec(function (err, data) {
             if (err) {
-                defer.reject('do not find all stationName')
+                defer.reject('do not find all stationId')
             } else {
 
                 defer.resolve(data)

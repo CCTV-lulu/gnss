@@ -87,6 +87,10 @@ process.on('message', function (message) {
             process.send({status: 'endOne', stationName: message.stationName, filePath: message.filePath})
         })
     }
+    if(message == 'break'){
+
+        return process.exit(2)
+    }
     if (message.status === 'handleLog') {
         getDateFromLog(message.cwd, message.logPath, function (result) {
             followProcess(message.cwd, result.filePath, function () {
