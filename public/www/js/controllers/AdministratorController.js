@@ -5,7 +5,13 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
     function init(){
         initUsers()
     }
+    
+    $scope.$watch('isAdmin',function(isAdmin){
+        if(isAdmin === true){
+        $scope.station = undefined
+        }
 
+    })
 
     function initUsers(){
         if($rootScope.rootIsAdmin){
@@ -57,6 +63,7 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
             return Prompt.promptBox('warning', '普通用户需要绑定基站！')
         }
         if(station&&isAdmin){
+             baseStation._id=''
             return Prompt.promptBox('warning', '管理员不能绑定基站！')
         }
         if ($scope.username && $scope.password ) {
