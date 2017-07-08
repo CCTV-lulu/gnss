@@ -73,6 +73,8 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
         if ($scope.username && $scope.password ) {
             UserService.addUser($scope.username, $scope.password, station,isAdmin, function (data) {
                 if(!data.status){
+                    clearInput()
+                    $scope.station = undefined
                     return Prompt.promptBox('warning', data.message)
                 }
                 initUsers();
@@ -102,7 +104,9 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
                 $("#navbar_edit").modal('hide');
                 Prompt.promptBox('success','修改成功')
             }else{
-                Prompt.promptBox('warning', result.message)
+                $("#password").val('')
+                $("#newpassword").val('')
+                return alert( result.message)
             }
 
         })

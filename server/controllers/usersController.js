@@ -13,18 +13,27 @@ module.exports = {
             var updatedUserData = {
                 password: req.body.password
             };
-            if (updatedUserData.password && updatedUserData.password.length > 0) {
-                updatedUserData.salt = encryption.generateSalt();
-                updatedUserData.hashPass = encryption.generateHashedPassword(updatedUserData.salt, updatedUserData.password);
-            }
+            User.findByName(req.user.username).then(function (result) {
+                var newHashPass = encryption.generateHashedPassword(result.salt,updatedUserData.password);
+                if(result.hashPass===newHashPass){
+                    return res.send({status:false,message:"新密码与旧密码相同"})
+                }else {
+                    if (updatedUserData.password && updatedUserData.password.length > 0) {
+                        updatedUserData.salt = encryption.generateSalt();
+                        updatedUserData.hashPass = encryption.generateHashedPassword(updatedUserData.salt, updatedUserData.password);
+                    }
 
-            User.updateUser({_id: req.body.userId}, updatedUserData, function (err,result) {
-                if(result.ok ===1&&result.n ===1){
-                  return res.send({status:true})
-               }else{
-                   return res.send({status:false,message:"检查输入信息"})
-               }
+                    User.updateUser({_id: req.body.userId}, updatedUserData, function (err,result) {
+                        if(result.ok ===1&&result.n ===1){
+                            return res.send({status:true})
+                        }else{
+                            return res.send({status:false,message:"检查输入信息"})
+                        }
+                    })
+                }
+
             })
+
         }
         else {
             res.send({status:false, message:"权限不足"})

@@ -44,11 +44,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     }
 
 
-
-
-
-
-
     function getStationInfo(staId, limit) {
         try {
             loadStationStatus($rootScope.stationId, limit,function(){
@@ -300,7 +295,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
 
     function showDxDy(data, type) {
-
         var types = {
             'gpsDxDy': 0,
             'glsDxDy': 1,
@@ -425,6 +419,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         var staArrs = [gpsY, glsY, dbsY, groupY];
 
         function push_data(data, staArr) {
+            
             if (data) {
                 staArr.push(data.H)
             }
