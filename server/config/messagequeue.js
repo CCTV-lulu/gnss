@@ -238,6 +238,7 @@ function onMessage(data) {
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {
+            console.log(sta_data)
             sta_data.station_id = message.station;
             saveStaInfo(sta_data)
 
