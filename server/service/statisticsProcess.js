@@ -43,7 +43,7 @@ StatisticsProcess.prototype.init = function (cb) {
     var self = this;
     self.checkFile(function () {
         StatisticsProcess.initProcess();
-        var batchChildProcess = child_process.fork('./server/config/batch_process');
+        var batchChildProcess = child_process.fork('./service/handleProcess/batch_process');
         batchChildProcess.on('message', function (batchProcessResult) {
             if (batchProcessResult.status === 200) {
                 self.updateBatchProcessDate(0, function () {

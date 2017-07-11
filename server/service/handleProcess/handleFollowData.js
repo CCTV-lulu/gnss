@@ -2,33 +2,8 @@
 var fs = require('fs');
 var os = require('os');
 
-var parse = require('../canavprocess/follow_process.js');
+var parse = require('../../canavprocess/follow_process.js');
 var readLine = require('linebyline');
-
-//<<<<<<< HEAD
-//    mongoose.connect(config.db);
-//    var db = mongoose.connection;
-//
-//    db.once('open', function (err) {
-//        if (err) {
-//            console.log('Database could not be opened: ' + err);
-//            return;
-//        }
-//        console.log('Database up and running...')
-//    });
-//
-//    db.on('error', function (err) {
-//        console.log('Database error: ' + err);
-//    });
-//
-//    stationConfig.init();
-//
-//var StationConfig = require('../data/stationConfig.js');
-//
-//
-//=======
-//>>>>>>> blank
-
 
 function followProcess(cwd, dataPath, config, cb) {
     var stream;

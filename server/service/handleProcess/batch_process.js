@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 var fs = require('fs');
-var ca = require('../canavprocess/routes/calib');
-var cmn = require('../canavprocess/routes/comn');
-var opt = require('../canavprocess/config/optcomm.json');
+var ca = require('../../canavprocess/routes/calib');
+var cmn = require('../../canavprocess/routes/comn');
+var opt = require('../../canavprocess/config/optcomm.json');
 var readline = require('readline');
-var statis = require('../canavprocess/statistics_process');
+var statis = require('../../canavprocess/statistics_process');
 var path = require('path');
 var promise = global.Promise;
 

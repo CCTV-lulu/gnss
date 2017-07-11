@@ -40,10 +40,10 @@ function saveStartLog(isHandle) {
     if (isHandle === false) {
         info = logRecord.infos.pop()
     }
-    lock.lock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
+    lock.lock('logRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
         if (err) return;
         fs.writeFileSync('server/config/logRecord.json', JSON.stringify(logRecord))
-        lock.unlock('firstLogRecord.lock',function (err) {
+        lock.unlock('logRecord.lock',function (err) {
         })
     });
     
@@ -106,7 +106,7 @@ function startHandleLogFile() {
 }
 
 function initLock(cb){
-    lock.unlock('firstLogRecord.lock', function (err) {
+    lock.unlock('logRecord.lock', function (err) {
 
         if(err) return initLock(cb);
         cb()
