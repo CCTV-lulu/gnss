@@ -20,6 +20,7 @@ FollowProcess.saveFollowProcess = function (stationId, chlid) {
 };
 
 FollowProcess.prototype.init = function () {
+
     var self = this;
     FollowProcess.initProcess(self.stationId);
     var child = child_process.fork('./server/config/handleFollowData');
@@ -30,7 +31,7 @@ FollowProcess.prototype.init = function () {
     });
     child.on('close', function (message) {
         if (message !== 2) {
-            self.checkIsClose(stationId, processId)
+            self.checkIsClose(self.stationId, processId)
         }
 
     });
@@ -38,8 +39,10 @@ FollowProcess.prototype.init = function () {
     var processId = FollowProcess.saveFollowProcess(self.stationId, child);
     self.processId = processId;
     self.child = child
+    self.getHandleFile(function(){
+        self.startHandle();
+    })
 
-    self.startHandle();
 
 };
 
@@ -54,11 +57,33 @@ FollowProcess.prototype.startHandle = function () {
                 .then(function () {
                     self.sendInfoToProcess('close')
                 }, function (err) {
-                    console.log(err)
                 })
         }
+    }, function () {
     });
 };
+
+FollowProcess.prototype.getHandleFile =  function(cb){
+        var self = this;
+        var fileList = fs.readdirSync(dataRootPath + "/data");
+        FollowDate.clearByStationId(self.stationId)
+            .then(function () {
+                var needHandleinfo = [];
+                for (var i = 0; i < fileList.length; i++) {
+                    var fileStationId = fileList[i].split('.')[0];
+                    if (self.stationId === fileStationId) {
+                        var logResolvePath = dataRootPath + '/data/' + fileList[i];
+                        needHandleinfo.push(logResolvePath)
+                    }
+                }
+                FollowDate.saveStationNeedHandleInfo(self.stationId, needHandleinfo)
+                    .then(function (result) {
+                        cb()
+                    })
+            }, function (err) {
+                console.log(err)
+            })
+}
 
 FollowProcess.prototype.closeProcess = function () {
     try {
@@ -85,11 +110,10 @@ FollowProcess.prototype.startNext = function (filePath) {
 };
 
 
-
 FollowProcess.prototype.getHandleInfo = function (cb) {
     var self = this;
     FollowDate.getHandleInfoByStationId(self.stationId).then(function (result) {
-        if (result.filePath.length > 0) {
+        if (result && result.filePath.length > 0) {
             var info = {
                 status: 'handleData',
                 cwd: dataRootPath,
@@ -102,7 +126,6 @@ FollowProcess.prototype.getHandleInfo = function (cb) {
             cb(false)
         }
     }, function (err) {
-        console.log(err)
     })
 };
 

@@ -4,6 +4,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     //var timeDelay;
     var currentStation;
     var isAdmin;
+    var currentProcess ;
 
     //getStation($rootScope.rootIsAdmin);
 
@@ -32,10 +33,12 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                     if (!threshold[indexs[i]] || !threshold[indexs[i]].threshold || threshold[indexs[i]].threshold.HPL === undefined) {
                         hpl_num_is_able = true;
                         $('input[name=hpl_num]')[0].checked = false;
+                        console.log(threshold[indexs[i]])
                     }
                     if (!threshold[indexs[i]] || !threshold[indexs[i]].threshold || threshold[indexs[i]].threshold.VPL === undefined) {
                         vpl_num_is_able = true;
                         $('input[name=vpl_num]')[0].checked = false;
+                        console.log(threshold[indexs[i]])
                     }
                 }
 
@@ -43,6 +46,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             } else {
 
             }
+
 
             $scope.optionsAble = {
                 vpl_num_is_able: vpl_num_is_able,
@@ -168,7 +172,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             findData.options = filer.options
 
             BatchProcess.startBatchProcess(findData, function (data) {
-                if(data.status=='chechkStop'){
+                if(data.status=='isFollow'){
                    Prompt.promptBox("warning", "正在进行预处理，请等待")
                 }else {
                     startBatchProcess(data)
@@ -202,11 +206,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function waiting(data) {
         var waitTime = parseInt(data.effectiveTime)
+        currentProcess = data.processId
         if (!show_wait(waitTime)) return;
         $scope.mySwitch = true;
-        getResult(data.filePath);
+        getResult(data.processId);
 
     }
+
+
 
     function show_wait(waitTime) {
         var $loading = $('.loading');
@@ -219,7 +226,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         return true;
     }
 
-    function getResult(filePath) {
+    function getResult(processId) {
         if ($location.path() != '/blank') return;
 
         BatchProcess.getBatchProcessResult(function (data) {
@@ -228,18 +235,20 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
             if (data.result.isRunning === 1) {
                 return setTimeout(function () {
-                    getResult(filePath)
+                    getResult(processId)
                 }, 5000)
             }
             if (data.result.isRunning === -1) {
                 return batchProcessErr();
             }
-
+            if (data.result.isRunning === -2) {
+                return batchProcessErr('正在预处理，请稍后重试');
+            }
             var username = data.result.userName
             //$interval.cancel(getBatchDataPolling);
             $scope.mySwitch = false;
-            localStorage.setItem($rootScope.rootUserInfo.username + '_current_result_path', filePath)
-            $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + filePath + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+            localStorage.setItem($rootScope.rootUserInfo.username + '_current_result_processId', processId)
+            $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
                 showProcessResult(data, username)
 
             })
@@ -248,7 +257,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     function stopBatchProcess() {
-        BatchProcess.stopBatchProcess(function (result) {
+        BatchProcess.stopBatchProcess(currentProcess,function (result) {
 
             if (result.message == 'success') {
                 Prompt.promptBox("success", "进程已结束")
@@ -261,10 +270,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
 
-    function batchProcessErr() {
+    function batchProcessErr(messsage) {
         $(".loading").hide();
         //$interval.cancel(getBatchDataPolling);
-        Prompt.promptBox("warning", "处理异常请再次请求")
+        Prompt.promptBox("warning", messsage||"处理异常请再次请求")
+        $('#dataStatisticsChartLoding').hide();
     }
 
     function showProcessResult(data, username) {
@@ -392,7 +402,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
-            var currentRate = 0
+            var currentRate = 0;
             data[key][showType].X.forEach(function (x, index) {
                 currentRate += data[key][showType].Y[index];
                 info.data.push([x, currentRate])
@@ -569,15 +579,13 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
 
         }
-        console.log('endTime')
-        console.log(new Date())
     }
 
     function chartTimeLine(id, imageName, username) {
 
 
-        var path = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_path');
-        $("#" + id + ' img').attr('src', '/chartImage/' + username + '/' + path + '/' + imageName)
+        var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
+        $("#" + id + ' img').attr('src', '/chartImage/' + username + '/' + processId + '/' + imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
@@ -645,10 +653,10 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     function initResult() {
-        var path = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_path');
-        if (path === null) return;
+        var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
+        if (processId === null) return;
         //localStorage.setItem(key:1)
-        $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + path + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+        $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
             showResult(data, $rootScope.rootUserInfo.username)
 
         })

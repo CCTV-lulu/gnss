@@ -392,17 +392,21 @@ function setStaThreshold(req, res) {
     StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold, thresholdInfo.config).then(function (result) {
         if (result.status) {
             if(result.isNeedRrHandle){
-                StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
+                return StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
                     var newFollowProcess = new FollowProcess(thresholdInfo.staId, config.stationConfig.config)//todo
                     newFollowProcess.init()
-                },function(){
-
+                    res.send(result)
+                },function(err){
+                    res.send(result)
                 })
 
             }
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
+            res.send(result)
         }
-        res.send(result)
+
+    },function(err){
+        console.log('------err')
     })
 }
 

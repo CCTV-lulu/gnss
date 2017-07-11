@@ -172,7 +172,7 @@ function removeOverTimeDate(originalname) {
 //getStaData('./logs/shanghai-dev.log-2017-03-14');
 
 
-// getStaData(cwd,cwd+"/logs/beijing-thu.log-2017-06-07","./logs/beijing-thu.log-2017-06-07")
+ getStaData(cwd,cwd+"/logs/hangkeyuan-11.log-2017-07-09","./logs/hangkeyuan-11.log-2017-07-09")
 
 function getStaData(cwd, logResolvePath, log_path, cb) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');

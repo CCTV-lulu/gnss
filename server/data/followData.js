@@ -6,7 +6,7 @@ module.exports = {
         var defer = Promise.defer();
         FollowData.findOne({stationId:stationId}).exec(function (err,data) {
             if(err){
-                return defer.reject('find stationId error')
+                return defer.resolve('find stationId error')
             }
 
             defer.resolve(data)
@@ -17,7 +17,7 @@ module.exports = {
         var defer = Promise.defer();
         FollowData.findOne({stationId:stationId}).exec(function (err,data) {
             if(err){
-                return defer.reject({status: false})
+                return defer.resolve({status: false})
             }
             var index = data.filePath.indexOf(logResolvePath);
             if(index>=0){
@@ -39,7 +39,7 @@ module.exports = {
         var defer = Promise.defer();
         FollowData.remove({stationId:stationId}).exec(function (err,data) {
             if (err){
-                return defer.reject('find stationId error')
+                return defer.resolve('find stationId error')
             }
             defer.resolve({status:true})
         });
@@ -53,7 +53,7 @@ module.exports = {
         };
         FollowData.create(newFolloeData, function (err, data) {
             if (err) {
-                return defer.reject({status: false, message: err})
+                return defer.resolve({status: false, message: err})
             }
             return defer.resolve({status: true, message: data})
         });
@@ -63,7 +63,7 @@ module.exports = {
         var defer = Promise.defer();
         FollowData.where().exec(function (err, data) {
             if (err) {
-                defer.reject('do not find all stationId')
+                defer.resolve('do not find all stationId')
             } else {
 
                 defer.resolve(data)

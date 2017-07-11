@@ -13,7 +13,7 @@ module.exports = {
             }
             req.logIn(user, function(err) {
                 if (err) return next(err);
-                batchProcessController.killUserBatchProcess(true,user.username);
+                //batchProcessController.killUserBatchProcess(true,user.username);
                 stationController.removeCSV(req.user.username);
                 //BatchProcess.deleteBatchProcess(user.username).then(function () {
                 //    console.log(user.username+'success')
@@ -25,7 +25,7 @@ module.exports = {
     },
 //登录验证完后登录
     logout: function (req, res, next) {
-        batchProcessController.killUserBatchProcess(true,req.user.username);
+        //batchProcessController.killUserBatchProcess(true,req.user.username);
         stationController.removeCSV(req.user.username);
         //killChild.killChild(req.user.username)
         //BatchProcess.deleteBatchProcess(req.user.username).then(function () {

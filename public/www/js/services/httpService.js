@@ -552,8 +552,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 cb(data)
             })
         }
-        function stopBatchProcess(cb){
-            httpRequest.httpGet( url + "/stopBatchProcess", function (data) {
+        function stopBatchProcess(currentProcess,cb){
+            httpRequest.httpGet( url + "/stopBatchProcess/"+currentProcess, function (data) {
                 cb(data)
             })
         }
