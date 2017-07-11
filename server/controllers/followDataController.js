@@ -125,7 +125,7 @@
 //        startBatchFollwData(stationName)
 //    })
 //}
-//reBatchHandleFollow();
+reBatchHandleFollow();
 //
 //module.exports = {
 //    reBatchHandleFollow: reBatchHandleFollow,

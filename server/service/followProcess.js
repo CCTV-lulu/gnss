@@ -6,6 +6,8 @@ var taskManagement = require('../service/taskManagement.js');
 var dataRootPath = path.resolve('../');
 //var StationConfig = require('../data/stationConfig.js');
 
+
+
 function FollowProcess(stationId, config) {
     this.stationId = stationId;
     this.config = config;

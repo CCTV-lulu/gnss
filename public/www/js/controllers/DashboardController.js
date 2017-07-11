@@ -302,6 +302,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             'groupDxDy': 3
         };
         var show_date = [];
+
         for (var i = 0; i < data.length; i++) {
             if (data[i].posR[types[type]]) {
                 var info = data[i].posR[types[type]];

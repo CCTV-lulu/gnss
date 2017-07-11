@@ -172,6 +172,7 @@ function getBatchProcess(req, res) {
 //>>>>>>>
 //blank
 
+
 function stopBatchProcess(req, res) {
     var username = req.user.username;
     var process = StatisticsProcess.getProcessById(req.param.processId);

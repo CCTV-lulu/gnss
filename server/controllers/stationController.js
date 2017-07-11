@@ -387,9 +387,15 @@ function getStaThreshold(req, res) {
     });
 }
 
+function getStaHandleData(req, res) {
+    StationConfig.getAllStationThreshold().then(function (stationConfig) {
+        res.send(stationConfig)
+    });
+}
+
 function setStaThreshold(req, res) {
     var thresholdInfo = req.body;
-    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold, thresholdInfo.config).then(function (result) {
+    StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold,thresholdInfo.config).then(function (result) {
         if (result.status) {
             if(result.isNeedRrHandle){
                 return StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
@@ -402,13 +408,32 @@ function setStaThreshold(req, res) {
 
             }
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
-            res.send(result)
+            StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
+            return res.send(result);
         }
 
     },function(err){
         console.log('------err')
+
     })
+
 }
+
+function setStaHandleData(req, res) {
+    var thresholdInfo = req.body;
+    StationConfig.setStationHandleData(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.handleData).then(function (result) {
+
+        if (result.status) {
+            StationSocketStatus.initStationOpt(thresholdInfo.staId)
+        }
+        StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
+        return res.send(result)
+
+    })
+
+}
+
+
 
 function createWaring(req, res) {
     Station.findByStaId(req.body.staId).then(function (result) {
@@ -514,6 +539,8 @@ function removeCSV(username){
 /*==================================*/
 
 
+
+
 module.exports = {
     getUserStationId: getUserStationId,
     updateStaId: updateStaId,
@@ -530,6 +557,9 @@ module.exports = {
     //downloadStaData: downloadStaData,
     getStaThreshold: getStaThreshold,
     setStaThreshold: setStaThreshold,
+
+    setStaHandleData:setStaHandleData,
+    getStaHandleData:getStaHandleData,
 
     getUserStationInfo: getUserStationInfo,
     createWaring: createWaring,
