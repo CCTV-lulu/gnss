@@ -7,8 +7,8 @@ var iconv = require('iconv-lite');
 //var multer = require('multer'); // v1.0.5
 var CSVPath = './public/csv';
 var FILEPATH = '/csv';
-var batchHandleFollowDate = require('./followDataController.js');
-
+//var batchHandleFollowDate = require('../service/followDateService.js');
+var FollowProcess = require('../service/followProcess.js');
 
 
 //var batchProcessData = require('../batch_process_data/batch_process_data');
@@ -391,13 +391,22 @@ function setStaThreshold(req, res) {
     var thresholdInfo = req.body;
     StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold, thresholdInfo.config).then(function (result) {
         if (result.status) {
-            console.log(result.isNeedRrHandle)
             if(result.isNeedRrHandle){
-               batchHandleFollowDate.batchHandleFollow(thresholdInfo.staId)//todo
+                return StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
+                    var newFollowProcess = new FollowProcess(thresholdInfo.staId, config.stationConfig.config)//todo
+                    newFollowProcess.init()
+                    res.send(result)
+                },function(err){
+                    res.send(result)
+                })
+
             }
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
+            res.send(result)
         }
-        res.send(result)
+
+    },function(err){
+        console.log('------err')
     })
 }
 

@@ -128,15 +128,15 @@ function getFollowDatePath(batchProcessFiler) {
 }
 
 
-function batch_process(batchProcessFiler, config) {
+function batch_process(batchProcessFiler, config, processId) {
 
 
     var files = getFollowDatePath(batchProcessFiler);
-    var startTime = new Date().getTime()
+
     if (files.allTime == 30) {
-        return process.send({status: 301, effectiveTime: files.allTime, filePath: startTime});
+        return process.send({status: 301, effectiveTime: files.allTime, processId: processId});
     }
-    process.send({status: 300, effectiveTime: files.allTime, filePath: startTime});
+    process.send({status: 300, effectiveTime: files.allTime, processId: processId});
 
     var para = new statis_create();
     satis_init(para, batchProcessFiler, config);
@@ -144,8 +144,8 @@ function batch_process(batchProcessFiler, config) {
 
     processOneDay(files.allFilesData, 0, function (data) {
 
-        fs.mkdir('./public/chartImage/' + batchProcessFiler.username + '/' + startTime + '/', function () {
-            createImage(data, batchProcessFiler, startTime, config).then(function (results) {
+        fs.mkdir('./public/chartImage/' + batchProcessFiler.username + '/' + PROESSID + '/', function () {
+            createImage(data, batchProcessFiler, config).then(function (results) {
                 exporter.killPool()
                 for (var sys in data) {
                     data[sys].up_slice = {
@@ -154,7 +154,7 @@ function batch_process(batchProcessFiler, config) {
                     }
                 }
 
-                fs.writeFile('./public/chartImage/' + batchProcessFiler.username + '/' + startTime + '/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+                fs.writeFile('./public/chartImage/' + batchProcessFiler.username + '/' + PROESSID + '/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
                     if (err) throw err;
                     process.send({status: 200, username: batchProcessFiler.username});
                 });
@@ -180,13 +180,19 @@ function processOneDay(files, index, cb) {
     });
 }
 
-
+var PROESSID ;
 process.on('message', function (info) {
     if (info.message == 'close') {
-        process.exit()
+        return process.exit(0)
     }
+    if(info =='break'){
+        return process.exit(1)
+    }
+
     //try{
-    batch_process(info.filter, info.config)
+
+    PROESSID = info.processId
+    batch_process(info.filter, info.config, info.processId)
     //}catch(data){
     //    process.send({status:404, username: batchProcessFiler.username});
     //}
@@ -253,7 +259,7 @@ function getAllFilePath(station, allDate) {
     return allFiles
 }
 
-function createImage(data, filter, startTime,config) {
+function createImage(data, filter,config) {
     //var data = require('../../public/json/1.json');
     //filter = {
     //    username: 1,
@@ -269,16 +275,16 @@ function createImage(data, filter, startTime,config) {
     var promises = [];
     exporter.initPool({reaper: false, maxWorkers: infos.length});
     for (var i = 0; i < infos.length; i++) {
-        promises.push(chartImage(infos[i], filter.username, startTime))
+        promises.push(chartImage(infos[i], filter.username))
     }
 
     return promise.all(promises)
 }
 
-function chartImage(chartInfo, username, startTime) {
+function chartImage(chartInfo, username) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
-        fs.writeFile("./public/chartImage/" + username + '/' + startTime + '/' + chartInfo.fileName + ".png", res.data, 'base64', function (err) {
+        fs.writeFile("./public/chartImage/" + username + '/' + PROESSID + '/' + chartInfo.fileName + ".png", res.data, 'base64', function (err) {
             defer.resolve(chartInfo.fileName)
         });
 

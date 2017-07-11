@@ -135,8 +135,6 @@ module.exports = {
             newThreshold[singal] = threshold;
             var newConfig = stationConfig.config||{};
 
-            // console.log(newConfig.elmin[parseInt(singal)])
-            // console.log(config.elmin)
             if (newConfig.elmin[parseInt(singal)]!==config.elmin){
                 isNeedRrHandle = true
             }

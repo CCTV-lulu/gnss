@@ -53,7 +53,6 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
         //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
     $scope.$watch('station',function(station){
-        console.log(!station||!$scope.allThreshold)
         if(!station||!$scope.allThreshold) return;
         showThreshold()
         //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
