@@ -53,5 +53,7 @@ module.exports = function (app) {
     /*====================Warning*/
     app.get('/getWarningInfo' ,auth.isInRole('user'),controllers.station.checkWarningStatus);
     app.post('/createWaring', auth.isInRole('user'), controllers.station.createWaring);
-
+    /*====================HandleData*/
+    app.get('/getStaHandleData', auth.isInRole('user'),controllers.station.getStaHandleData);
+    app.post('/setStaHandleData', auth.isInRole('admin'),controllers.station.setStaHandleData);
 };

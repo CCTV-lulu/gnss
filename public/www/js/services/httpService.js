@@ -566,19 +566,32 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
     })
     .factory('Threshold',function($http, $location, settingInfo, Prompt, Passport, httpRequest){
         var url = "http://" + settingInfo.server + ":" + settingInfo.port;
-        function setThreshold(data, cb) {
-            httpRequest.post(url + "/setStaThreshold", data, function (result) {
-                cb(result)
-            })
-        }
         function getThreshold(cb){
             httpRequest.httpGet( url + "/getStaThreshold", function (result) {
                 cb(result)
             })
         }
+        function setThreshold(data, cb) {
+            httpRequest.post(url + "/setStaThreshold", data, function (result) {
+                cb(result)
+            })
+        }
+
+        function getHandleData(cb){
+            httpRequest.httpGet( url + "/getStaHandleData", function (result) {
+                cb(result)
+            })
+        }
+        function setHandleData(data,cb) {
+            httpRequest.post(url + "/setStaHandleData", data,function (result) {
+                cb(result)
+            })
+        }
         return {
             setThreshold: setThreshold,
-            getThreshold: getThreshold
+            getThreshold: getThreshold,
+            setHandleData:setHandleData,
+            getHandleData:getHandleData
         }
     })
     .factory('WarningCSV',function($http, $location, settingInfo, Prompt, Passport, httpRequest){

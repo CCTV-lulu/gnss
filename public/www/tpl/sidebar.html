@@ -41,6 +41,16 @@
                 <span class="title">阈值报警设置</span>
             </a>
         </li>
+         <li id="datahandle" class="nav-item">
+            <a ng-show="width"ng-click="dataConnect('datahandle')" data-toggle="collapse" data-target=".navbar-collapse">
+                <i class="icon-bulb"></i>
+                <span class="title">数据分析设置</span>
+            </a>
+            <a  ng-hide="width" ng-click="dataConnect('datahandle')" >
+                <i class="icon-bulb"></i>
+                <span class="title">数据分析设置</span>
+            </a>
+        </li>
         <li id="administrator" class="nav-item" >
             <a ng-show="width" ng-click="dataConnect('administrator')" data-toggle="collapse" data-target=".navbar-collapse">
                 <i class="icon-user"></i>
@@ -63,6 +73,7 @@
                 <span class="title">告警查询</span>
             </a>
         </li>
+
     </ul>
 
 </div>

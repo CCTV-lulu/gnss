@@ -102,6 +102,24 @@ MetronicApp.config(['$stateProvider', '$httpProvider', '$urlRouterProvider', fun
             }
         })
 
+         .state('datahandle', {
+            url: '/datahandle',
+            templateUrl: "views/datahandle.html",
+            data: {pageTitle: "Datahandle Page Template"},
+            controller: "DataHandleController",
+            resolve: {
+                deps: ['$ocLazyLoad', function ($ocLazyLoad) {
+                    return $ocLazyLoad.load({
+                        name: 'MetronicApp',
+                        insertBefore: '#ng_load_plugins_before',
+                        files: [
+                            'js/controllers/DataHandleController.js'
+                        ]
+                    });
+                }]
+            }
+        })
+
         .state('warning', {
             url: '/warning',
             templateUrl: "views/warning.html",
