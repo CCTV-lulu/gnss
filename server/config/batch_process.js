@@ -22,7 +22,7 @@ function statis_create() {
     this.option = {};//new statis_option_create();
 }
 
-function statis_option_create(threshold) {
+function statis_option_create(handleData) {
     this.sat_hist = 0;
     this.err_hist = 0;
     this.dop_hist = 0;
@@ -39,12 +39,12 @@ function statis_option_create(threshold) {
     };
     this.up_slice = new function () {
         this.sat_num = {"flag": 0, "up_min": 0, "up_len": 30};
-        this.her_num = {"flag": 0, "up_min": threshold.dH || 0, "up_len": 30};
-        this.ver_num = {"flag": 0, "up_min": threshold.dV || 0, "up_len": 30};
-        this.hdop_num = {"flag": 0, "up_min": threshold.HDOP || 0, "up_len": 30};
-        this.vdop_num = {"flag": 0, "up_min": threshold.VDOP || 0, "up_len": 30};
-        this.hpl_num = {"flag": 0, "up_min": threshold.HPL || 0, "up_len": 30};
-        this.vpl_num = {"flag": 0, "up_min": threshold.VPL || 0, "up_len": 30};
+        this.her_num = {"flag": 0, "up_min": handleData.dH || 0, "up_len": 30};
+        this.ver_num = {"flag": 0, "up_min": handleData.dV || 0, "up_len": 30};
+        this.hdop_num = {"flag": 0, "up_min": handleData.HDOP || 0, "up_len": 30};
+        this.vdop_num = {"flag": 0, "up_min": handleData.VDOP || 0, "up_len": 30};
+        this.hpl_num = {"flag": 0, "up_min": handleData.HPL || 0, "up_len": 30};
+        this.vpl_num = {"flag": 0, "up_min": handleData.VPL || 0, "up_len": 30};
     };
 }
 function hist_create() {
@@ -88,12 +88,13 @@ function satis_init(para, filter, config) {
         para.hist[sys] = new hist_create();
 
         if(config){
-           var threshold = config.threshold ? config.threshold[sys]:{}
+
+           var handleData = config.handleData ? config.handleData[sys]:{}
         }
         else {
-            threshold={}
+            handleData={}
         }
-        para.option[sys] = new statis_option_create(threshold||{});
+        para.option[sys] = new statis_option_create(handleData||{});
         option_init(para.option[sys], filter.options);
     });
     //option_init(para.option[ca.SYS_GPS]);
@@ -186,7 +187,7 @@ process.on('message', function (info) {
         return process.exit(0)
     }
     if(info =='break'){
-        return process.exit(1)
+        return process.exit(2)
     }
 
     //try{

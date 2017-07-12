@@ -195,7 +195,10 @@ module.exports = {
         var defer = Promise.defer();
         StationConfig.findOne({staId:staId}).exec(function (err, stationConfig) {
             if(err){
-                return defer.resolve({status:false})
+                return defer.resolve({status:false,message:'拉取数据失败'})
+            }
+            if(!stationConfig){
+                return defer.resolve({status:false,message:'请刷新'})
             }
             var config = stationConfig.config||{};
             var newHandleData = stationConfig.handleData||{};
@@ -207,7 +210,6 @@ module.exports = {
                 newHandleData[singal].elmin = config.elmin[parseInt(singal)];
                 newHandleData[singal].rb = config.rb[parseInt(singal)];
             }
-
             StationConfig.update({staId:staId},{$set:{handleData:newHandleData}},function (err,result) {
                 if(err){
                     return defer.resolve({status: false, message: '保存失败'})
