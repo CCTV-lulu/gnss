@@ -164,6 +164,7 @@ function posR_create() {
     this.exsats="";
     this.HDOP=0;
     this.VDOP=0;
+    this.basecoord=[0,0,0];
     this.dX=0;
     this.dY=0;
     this.dZ=0;
@@ -888,6 +889,9 @@ function posShowStruct(para,sys,logjson) {
             }
         }
     }
+    posR.basecoord[0]=rb[0];
+    posR.basecoord[1]=rb[1];
+    posR.basecoord[2]=rb[2];
     cmn.ecef2pos(rb, pos);
     rd[0] = sol.rr[0] - rb[0];
     rd[1] = sol.rr[1] - rb[1];
@@ -896,8 +900,8 @@ function posShowStruct(para,sys,logjson) {
     posR.dX =enu[0];
     posR.dY =enu[1];
     posR.dZ =enu[2];
-    posR.dH=math.sqrt(enu[0]*enu[0]+enu[1]*enu[1]);
-    posR.dV=math.abs(enu[2]);
+    posR.dH=math.sqrt(posR.dX*posR.dX+posR.dY*posR.dY);
+    posR.dV=math.abs(posR.dZ);
     posR.VPL = sol.VPL;
     posR.HPL = sol.HPL;
     posR.exsats = sol.ex;
@@ -1002,9 +1006,6 @@ function  posOutStruct(para,sys,logjson) {
     posR.X = sol.rr[0];
     posR.Y = sol.rr[1];
     posR.Z = sol.rr[2];
-    posR.Lat = pos[0]*ca.R2D;
-    posR.Lon = pos[1]*ca.R2D;
-    posR.H = pos[2];
     posR.GDOP = sol.dop[0];
     posR.PDOP = sol.dop[1];
     posR.HDOP = sol.dop[2];
@@ -1037,6 +1038,9 @@ function  posOutStruct(para,sys,logjson) {
         }
     }
     cmn.ecef2pos(rb, pos);
+    posR.Lat = pos[0]*ca.R2D;
+    posR.Lon = pos[1]*ca.R2D;
+    posR.H = pos[2];
     rd[0] = sol.rr[0] - rb[0];
     rd[1] = sol.rr[1] - rb[1];
     rd[2] = sol.rr[2] - rb[2];

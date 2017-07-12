@@ -68,31 +68,31 @@ function saveStaInfo(data) {
         statInfo[data.station_id].shift()
     }
 
-    fs.stat("../station" + data.station_id, function (err, stat) {
-        if (err == null) {
-            if (stat.isDirectory()) {
-                fs.readdir("../station" + data.station_id, function (err, files) {
-                    if (err) return console.log(err);
-                    //if (files.length > 5) {
-                    //    for (var n = 0; n < files.length - 5; n++) {
-                    //        fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
-                    //            if (err) throw err;
-                    //        })
-                    //    }
-                    //}
-                    //console.log(staInfo)
-                    writeFileSync(data, staInfo);
-                })
-            }
-        } else if (err.code == 'ENOENT') {
-            fs.mkdir("../station" + data.station_id, '0777', function (err) {
-                if (err) return console.log(err);
-                writeFileSync(data, staInfo);
-            });
-        } else {
-            console.log('错误：' + err);
-        }
-    });
+    //fs.stat("../station" + data.station_id, function (err, stat) {
+    //    if (err == null) {
+    //        if (stat.isDirectory()) {
+    //            fs.readdir("../station" + data.station_id, function (err, files) {
+    //                if (err) return console.log(err);
+    //                //if (files.length > 5) {
+    //                //    for (var n = 0; n < files.length - 5; n++) {
+    //                //        fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
+    //                //            if (err) throw err;
+    //                //        })
+    //                //    }
+    //                //}
+    //                //console.log(staInfo)
+    //                writeFileSync(data, staInfo);
+    //            })
+    //        }
+    //    } else if (err.code == 'ENOENT') {
+    //        fs.mkdir("../station" + data.station_id, '0777', function (err) {
+    //            if (err) return console.log(err);
+    //            writeFileSync(data, staInfo);
+    //        });
+    //    } else {
+    //        console.log('错误：' + err);
+    //    }
+    //});
 }
 
 function writeFileSync(data, staInfo) {

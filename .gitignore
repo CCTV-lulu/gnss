@@ -6,5 +6,3 @@ public/csv/*
 node_modules/
 server/config/logRecord.json
 server/canavprocess/config/posmidd.json
-
-w

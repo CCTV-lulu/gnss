@@ -53,7 +53,6 @@ function getProopt(sta_id) {
 }
 function pos_config(sta_id, prcopt) {
     var para={};
-
     if (!stationPara.hasOwnProperty(sta_id)) {
         //var prcopt = getProopt(sta_id);
         if(prcopt!=0){
@@ -68,15 +67,16 @@ function pos_config(sta_id, prcopt) {
     para= stationPara[sta_id];
     return para;
 }
-
 module.exports.initStationPara = function(sta_id){
-  delete  stationPara[sta_id]
+    delete  stationPara[sta_id]
 };
 
-module.exports.parser_pos=function(sta_id,data, prcopt ) {
+module.exports.parser_pos=function(sta_id,data, prcopt) {
     var rtcm=rtcm_init(sta_id);
-    var para=pos_config(sta_id,prcopt);
+    var para=pos_config(sta_id, prcopt);
     var pos_list = [];
+
+
     if(para!=0){
         var navsys=[];
         var results=[];
@@ -156,7 +156,6 @@ module.exports.parser_pos=function(sta_id,data, prcopt ) {
         });
         para.prcopt.navsys=navsys;
     }
-
     return pos_list;
 };
 module.exports.procset=function (sta_id,prcopt) {
