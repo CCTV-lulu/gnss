@@ -341,7 +341,9 @@ function getStationStatus(req, res, next) {
 
     var stationData = {};
     //StationSocketStatus.StationSocketStatus[req.query.staId] = true;
+
     if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
+
         stationData.StationSocketStatus = false;
     } else {
         var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId];
