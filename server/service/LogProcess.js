@@ -1,4 +1,9 @@
 var lock = require('lockfile');
+var child_process = require('child_process');
+var path = require('path');
+var StationConfig = require('../data/stationConfig');
+var taskManagement = require('../service/taskManagement.js');
+var dataRootPath = path.resolve('../');
 
 function LogProcess(logPath) {
     this.lockFile = 'logRecord.lock';
@@ -80,29 +85,82 @@ LogProcess.prototype.unlock = function (cb) {
     });
 };
 
-LogProcess.prototype.handleLogToData = function () {
+LogProcess.prototype.handleLogToData = function (logPath, cb) {
+    var batchChildProcess = child_process.fork('./service/handleProcess/logProcess.js');
+    var self = this;
+    batchChildProcess.on('message', function (result) {
+        if (result.status == 'endOne') {
+            batchChildProcess.send('close')
+            return cb(result.dataPath);
+        }
+
+    });
+    batchChildProcess.on('close', function (message) {
+        if (message == 0) {
+
+        } else {
+            self.handleLogToData(logPath)
+        }
+    });
+    batchChildProcess.send({logPath: logPath})
+
+};
+LogProcess.prototype.handleFollowData = function (dataPath, cb) {
+    var child = child_process.fork('./service/handleProcess/handleFollowData.js');
+    child.on('message', function (message) {
+        if (message.status === 'endOne') {
+            return cb({status: true})
+        }
+    });
+    child.on('close', function (message) {
+        if (message !== 2) {
+            return cb({status: false})
+        }
+
+    });
+    var stationInfo = dataPath.split('.data')[0].split('/');
+    var stationId = stationInfo[stationInfo.length - 1];
+    var processId = this.saveFollowProcess(stationId, child);
+    this.getHandleInfo(stationId, dataPath, function (info) {
+        child.send(info)
+    })
 
 };
 
-LogProcess.prototype.handleFollowData = function () {
+LogProcess.saveFollowProcess = function (stationId, chlid) {
+    return taskManagement.addProcess({stationId: stationId, process: chlid})
+};
+
+LogProcess.prototype.getHandleInfo = function (stationId,filePath, cb) {
+    var config //todo;
+    StationConfig.findByStaId(stationId).then(function(){
+        var info = {
+            status: 'handleData',
+            cwd: dataRootPath,
+            stationId: result.stationId,
+            filePath: filePath,
+            config: config
+        };
+        return info;
+    })
 
 };
-LogProcess.prototype.handleData = function(){
+LogProcess.prototype.handleData = function () {
     var self = this;
     var logRecord = self.getLogRecord();
     if (logRecord.status || logRecord.infos.length === 0)  return;
 
-    var info = self.update(true).then(function(info){
+    var info = self.update(true).then(function (info) {
         if (info) {
             //removeOverTimeDate(info.logPath.split('/').pop());
             getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
-                self.update(false).then(function(){
+                self.update(false).then(function () {
 
                 })
             })
 
-        }else{
-            self.update(false).then(function(){
+        } else {
+            self.update(false).then(function () {
 
             })
         }
