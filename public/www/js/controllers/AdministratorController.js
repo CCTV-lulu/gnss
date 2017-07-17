@@ -74,7 +74,8 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
             UserService.addUser($scope.username, $scope.password, station,isAdmin, function (data) {
                 if(!data.status){
                     clearInput()
-                    $scope.station = undefined
+                    $scope.station = undefined;
+                    $scope.isAdmin = false
                     return Prompt.promptBox('warning', data.message)
                 }
                 initUsers();
@@ -99,7 +100,7 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
         if(!$scope.newPassword||!$scope.rePassword||($scope.rePassword!=$scope.newPassword)){
             return alert('请检查密码')
         }
-        UserService.changePassword($scope.changeUserId, $scope.newPassword,function(result){
+        UserService.changePassword($scope.changeUserName, $scope.newPassword,function(result){
             if(result.status){
                 $("#navbar_edit").modal('hide');
                 Prompt.promptBox('success','修改成功')
@@ -138,7 +139,6 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
     /*===========================*/
 
 
-
     $scope.$on('logout', function (event, url) {
         $scope.$emit('logout-connect-app', 'data')
         //$('body').addClass('page-on-load');
@@ -146,20 +146,12 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
     });
 
 
-
-
-
-
-
-
-
-
-
-
     $scope.addStation = function () {
         if ($scope.name && $scope.staId) {
             Mongodb.addStation($scope.name, $scope.staId, function (result) {
                 if (result.status == false) {
+                    $("#station-name").val('');
+                    $("#station-id").val('');
                     Prompt.promptBox('warning', result.message)
                 } else {
                     $rootScope.allStations = result.allStations;

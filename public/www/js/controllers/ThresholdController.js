@@ -78,7 +78,7 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
             config:$scope.config,
         };
         Threshold.setThreshold(data,function(allThreshold){
-
+            console.log(data.config)
             if(allThreshold.status){
                 $scope.allThreshold = allThreshold.allThreshold;
                 showThreshold()

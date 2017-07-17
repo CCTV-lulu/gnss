@@ -24,18 +24,17 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         Threshold.getThreshold(function (allThreshold) {
             if (allThreshold.status) {
                 var threshold = allThreshold.allThreshold[$scope.station];
-
                 var indexs = getSingal();
                 var hpl_num_is_able = false;
                 var vpl_num_is_able = false;
                 for (var i = 0; i < indexs.length; i++) {
 
-                    if (!threshold[indexs[i]] || !threshold[indexs[i]].threshold || threshold[indexs[i]].threshold.HPL === undefined) {
+                    if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.HPL === undefined) {
                         hpl_num_is_able = true;
                         $('input[name=hpl_num]')[0].checked = false;
                         console.log(threshold[indexs[i]])
                     }
-                    if (!threshold[indexs[i]] || !threshold[indexs[i]].threshold || threshold[indexs[i]].threshold.VPL === undefined) {
+                    if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.VPL === undefined) {
                         vpl_num_is_able = true;
                         $('input[name=vpl_num]')[0].checked = false;
                         console.log(threshold[indexs[i]])

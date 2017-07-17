@@ -45,6 +45,10 @@ Date.prototype.Format = function (fmt) { //author: meizz
 //    var dateArr = receiveTime.split(',')
 //    return Date.UTC(parseInt(dateArr[0]), parseInt(dateArr[1]) - 1, parseInt(dateArr[2]), parseInt(dateArr[3]), parseInt(dateArr[4]), parseInt(dateArr[5])) - 18000;
 //}
+function updataRb(stationName,data){
+    upDataRbStatus[stationName] = false;
+    StationConfig.setRb(stationName,data)
+}
 
 function saveStaInfo(data) {
 
@@ -66,6 +70,17 @@ function saveStaInfo(data) {
     statInfo[data.station_id].push(staInfo);
     if (statInfo[data.station_id].length > 300) {
         statInfo[data.station_id].shift()
+    }
+    if(upDataRbStatus[data.station_id] == true){
+        var stats=[]
+       Object.keys(data.posR).forEach(function(sys){
+           stats.push(data.posR[sys].stat)
+       })
+        console.log(stats)
+       if(stats.length==4&&stats.indexOf(0)==-1){
+           updataRb(data.station_id,data)
+       }
+
     }
 
     //fs.stat("../station" + data.station_id, function (err, stat) {
@@ -145,6 +160,11 @@ var allBuffers = {};
 //});
 
 
+var upDataRbStatus={}
+function update(stationName){
+    upDataRbStatus[stationName] = true;
+}
+
 function initSockectServer() {
 
     io.on('connection', function (socket) {
@@ -153,6 +173,11 @@ function initSockectServer() {
         socket.on('disconnect', function () {
             StationSocketStatus[stationName] = false
         });
+
+        setTimeout(function(){
+            update(stationName)
+        },1000*60*60)
+
         StationSocketStatus[stationName] = true;
         socket.on('' + stationName, function (data) {
             if (!StationSocketStatus[stationName]) {

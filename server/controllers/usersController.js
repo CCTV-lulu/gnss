@@ -8,14 +8,17 @@ module.exports = {
 
 
     changePassword: function (req, res) {
-
-        if (req.user._id == req.body.userId || req.user.roles.indexOf('admin') > -1) {
+            console.log("-------")
+            console.log(req.body)
+        if (req.user.username == req.body.userId || req.user.roles.indexOf('admin') > -1) {
             var updatedUserData = {
                 password: req.body.password
             };
-            User.findByName(req.user.username).then(function (result) {
+            User.findByName(req.body.userId).then(function (result) {
+
                 var newHashPass = encryption.generateHashedPassword(result.salt,updatedUserData.password);
                 if(result.hashPass===newHashPass){
+                    console.log('============')
                     return res.send({status:false,message:"新密码与旧密码相同"})
                 }else {
                     if (updatedUserData.password && updatedUserData.password.length > 0) {
@@ -23,7 +26,7 @@ module.exports = {
                         updatedUserData.hashPass = encryption.generateHashedPassword(updatedUserData.salt, updatedUserData.password);
                     }
 
-                    User.updateUser({_id: req.body.userId}, updatedUserData, function (err,result) {
+                    User.updateUser({username: req.body.userId}, updatedUserData, function (err,result) {
                         if(result.ok ===1&&result.n ===1){
                             return res.send({status:true})
                         }else{

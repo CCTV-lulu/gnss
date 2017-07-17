@@ -61,6 +61,7 @@ module.exports = {
     },
     findByName:function(username){
         return User.findOne({username: username}).exec()
-    }
+    },
+
 
 };

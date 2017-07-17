@@ -43,7 +43,7 @@ StatisticsProcess.prototype.init = function (cb) {
     var self = this;
     self.checkFile(function () {
         StatisticsProcess.initProcess();
-        var batchChildProcess = child_process.fork('./service/handleProcess/batch_process');
+        var batchChildProcess = child_process.fork('./server/service/handleProcess/batch_process');
         batchChildProcess.on('message', function (batchProcessResult) {
             if (batchProcessResult.status === 200) {
                 self.updateBatchProcessDate(0, function () {
@@ -60,7 +60,8 @@ StatisticsProcess.prototype.init = function (cb) {
         batchChildProcess.on('close', function (message) {
             if (message == 0) {
 
-            } else if (message === 1) {
+            } else if (message === 2) {
+                console.log("----------")
                 return self.updateBatchProcessDate(-2, function () {
                     self.stop()
                 });

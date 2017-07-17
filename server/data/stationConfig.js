@@ -4,7 +4,7 @@ var config = {
     "mode": 0,
     "nf": 0,
     "navsys": [0, 2],
-    "elmin": [10, 10, 10, 10],
+    "elmin": [5, 5, 5, 5],
     "snrmask": {
         "ena": [1, 0],
         "mask": [
@@ -19,12 +19,7 @@ var config = {
     "tropopt": 1,
     "rbinit": [300, 300, 300, 300],
     "isrb": [0, 0, 0, 0],
-    "rb": [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-    ],
+    "rb":false,
     "mul_vare": 5,
     "init_vare": 100,
     "exsats": [
@@ -58,7 +53,7 @@ function handleAllThreshold(allConfig) {
         var config = {};
         oneConfig.config.elmin.forEach(function (oneElmin,index) {
             config[index.toString()] = {}
-            config[index.toString()].config = {elmin: oneElmin, rb: oneConfig.config.rb[index]}
+            config[index.toString()].config = {elmin: 5, rb: oneConfig.config.rb[index]}
         })
         Object.keys(config).forEach(function(sys){
             config[sys].threshold = oneConfig.threshold ? oneConfig.threshold[sys]:{}
@@ -195,7 +190,10 @@ module.exports = {
         var defer = Promise.defer();
         StationConfig.findOne({staId:staId}).exec(function (err, stationConfig) {
             if(err){
-                return defer.resolve({status:false})
+                return defer.resolve({status:false,message:'拉取数据失败'})
+            }
+            if(!stationConfig){
+                return defer.resolve({status:false,message:'请刷新'})
             }
             var config = stationConfig.config||{};
             var newHandleData = stationConfig.handleData||{};
@@ -207,7 +205,6 @@ module.exports = {
                 newHandleData[singal].elmin = config.elmin[parseInt(singal)];
                 newHandleData[singal].rb = config.rb[parseInt(singal)];
             }
-
             StationConfig.update({staId:staId},{$set:{handleData:newHandleData}},function (err,result) {
                 if(err){
                     return defer.resolve({status: false, message: '保存失败'})
@@ -217,7 +214,35 @@ module.exports = {
 
         })
         return defer.promise;
+    },
+    setRb:function (staId,data) {
+        var defer =  Promise.defer();
+        StationConfig.findOne({staId:staId}).exec(function (err,stationConfig) {
+            if(err){
+                return defer.resolve({status:false,message:'拉取数据失败'})
+            }
+            if(!stationConfig){
+                return defer.resolve({status:false,message:'请刷新'})
+            }
+            var newConfig = stationConfig.config||{};
+            var rb = stationConfig.config.rb;
+            if(rb === false) {
+                newConfig.rb = [];
+                Object.keys(data.posR).forEach(function (sys) {
+                    newConfig.rb[sys] = data.posR[sys].basecoord;
+                })
+            }
+            StationConfig.update({staId:staId},{$set:{config:newConfig}},function (err,result) {
+                if(err){
+                    return defer.resolve({status:false,message:'保存失败'})
+                }
+                return defer.resolve(result)
+            })
+
+        })
+        return defer.promise;
     }
+    
 
 
 };

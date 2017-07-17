@@ -67,6 +67,7 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
         }
 
         $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].handleData:{}
+        $scope.config=$scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].config:{}
         if(!$scope.isAdmin){
             $scope.isReadonly = true;
         }
@@ -78,6 +79,7 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
             staId: $scope.station,
             signal: $scope.signal,
             handleData: $scope.threshold,
+            config:$scope.config,
         };
         Threshold.setHandleData(data,function(allHandleData){
 
