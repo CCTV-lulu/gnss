@@ -399,17 +399,15 @@ function setStaThreshold(req, res) {
     var thresholdInfo = req.body;
     StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold,thresholdInfo.config).then(function (result) {
         if (result.status) {
-            if(result.isNeedRrHandle){
-                StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
-                return StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
-                    var newFollowProcess = new FollowProcess(thresholdInfo.staId, config.stationConfig.config)//todo
-                    newFollowProcess.init()
-                    res.send(result)
-                },function(err){
-                    res.send(result)
-                })
 
-            }
+            // StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
+            //     var newFollowProcess = new FollowProcess(thresholdInfo.staId, config.stationConfig.config)//todo
+            //     newFollowProcess.init()
+            //     res.send(result)
+            // },function(err){
+            //     res.send(result)
+            // })
+
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
             return res.send(result);
         }
@@ -424,12 +422,10 @@ function setStaThreshold(req, res) {
 function setStaHandleData(req, res) {
     var thresholdInfo = req.body;
     StationConfig.setStationHandleData(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.handleData).then(function (result) {
-
         if (result.status) {
-            StationSocketStatus.initStationOpt(thresholdInfo.staId)
+            return res.send(result)
         }
         StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
-        return res.send(result)
 
     })
 

@@ -1,8 +1,8 @@
 var fs = require('fs');
 var readLine = require('linebyline');
 
-function handleLog(logResolvePath, cb) {
-    var dataPath = logResolvePath.replace('/data/','followData');
+function handleLog(cwd,logResolvePath) {
+    var dataPath = cwd + '/data/' + logResolvePath.split('/').pop().replace('log-', 'data-')
     var allData = [];
     var rl = readLine(logResolvePath);
     rl.on('line', function (line, idx) {
@@ -18,7 +18,7 @@ function handleLog(logResolvePath, cb) {
         var buff = Buffer.concat(allData);
         fs.writeFile(dataPath, buff, function () {
             console.log('-------------------------------------------ok')
-            process.send({status:'endOne'})
+            process.send({status:'endOne',message:dataPath})
         });
     });
 
@@ -28,8 +28,7 @@ process.on('message',function(message){
     if(message === 'close'){
         return process.exit(0)
     }
-    handleLog()
+    handleLog(message.cwd,message.logPath)
 });
-
 
 

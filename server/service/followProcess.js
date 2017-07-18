@@ -25,7 +25,7 @@ FollowProcess.prototype.init = function () {
 
     var self = this;
     FollowProcess.initProcess(self.stationId);
-    var child = child_process.fork('./service/handleProcess/handleFollowData');
+    var child = child_process.fork('./server/service/handleProcess/handleFollowData');
     child.on('message', function (message) {
         if (message.status === 'endOne') {
             self.startNext(processId, message, message)

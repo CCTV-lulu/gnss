@@ -274,7 +274,7 @@ function followProcess(cwd, dataPath, cb) {
                 var data;
                 while (null != (data = stream.read(len))) {
                     var logpos = parse.parser_pos(data);
-                    // console.log('------------------')
+                    console.log('------------------')
                     logpos.forEach(function (log) {
                         var obj = {"time": log.time, "data": log.posR};
                         fwrite.write(JSON.stringify(obj) + os.EOL);

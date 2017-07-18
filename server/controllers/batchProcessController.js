@@ -11,25 +11,19 @@ var rimraf = require('rimraf');
 function startBatchProcess(req, res) {
     var batchProcessInfo = req.body;
     var user = req.user;
-    FollowData.getHandleInfoByStationId(batchProcessInfo.sta_id)
+    StationConfig.findByStaId(batchProcessInfo.sta_id)
         .then(function (result) {
-
-            if (result !== null) {
-                return res.send({status: 'isFollow'})
+            if(result.stationConfig===undefined){
+                return res.send({status:'unFind'})
             }
-            StationConfig.findByStaId(batchProcessInfo.sta_id)
-                .then(function (result) {
-                    if(result.stationConfig===undefined){
-                        return res.send({status:'unFind'})
-                    }
-                    batchProcessInfo.username = user.username;
-                    var statisticsProcess = new StatisticsProcess(user.username, batchProcessInfo.sta_id, result.stationConfig, batchProcessInfo);
-                    statisticsProcess.init(function (result) {
-                        res.send(result);
-                    });
-                })
-
+            batchProcessInfo.username = user.username;
+            var statisticsProcess = new StatisticsProcess(user.username, batchProcessInfo.sta_id, result.stationConfig, batchProcessInfo);
+            statisticsProcess.init(function (result) {
+                res.send(result);
+            });
         })
+
+
 }
 
 

@@ -47,7 +47,14 @@ Date.prototype.Format = function (fmt) { //author: meizz
 //}
 function updataRb(stationName,data){
     upDataRbStatus[stationName] = false;
-    StationConfig.setRb(stationName,data)
+    StationConfig.findByStaId(stationName).then(function (result) {
+        if(result.stationConfig.config.rb===false){
+            StationConfig.setRb(stationName,data).then(function (result) {
+                initStationOpt(result.staId)
+            })
+        }
+    })
+
 }
 
 function saveStaInfo(data) {

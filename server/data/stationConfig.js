@@ -118,7 +118,6 @@ module.exports = {
     setStationThreshold: function (staId, singal, threshold,config) {
         var self = this;
         var defer = Promise.defer();
-        var isNeedRrHandle =  false;
         StationConfig.findOne({staId: staId}).exec(function (err, stationConfig) {
             if (err) {
                 return defer.resolve({status: false, message: '拉取数据失败'})
@@ -130,24 +129,15 @@ module.exports = {
             var newThreshold = stationConfig.threshold || {};
             newThreshold[singal] = threshold;
             var newConfig = stationConfig.config||{};
-
-            if (newConfig.elmin[parseInt(singal)]!==config.elmin){
-                isNeedRrHandle = true
-            }
-            if(newConfig.rb[parseInt(singal)].toString() !== config.rb.toString()){
-                isNeedRrHandle = true
-            }
-
             newConfig.elmin[parseInt(singal)] = config.elmin;
             newConfig.rb[parseInt(singal)]=config.rb;
 
             StationConfig.update({staId: staId}, {$set: {threshold:newThreshold,config: newConfig}}, function (err, result) {
 
                 if (err) {
-                    return defer.resolve({status: false, message: '保存失败',isNeedRrHandle: isNeedRrHandle})
+                    return defer.resolve({status: false, message: '保存失败'})
                 } else {
                     self.getAllStationThreshold().then(function (allThreshold){
-                        allThreshold.isNeedRrHandle = isNeedRrHandle;
                         return defer.resolve(allThreshold)
                     })
                 }
@@ -225,13 +215,12 @@ module.exports = {
                 return defer.resolve({status:false,message:'请刷新'})
             }
             var newConfig = stationConfig.config||{};
-            var rb = stationConfig.config.rb;
-            if(rb === false) {
-                newConfig.rb = [];
-                Object.keys(data.posR).forEach(function (sys) {
-                    newConfig.rb[sys] = data.posR[sys].basecoord;
-                })
-            }
+
+            newConfig.rb = [];
+            Object.keys(data.posR).forEach(function (sys) {
+                newConfig.rb[sys] = data.posR[sys].basecoord;
+            })
+
             StationConfig.update({staId:staId},{$set:{config:newConfig}},function (err,result) {
                 if(err){
                     return defer.resolve({status:false,message:'保存失败'})

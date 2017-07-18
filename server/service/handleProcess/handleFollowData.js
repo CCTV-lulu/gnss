@@ -27,16 +27,15 @@ function followProcess(cwd, dataPath, config, cb) {
         now.getDate(), 23, 59, 59
     ];
 
-
     stream = fs.createReadStream(dataPath);
     parse.procinit(stationId, startTime, endTime, maxLen, config);
+    // followDataPath = followDataPath.replace('followData','data')
     var fwrite = fs.createWriteStream(followDataPath);
     stream.on('readable', function () {
         var data;
         while (null != (data = stream.read(len))) {
             var logpos = parse.parser_pos(data);
             logpos.forEach(function (log) {
-
                 var obj = {"time": log.time, "data": log.posR};
                 fwrite.write(JSON.stringify(obj) + os.EOL);
             });
@@ -81,9 +80,11 @@ process.on('message', function (message) {
         return process.exit()
     }
     if (message.status === 'handleData') {
+
         followProcess(message.cwd, message.filePath, message.config, function () {
-            process.send({status: 'endOne', stationName: message.stationName, filePath: message.filePath})
+            process.send({status: 'endOne', stationName: message.stationId, filePath: message.filePath})
         })
+
     }
     if(message == 'break'){
 
