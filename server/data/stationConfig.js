@@ -230,8 +230,31 @@ module.exports = {
 
         })
         return defer.promise;
-    }
-    
+    },
+    removeConfig:function (staId,singal) {
+        var self = this;
+        var defer = Promise.defer();
+        StationConfig.findOne({staId:staId}).exec(function (err,stationConfig) {
+            if(err){
+                return defer.resolve({status:false,message:'拉取数据失败'})
+            }
+            if(!stationConfig){
+                return defer.resolve({status:false,message:'请刷新'})
+            }
+            var newConfig = stationConfig.config||{};
+            newConfig.rb = false
+            StationConfig.update({staId:staId},{$set:{config:newConfig}},function (err,result) {
+                if (err){
+                    return defer.resolve({status:false,message:'重置失败'})
+                } else {
+                    self.getAllStationThreshold().then(function (allThreshold){
+                        return defer.resolve(allThreshold)
+                    })
+                }
+            })
 
+        });
+        return defer.promise;
+    }
 
 };

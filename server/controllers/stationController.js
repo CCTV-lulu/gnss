@@ -418,6 +418,18 @@ function setStaThreshold(req, res) {
     })
 
 }
+function removeConfig(req,res) {
+    var thresholdInfo = req.body;
+    StationConfig.removeConfig(thresholdInfo.staId,thresholdInfo.signal).then(function (result) {
+        if (result.status) {
+            StationSocketStatus.setConfig(thresholdInfo.staId)
+            res.send(result);
+        }
+    },function (err) {
+        console.log('--------err')
+    })
+
+}
 
 function setStaHandleData(req, res) {
     var thresholdInfo = req.body;
@@ -555,6 +567,7 @@ module.exports = {
     //downloadStaData: downloadStaData,
     getStaThreshold: getStaThreshold,
     setStaThreshold: setStaThreshold,
+    removeConfig: removeConfig,
 
     setStaHandleData:setStaHandleData,
     getStaHandleData:getStaHandleData,

@@ -83,7 +83,7 @@ function saveStaInfo(data) {
        Object.keys(data.posR).forEach(function(sys){
            stats.push(data.posR[sys].stat)
        })
-        console.log(stats)
+        // console.log(stats)
        if(stats.length==4&&stats.indexOf(0)==-1){
            updataRb(data.station_id,data)
        }
@@ -172,6 +172,14 @@ function update(stationName){
     upDataRbStatus[stationName] = true;
 }
 
+
+
+function setConfig( stationName){
+      setTimeout(function(){
+            update(stationName)
+        },1000*60*60)
+}
+
 function initSockectServer() {
 
     io.on('connection', function (socket) {
@@ -181,9 +189,7 @@ function initSockectServer() {
             StationSocketStatus[stationName] = false
         });
 
-        setTimeout(function(){
-            update(stationName)
-        },1000*60*60)
+        setConfig(stationName)
 
         StationSocketStatus[stationName] = true;
         socket.on('' + stationName, function (data) {
@@ -306,7 +312,8 @@ module.exports = {
     getStatInfo: getStatInfo,
     initSockectServer: initSockectServer,
     initSockectClinet: initSockectClinet,
-    initStationOpt: initStationOpt
+    initStationOpt: initStationOpt,
+    setConfig:setConfig
 };
 
 
