@@ -65,10 +65,10 @@ function saveStartLog(isHandle,logRecord) {
     if (isHandle) {
         info = logRecord.infos.pop()
     }
-    lock.lock('logRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
+    lock.lock('firstlogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
         if (err) return
         fs.writeFileSync('logRecord.json', JSON.stringify(logRecord))
-        lock.unlock('logRecord.lock',function (err) {
+        lock.unlock('firstlogRecord.lock',function (err) {
         })
     })
 
