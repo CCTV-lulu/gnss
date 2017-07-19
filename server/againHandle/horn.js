@@ -93,16 +93,14 @@ function getLogRecord(cb) {
 function getLoginfo(cb) {
     var logRecord = {"status": false, "infos": []}
     var logFile;
-    fs.readdir(cwd + "/logs",function (err,files) {
+    fs.readdir('/gnss1' + "/logs",function (err,files) {
         if(err){
             return
         }
         files.forEach(function (filename) {
 
             // if((filename.split('.')[0]==='beijing-thu')===true)
-            if(filename.split('.')[0]==='hangkeyuan-06'||filename.split('.')[0]==='hangkeyuan-07'||filename.split('.')[0]==='hangkeyuan-08'||
-            filename.split('.')[0]==='hangkeyuan-09'||filename.split('.')[0]==='hangkeyuan-10'||filename.split('.')[0]==='hangkeyuan-11'||
-            filename.split('.')[0]==='hangkeyuan-12')
+            if(filename.split('.')[0]==='hangkeyuan-12')
             {
                 logRecord.infos.push({'cwd':'/gnss1', 'logResolvePath': '/gnss1/logs/'+filename, 'logPath':'/logs/'+filename})
             }

@@ -302,9 +302,9 @@ function handleDate(data, filter,config) {
             filter.sys.forEach(function (sys) {
                 var singalIndex = parseInt(sys);
                 var singal = signals[singalIndex];
-                var threshold =  config.threshold ||{};
+                var threshold =  config.handleData ||{};
                 var limit = threshold[sys]||{};
-                console.log(config)
+
                 var lineLimit = lineType == 'hpl_num' ? limit['HPL'] : limit['VPL'];
                 var line = getTimeLine(singal + lineType, data, singalIndex, lineType, lineLimit);
                 if (line === false) return;
