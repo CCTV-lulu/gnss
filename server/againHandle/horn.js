@@ -9,7 +9,8 @@ var readLine = require('linebyline')
 
 
 var MongoClient = require('mongodb').MongoClient;
-var DB_CONN_STR = 'mongodb://localhost:27017/wang'; //数据库名为wang
+var DB_CONN_STR = 'mongodb://root:123@localhost:27017/wang?authSource=admin';
+//数据库名为wang
 
 
 // var path = require('path');
@@ -77,10 +78,11 @@ function saveStartLog(isHandle,logRecord) {
 
 function getLogRecord(cb) {
     try {
-
+        console.log("---------------read1")
         cb(JSON.parse(fs.readFileSync('logRecord.json', {flag: 'r+', encoding: 'utf8'})))
 
     } catch (err) {
+        console.log('---------------read2')
         getLoginfo(function (result) {
             cb(result)
         })
@@ -106,6 +108,7 @@ function getLoginfo(cb) {
             }
 
         })
+        console.log("-----------write")
         fs.writeFileSync('logRecord.json', JSON.stringify(logRecord))
         var logFile = JSON.parse(fs.readFileSync('logRecord.json', {flag: 'r+', encoding: 'utf8'}))
         cb(logFile)
@@ -123,11 +126,13 @@ function startHandleLogFile() {
         getLogRecord(function(result){
         handleLogFile(result)
     })
-    }, 1000)
+    }, 30*1000)
 }
 
 function handleLogFile(logRecord) {
+    console.log("-------------start")
     if (logRecord.status)  return;
+    console.log(logRecord)
     var info = saveStartLog(true,logRecord)
     if (info) {
         // removeOverTimeDate(info.logPath.split('/').pop())
@@ -189,6 +194,7 @@ function getStaData(cwd, logResolvePath, log_path, cb) {
     var dataPath = cwd + '/data/' + log_path.split('/').pop().replace('log-', 'data-');
     var allData = [];
     var rl = readLine(logResolvePath);
+    console.log('-------------start getSTART')
     rl.on('line', function (line, idx) {
         var send = line.replace(/" "/g, "").replace(/:/g, "");
         var sendInfo = send.split("'");
@@ -279,6 +285,8 @@ function followProcess(cwd, dataPath, cb) {
     }
 
     findByStaId(stationId,function (result) {
+        console.log('-------------------find config')
+        console.log(result)
         var parse = require('../canavprocess/follow_process.js');
 
         if (result.status) {
