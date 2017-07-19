@@ -12,7 +12,9 @@ var MongoClient = require('mongodb').MongoClient;
 var DB_CONN_STR = 'mongodb://localhost:27017/wang'; //数据库名为wang
 
 
-var cwd="/home/lulu";
+// var path = require('path');
+// var cwd = path.resolve('/');
+var cwd = process.env.HOME || process.env.USERPROFILE
 // var logResolvePath="/home/lulu/logs/beijing-thu.log-2017-06-07";
 // var logPath="/logs/beijing-thu.log-2017-07"
 
@@ -55,72 +57,87 @@ function addLogResolve(cwd, logResolvePath, logPath,cb) {
 }
 
 
-function saveStartLog(isHandle) {
-    var logRecord = getLogRecord();
+function saveStartLog(isHandle,logRecord) {
+    // var logRecord = getLogRecord()
+    // console.log(logRecord)
     logRecord.status = isHandle;
     var info;
     if (isHandle) {
         info = logRecord.infos.pop()
-
     }
-
-    lock.lock('firstLogRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
+    lock.lock('logRecord.lock',{wait:100,retries:1,retryWait:100},function (err) {
         if (err) return
         fs.writeFileSync('logRecord.json', JSON.stringify(logRecord))
-        lock.unlock('firstLogRecord.lock',function (err) {
+        lock.unlock('logRecord.lock',function (err) {
         })
     })
-    // return !isHandle? null  : logRecord.infos[logRecord.infos.length-1]
 
     return info
 }
 
-function getLogRecord() {
+function getLogRecord(cb) {
     try {
-        return JSON.parse(fs.readFileSync('logRecord.json', {flag: 'r+', encoding: 'utf8'}))
 
+        cb(JSON.parse(fs.readFileSync('logRecord.json', {flag: 'r+', encoding: 'utf8'})))
 
     } catch (err) {
-
-        return {"status": false, "infos": []}
+        getLoginfo(function (result) {
+            cb(result)
+        })
     }
 
+    // return JSON.parse(fs.readFileSync('logRecord.json', {flag: 'r+', encoding: 'utf8'}))
+}
+
+
+function getLoginfo(cb) {
+    var logRecord = {"status": false, "infos": []}
+    var logFile;
+    fs.readdir(cwd + "/logs",function (err,files) {
+        if(err){
+            return
+        }
+        files.forEach(function (filename) {
+
+            // if((filename.split('.')[0]==='beijing-thu')===true)
+            if(filename.split('.')[0]==='hangkeyuan-06'||filename.split('.')[0]==='hangkeyuan-07'||filename.split('.')[0]==='hangkeyuan-08'||
+            filename.split('.')[0]==='hangkeyuan-09'||filename.split('.')[0]==='hangkeyuan-10'||filename.split('.')[0]==='hangkeyuan-11'||
+            filename.split('.')[0]==='hangkeyuan-12')
+            {
+                logRecord.infos.push({'cwd':'/gnss1', 'logResolvePath': '/gnss1/logs/'+filename, 'logPath':'/logs/'+filename})
+            }
+
+        })
+        fs.writeFileSync('logRecord.json', JSON.stringify(logRecord))
+        var logFile = JSON.parse(fs.readFileSync('logRecord.json', {flag: 'r+', encoding: 'utf8'}))
+        cb(logFile)
+    })
 
 }
-// var file=JSON.parse(fs.readFileSync("./logRecord.json",{flag: 'r+', encoding: 'utf8'}))
-// file.infos.forEach(function (path) {
-//     addLogResolve("/home/lulu", path.logResolvePath,path.logPath,function(result){
-//
-//                 if(result.status){
-//                  console.log('ok')
-//                 }
-//
-//
-//             })
-// })
-
 
 startHandleLogFile()
 
 function startHandleLogFile() {
     // saveStartLog(false)
-    handleLogFile()
+    // handleLogFile()
+
     setInterval(function () {
-        handleLogFile()
-    }, 1000*60*2)
+        getLogRecord(function(result){
+        handleLogFile(result)
+    })
+    }, 1000)
 }
 
-function handleLogFile() {
-    var logRecord = getLogRecord();
+function handleLogFile(logRecord) {
     if (logRecord.status)  return;
-    var info = saveStartLog(true)
+    var info = saveStartLog(true,logRecord)
     if (info) {
-        removeOverTimeDate(info.logPath.split('/').pop())
+        // removeOverTimeDate(info.logPath.split('/').pop())
         console.log(info.cwd+ '=-======='+info.logResolvePath+ '=-======='+info.logPath)
 
         getStaData(info.cwd, info.logResolvePath, info.logPath, function () {
             console.log("+++++")
-            saveStartLog(false)
+            saveStartLog(false,logRecord)
         })
 
     }
@@ -131,7 +148,7 @@ function handleLogFile() {
 
 
 function removeOverTimeDate(originalname) {
-    fs.readdir(cwd + "/logs", function (err, files) {
+    fs.readdir('/gnss1' + "/logs", function (err, files) {
         if (err) {
             return
         }
@@ -274,7 +291,7 @@ function followProcess(cwd, dataPath, cb) {
                 var data;
                 while (null != (data = stream.read(len))) {
                     var logpos = parse.parser_pos(data);
-                    console.log('------------------')
+                    // console.log('------------------')
                     logpos.forEach(function (log) {
                         var obj = {"time": log.time, "data": log.posR};
                         fwrite.write(JSON.stringify(obj) + os.EOL);
