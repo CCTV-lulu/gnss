@@ -257,7 +257,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 return batchProcessErr();
             }
             if (data.result.isRunning === -2) {
-                return batchProcessErr('正在预处理，请稍后重试');
+                return batchProcessErr();
+                // return batchProcessErr('正在预处理，请稍后重试');
             }
             var username = data.result.userName
             //$interval.cancel(getBatchDataPolling);
