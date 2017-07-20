@@ -77,7 +77,7 @@ function getDateFromLog(cwd, logResolvePath, cb) {
 
 process.on('message', function (message) {
     if (message == 'close') {
-        return process.exit()
+        return process.exit(1)
     }
     if (message.status === 'handleData') {
 

@@ -403,7 +403,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                     }
                 }
             },
-            series: series
+            series: series,
+             yAxis: {
+                min: 0,
+                max: 1,
+                title: {
+                    text: ''
+                }
+            },
         })
     }
 
@@ -488,7 +495,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                     }
                 }
             },
-            series: series
+            series: series,
+             yAxis: {
+                min: 0,
+                max: 1,
+                title: {
+                    text: ''
+                }
+            },
         })
     }
 
@@ -573,11 +587,13 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                     }
                 }
             },
-            //xAxis: {
-            //    type: 'category',
-            //    tickWidth: 10
-            //
-            //},
+             yAxis: {
+                min: 0,
+                max: 1,
+                title: {
+                    text: ''
+                }
+            },
             series: series
         })
     }
@@ -628,7 +644,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         if (series.length == 0) return;
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        $('#' + type + '_container').show();
+        // $('#' + type + '_container').show();
         $('#' + type).highcharts({
             chart: {
                 type: 'column'

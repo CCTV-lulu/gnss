@@ -117,6 +117,8 @@ LogProcess.prototype.init = function () {
 };
 LogProcess.prototype.start = function () {
     var self = this;
+    var logRecord = self.getLogRecord();
+    logRecord.status =false;
     setInterval(function () {
         self.handleData()
     }, 1000 * 10)
@@ -166,13 +168,18 @@ LogProcess.prototype.handleLogToData = function (logPath, cb) {
         if (message == 0) {
 
         } else {
-            self.handleLogToData(logPath)
+            var logRecord = self.getLogRecord();
+            logRecord.status =false;
+            logRecord.infos.unshift(logRecord.infos.pop())
+            fs.writeFileSync(self.logSaveFile, JSON.stringify(logRecord));
+            // self.handleLogToData(logPath)
         }
     });
     batchChildProcess.send({logPath: logPath,cwd:cwd})
 
 };
 LogProcess.prototype.handleFollowData = function (dataPath, cb) {
+    var self = this;
     var child = child_process.fork('./server/service/handleProcess/handleFollowData.js');
     child.on('message', function (message) {
         if (message.status === 'endOne') {
@@ -181,8 +188,13 @@ LogProcess.prototype.handleFollowData = function (dataPath, cb) {
     });
     child.on('close', function (message) {
         if (message !== 2) {
+            var logRecord = self.getLogRecord();
+            logRecord.status =false;
+            logRecord.infos.unshift(logRecord.infos.pop())
+            fs.writeFileSync(self.logSaveFile, JSON.stringify(logRecord));
             return cb({status: false})
         }
+
 
     });
     var stationInfo = dataPath.split('.data')[0].split('/');
