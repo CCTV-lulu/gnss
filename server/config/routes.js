@@ -50,7 +50,7 @@ module.exports = function (app) {
     /*================threshole*/
     app.get('/getStaThreshold', auth.isInRole('user'),controllers.station.getStaThreshold);
     app.post('/setStaThreshold', auth.isInRole('admin'),controllers.station.setStaThreshold);
-    app.post('/removeConfig',auth.isInRole('admin'),controllers.station.removeConfig);
+    // app.post('/removeConfig',auth.isInRole('admin'),controllers.station.removeConfig);
     /*====================Warning*/
     app.get('/getWarningInfo' ,auth.isInRole('user'),controllers.station.checkWarningStatus);
     app.post('/createWaring', auth.isInRole('user'), controllers.station.createWaring);

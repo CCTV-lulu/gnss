@@ -63,19 +63,19 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         DateTable.dateTable();
         $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
         $scope.option = {
-            sat_hist: true,
-            err_hist: true,
-            dop_hist: true,
-            PL_hist: true,
+            sat_hist: false,
+            err_hist: false,
+            dop_hist: false,
+            PL_hist: false,
             hpl_num: false,
             vpl_num: false
         };
 
         $scope.sys = {
-            'GPS': true,
-            'GLS': true,
-            'BDS': true,
-            'GROUP': true
+            'GPS': false,
+            'GLS': false,
+            'BDS': false,
+            'GROUP': false
         };
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
@@ -317,7 +317,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         showDop('Vdop', data, 'hdop_hist');
         showPL('VPL', data, 'vpl_hist');
         showPL('HPL', data, 'hpl_hist');
+
         showAvailability('content', data);
+
         showStaNum('StaNum', data);
 
     }
@@ -644,7 +646,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         if (series.length == 0) return;
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        // $('#' + type + '_container').show();
+        $('#' + type + '_container').show();
         $('#' + type).highcharts({
             chart: {
                 type: 'column'

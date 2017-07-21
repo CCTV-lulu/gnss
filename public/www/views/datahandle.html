@@ -2,12 +2,12 @@
 <div class="portlet box blue">
     <div class="portlet-title">
         <div class="caption">
-            <i class="icon-settings"></i>数据处理设置 </div>
-             <button style="float: right;margin: 10px 100px 0 0;background-color: #00B7FF;border: none;" ng-click="clearConfig()"> 重 置 基 坐 标 </button>
+            <i class="icon-settings"></i>基准点坐标设置 </div>
     </div>
     <div class="portlet-body form">
         <div class="form-horizontal">
             <div class="form-body">
+
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">基站名：</label>
                     <div class="col-md-5" >
@@ -16,94 +16,31 @@
                             <option ng-if="isAdmin" ng-repeat='blankStation in allStations' value={{blankStation.staId}} >{{blankStation.name}}</option>
                         </select>
                     </div>
-
-                    <!--</div>-->
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">信号类型：</label>
-                    <div class="col-md-5">
-                        <select id='signal' class='form-control select2' ng-model="signal" ng-change="getStationThreshold()">
-                            <option ng-repeat='(key, signal) in allSingal' value={{key}}>{{signal}}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">水平误差：</label>
-                    <div class="col-md-5">
-                        <input type="number" class="form-control" ng-model="threshold.dH"  ng-readonly="isReadonly" placeholder="max值">
-                    </div>
-
-
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">垂直误差：</label>
-                    <div class="col-md-5    ">
-                        <input type="number" class="form-control " ng-model="threshold.dV"  ng-readonly="isReadonly" placeholder="max值">
-                    </div>
-
-
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">HDOP：</label>
-                    <div class="col-md-5    ">
-                        <input type="number" class="form-control "ng-model="threshold.HDOP" ng-readonly="isReadonly" placeholder="max值">
-                    </div>
-
-
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">VDOP：</label>
-                    <div class="col-md-5    ">
-                        <input type="number" class="form-control " ng-model="threshold.VDOP"  ng-readonly="isReadonly" placeholder="max值">
-                    </div>
-
-
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">HPL：</label>
-                    <div class="col-md-5    ">
-                        <input type="number" class="form-control " ng-model="threshold.HPL"  ng-readonly="isReadonly" placeholder="max值">
-                    </div>
-
-
-                </div>
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">VPL：</label>
-                    <div class="col-md-5    ">
-                        <input type="number" class="form-control" ng-model="threshold.VPL"  ng-readonly="isReadonly" placeholder="max值">
-                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="col-lg-4 col-md-4 control-label">elmin：</label>
-                    <div class="col-md-5">
-                        <input type="number" class="form-control" ng-model="config.elmin"  ng-readonly="isReadonly" disabled="true">
-                    </div>
-
-
-                </div>
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">基准坐标X：</label>
                     <div class="col-md-5">
-                        <input type="number" class="form-control" ng-model="config.rb[0]"  ng-readonly="isReadonly" disabled="true">
+                        <input type="text" class="form-control" ng-model="config.rb[0]"  ng-readonly="isReadonly" >
                     </div>
-
-
+                    <span>。</span>
                 </div>
+
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">基准坐标Y：</label>
                     <div class="col-md-5">
-                        <input type="number" class="form-control" ng-model="config.rb[1]"  ng-readonly="isReadonly"  disabled="true">
+                        <input type="text" class="form-control" ng-model="config.rb[1]"  ng-readonly="isReadonly">
                     </div>
-
+                    <span>。</span>
                 </div>
+
                 <div class="form-group">
                     <label class="col-lg-4 col-md-4 control-label">基准坐标H：</label>
                     <div class="col-md-5">
-                        <input type="number" class="form-control" ng-model="config.rb[2]"  ng-readonly="isReadonly"  disabled="true">
+                        <input type="text" class="form-control" ng-model="config.rb[2]"  ng-readonly="isReadonly">
                     </div>
+                    <span>m</span>
                 </div>
-
                 <!--</div>-->
             </div>
             <div class="form-actions" ng-show="isAdmin">

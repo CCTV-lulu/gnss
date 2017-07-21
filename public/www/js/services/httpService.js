@@ -587,19 +587,12 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 cb(result)
             })
         }
-        function removeConfig(data,cb) {
-            httpRequest.post(url + "/removeConfig",data,function (result) {
-                console.log('---------result')
-                console.log(result)
-                cb(result)
-            })
-        }
         return {
             setThreshold: setThreshold,
             getThreshold: getThreshold,
             setHandleData:setHandleData,
             getHandleData:getHandleData,
-            removeConfig:removeConfig
+
         }
     })
     .factory('WarningCSV',function($http, $location, settingInfo, Prompt, Passport, httpRequest){

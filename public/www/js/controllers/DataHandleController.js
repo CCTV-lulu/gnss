@@ -95,23 +95,23 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
 
         })
     };
-    $scope.clearConfig = function () {
-        var data={
-            staId: $scope.station,
-            signal: $scope.signal,
-        }
-        Threshold.removeConfig(data,function(result){
-            if(result.status){
-                $scope.allThreshold = result.allThreshold;
-                showThreshold()
-                Prompt.promptBox('success','重置成功')
-            }else{
-
-                Prompt.promptBox('warning','请刷新')
-            }
-
-        })
-    }
+    // $scope.clearConfig = function () {
+    //     var data={
+    //         staId: $scope.station,
+    //         signal: $scope.signal,
+    //     }
+    //     Threshold.removeConfig(data,function(result){
+    //         if(result.status){
+    //             $scope.allThreshold = result.allThreshold;
+    //             showThreshold()
+    //             Prompt.promptBox('success','重置成功')
+    //         }else{
+    //
+    //             Prompt.promptBox('warning','请刷新')
+    //         }
+    //
+    //     })
+    // }
 
 
 

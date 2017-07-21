@@ -31,6 +31,18 @@
                 <span class="title">数据分析</span>
             </a>
         </li>
+
+        <li id="datahandle" class="nav-item">
+            <a ng-show="width"ng-click="dataConnect('datahandle')" data-toggle="collapse" data-target=".navbar-collapse">
+                <i class="icon-bulb"></i>
+                <span class="title">基准点坐标设置</span>
+            </a>
+            <a  ng-hide="width" ng-click="dataConnect('datahandle')" >
+                <i class="icon-bulb"></i>
+                <span class="title">基准点坐标设置</span>
+            </a>
+        </li>
+
         <li id="threshold" class="nav-item">
             <a ng-show="width"ng-click="dataConnect('threshold')" data-toggle="collapse" data-target=".navbar-collapse">
                 <i class="icon-bulb"></i>
@@ -41,14 +53,16 @@
                 <span class="title">阈值报警设置</span>
             </a>
         </li>
-         <li id="datahandle" class="nav-item">
-            <a ng-show="width"ng-click="dataConnect('datahandle')" data-toggle="collapse" data-target=".navbar-collapse">
-                <i class="icon-bulb"></i>
-                <span class="title">数据分析设置</span>
+
+        <li id="warning" class="nav-item" >
+            <a ng-show="width" ng-click="dataConnect('warning')" data-toggle="collapse" data-target=".navbar-collapse">
+                <i class="glyphicon-cloud"></i>
+                <span class="title">告警查询</span>
             </a>
-            <a  ng-hide="width" ng-click="dataConnect('datahandle')" >
-                <i class="icon-bulb"></i>
-                <span class="title">数据分析设置</span>
+
+            <a ng-hide="width" ng-click="dataConnect('warning')" >
+                <i class="glyphicon-cloud"></i>
+                <span class="title">告警查询</span>
             </a>
         </li>
         <li id="administrator" class="nav-item" >
@@ -62,17 +76,7 @@
                 <span class="title">用户设置</span>
             </a>
         </li>
-        <li id="warning" class="nav-item" >
-            <a ng-show="width" ng-click="dataConnect('warning')" data-toggle="collapse" data-target=".navbar-collapse">
-                <i class="glyphicon-cloud"></i>
-                <span class="title">告警查询</span>
-            </a>
 
-            <a ng-hide="width" ng-click="dataConnect('warning')" >
-                <i class="glyphicon-cloud"></i>
-                <span class="title">告警查询</span>
-            </a>
-        </li>
 
     </ul>
 

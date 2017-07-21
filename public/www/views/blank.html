@@ -54,6 +54,78 @@
 
     </div>
 </div>
+<div class="row">
+<div class="portlet box blue">
+    <div class="portlet-body form">
+        <div class="form-horizontal">
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">信号类型：</label>
+                    <div class="col-md-5">
+                        <select id='signal' class='form-control select2' ng-model="signal" ng-change="getStationThreshold()">
+                            <option ng-repeat='(key, signal) in allSingal' value={{key}}>{{signal}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">水平误差：</label>
+                    <div class="col-md-5">
+                        <input type="number" class="form-control" ng-model="threshold.dH"  ng-readonly="isReadonly" placeholder="max值">
+                    </div>
+
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">垂直误差：</label>
+                    <div class="col-md-5    ">
+                        <input type="number" class="form-control " ng-model="threshold.dV"  ng-readonly="isReadonly" placeholder="max值">
+                    </div>
+
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">HDOP：</label>
+                    <div class="col-md-5    ">
+                        <input type="number" class="form-control "ng-model="threshold.HDOP" ng-readonly="isReadonly" placeholder="max值">
+                    </div>
+
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">VDOP：</label>
+                    <div class="col-md-5    ">
+                        <input type="number" class="form-control " ng-model="threshold.VDOP"  ng-readonly="isReadonly" placeholder="max值">
+                    </div>
+
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">HPL：</label>
+                    <div class="col-md-5    ">
+                        <input type="number" class="form-control " ng-model="threshold.HPL"  ng-readonly="isReadonly" placeholder="max值">
+                    </div>
+
+
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-4 col-md-4 control-label">VPL：</label>
+                    <div class="col-md-5    ">
+                        <input type="number" class="form-control" ng-model="threshold.VPL"  ng-readonly="isReadonly" placeholder="max值">
+                    </div>
+                </div>
+                <div class="form-actions" ng-show="isAdmin">
+                <div class="row">
+                    <div class="col-lg-offset-5 col-md-offset-4">
+                        <button class="btn btn-circle green col-md-4" ng-click="commitThreshold()"> 保 存 </button>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <div id="dataStatisticsChartLoding" class="display-none" style="margin-left: 20px" >
     <img src="assets/img/loading.gif" alt="loading"/></div>
 <div class="row" id="dataStatisticsChart" style="opacity: 0">
