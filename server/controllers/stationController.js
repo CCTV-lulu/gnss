@@ -433,12 +433,11 @@ function setStaThreshold(req, res) {
 
 function setStaHandleData(req, res) {
     var thresholdInfo = req.body;
-    console.log(thresholdInfo.config)
     StationConfig.setStationHandleData(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.handleData,thresholdInfo.config).then(function (result) {
         if (result.status) {
             return res.send(result)
         }
-        StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
+        // StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
 
     })
 

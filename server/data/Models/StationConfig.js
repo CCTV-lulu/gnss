@@ -7,7 +7,8 @@ module.exports.init = function () {
         staId: String,
         config:Object,
         threshold: Object,
-        handleData:Object
+        handleData:Object,
+        rb:Object
     });
 
     stationConfigSchema.method({

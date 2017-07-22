@@ -167,17 +167,20 @@ module.exports = {
             var newHandleData = stationConfig.handleData || {};
             var newConfig = stationConfig.config||{};
             newHandleData[singal] = handleData;
-            newConfig.rb[parseInt(singal)]=config.rb;
+            newHandleData[singal].elmin = 5;
             var newRb=[];
-            Object.keys(config.rb).forEach(function (index) {
-                if (index==2){
+            if(config!=undefined){
+                Object.keys(config.rb).forEach(function (index) {
+                    if (index==2){
 
-                    newRb.push(parseFloat(config.rb[index]).toFixed(2))
-                }else {
-                    newRb.push(parseFloat(config.rb[index]).toFixed(7))
-                }
-            })
-            newConfig.rb=[newRb,newRb,newRb,newRb]
+                        newRb.push(parseFloat(config.rb[index]).toFixed(2))
+                    }else {
+                        newRb.push(parseFloat(config.rb[index]).toFixed(7))
+                    }
+                })
+                newConfig.rb=[newRb,newRb,newRb,newRb]
+            }
+
             StationConfig.update({staId: staId}, {$set: {handleData:newHandleData,config: newConfig}}, function (err) {
 
                 if (err) {

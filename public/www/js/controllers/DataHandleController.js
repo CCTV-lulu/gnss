@@ -49,13 +49,12 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
         })
     }
 
-    $scope.$watch('signal',function(signal){
-        if(!signal||!$scope.allThreshold) return;
-        showThreshold()
-        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
-    });
+    // $scope.$watch('signal',function(signal){
+    //     if(!signal||!$scope.allThreshold) return;
+    //     showThreshold()
+    //     //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+    // });
     $scope.$watch('station',function(station){
-        console.log(!station||!$scope.allThreshold)
         if(!station||!$scope.allThreshold) return;
         showThreshold()
         //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
@@ -66,7 +65,7 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
             $scope.isReadonly = false;
         }
 
-        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].handleData:{}
+        // $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].handleData:{}
         $scope.config=$scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].config:{}
         if(!$scope.isAdmin){
             $scope.isReadonly = true;
@@ -77,8 +76,8 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
     $scope.commitThreshold = function () {
         var data = {
             staId: $scope.station,
-            signal: $scope.signal,
-            handleData: $scope.threshold,
+            // signal: $scope.signal,
+            // handleData: $scope.threshold,
             config:$scope.config,
         };
         Threshold.setHandleData(data,function(allHandleData){

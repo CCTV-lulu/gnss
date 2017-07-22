@@ -9,6 +9,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     //getStation($rootScope.rootIsAdmin);
 
     init();
+    initThreshold()
 
     function getSingal() {
         var indexs = [];
@@ -305,7 +306,100 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         //}
 
     }
+    //开始配置阈值参数
+    function initThreshold(){
+        $scope.allSingal = {
+            2:'BDS',
+            0:'GPS',
+            1:'GLS',
+            3:'组合'
+        };
+        $scope.signal = '0';
+        getThreshold();
+        $scope.isAdmin = $rootScope.rootIsAdmin;
+        $rootScope.$watch('rootIsAdmin',function(rootIsAdmin){
+            $scope.isAdmin=rootIsAdmin;
+            getStation($scope.isAdmin)
+        });
+        getStation($scope.isAdmin);
+        $scope.isReadonly=false
 
+    }
+
+    function getStation(isAdmin){
+        if(isAdmin){
+            $scope.allStations = $rootScope.allStations;
+
+            $rootScope.$watch('allStations',function(allStations){
+                if(allStations==undefined) return;
+                $scope.allStations = allStations;
+                $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
+
+            });
+
+        }else{
+            $scope.station =$rootScope.stationId;
+            $scope.stationInfoId= $rootScope.stationId;
+            $scope.stationInfoName = $rootScope.stationName;
+
+        }
+    }
+    function getThreshold(){
+        Threshold.getHandleData(function(allThreshold){
+
+            $scope.allThreshold = allThreshold.allThreshold;
+            showThreshold()
+            //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+        })
+    }
+
+    $scope.$watch('signal',function(signal){
+        if(!signal||!$scope.allThreshold) return;
+        showThreshold()
+        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+    });
+    $scope.$watch('station',function(station){
+        if(!station||!$scope.allThreshold) return;
+        showThreshold()
+        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+    });
+
+    function showThreshold(){
+        if(!$scope.isAdmin){
+            $scope.isReadonly = false;
+        }
+
+        $scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].handleData:{}
+        // $scope.config=$scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].config:{}
+        if(!$scope.isAdmin){
+            $scope.isReadonly = true;
+        }
+
+    }
+
+    $scope.commitThreshold = function () {
+        var data = {
+            staId: $scope.station,
+            signal: $scope.signal,
+            handleData: $scope.threshold,
+            // config:$scope.config,
+        };
+        Threshold.setHandleData(data,function(allHandleData){
+
+            if(allHandleData.status){
+                $scope.allThreshold = allHandleData.allThreshold;
+
+                showThreshold()
+                Prompt.promptBox('success','保存成功')
+            }else{
+
+                Prompt.promptBox('warning','请刷新')
+            }
+
+        })
+    };
+
+    //结束配置阈值参数
 
     function showResult(data, username) {
         $('#dataStatisticsChartLoding').hide();
@@ -328,7 +422,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSErrHist', 'GLSErrHist', 'BDSErrHist', 'GroupErrHist'];
+        var names = ['GPSERRHIST', 'GLSERRHIST', 'BDSERRHIST', 'GROUPERRHIST'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
@@ -345,6 +439,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
+        series.push({name:"VDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+        series.push({name:"HDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -401,7 +497,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             xAxis: {
                 labels: {
                     formatter: function () {
-                        return this.value + 'm';
+                        return this.value;
                     }
                 }
             },
@@ -421,7 +517,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSDop', 'GLSDop', 'BDSDop', 'GroupDop'];
+        var names = ['GPSDOP', 'GLSDOP', 'BDSDOP', 'GROUPDOP'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
@@ -438,6 +534,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         });
         if (series.length == 0) return;
+        series.push({name:"VDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+        series.push({name:"HDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
         $('#' + type + '_container').show();
         Highcharts.setOptions({
             lang: {
@@ -493,7 +591,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             xAxis: {
                 labels: {
                     formatter: function () {
-                        return this.value + 'm';
+                        return this.value;
                     }
                 }
             },
@@ -529,6 +627,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
+        series.push({name:"VDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+        series.push({name:"HDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -585,7 +685,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             xAxis: {
                 labels: {
                     formatter: function () {
-                        return this.value + 'm';
+                        return this.value ;
                     }
                 }
             },
@@ -601,7 +701,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     function showTime(data, username) {
-        var signals = ['GPS', 'GLS', 'BDS', 'Group'];
+        var signals = ['GPS', 'GLS', 'BDS', 'GROUP'];
         for (var sys in data) {
             var sysIndex = parseInt(sys);
             if (data[sys].up_slice.vpl_num == 1) {
@@ -630,7 +730,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function showStaNum(type, data) {
         //var showData = data[type];
-        var names = ['GPSStaNum', 'GLSStaNum', 'BDSStaNum', 'GroupStaNum'];
+        var names = ['GPSSTANUM', 'GLSSTANUM', 'BDSSTANUM', 'GROUPSTANUM'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {

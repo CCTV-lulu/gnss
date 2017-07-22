@@ -189,7 +189,7 @@ function initSockectServer() {
             StationSocketStatus[stationName] = false
         });
 
-        setConfig(stationName)
+        // setConfig(stationName)
 
         StationSocketStatus[stationName] = true;
         socket.on('' + stationName, function (data) {
@@ -313,7 +313,7 @@ module.exports = {
     initSockectServer: initSockectServer,
     initSockectClinet: initSockectClinet,
     initStationOpt: initStationOpt,
-    setConfig:setConfig
+    // setConfig:setConfig
 };
 
 

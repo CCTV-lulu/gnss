@@ -121,7 +121,7 @@ MetronicApp.controller('HeaderController',
                             $rootScope.stationId = currentStationInfo.realTimeStation.staId
                         }
                         if ($location.path() == '/stardata') {
-                            $rootScope.stationId = currentStationInfo.originStation.staId
+                            $rootScope.stationId = currentStationInfo.realTimeStation.staId
                         }
                         $scope.realTimeStation = currentStationInfo.realTimeStation.name;
                         $scope.originStation = currentStationInfo.originStation.name;
@@ -230,7 +230,7 @@ MetronicApp.controller('HeaderController',
                 }
 
                 if (!originStationStatus) {
-                    currentInfo.originStation = {
+                    currentInfo.realTimeStation = {
                         name: stations[0].name,
                         staId: stations[0].staId
                     }
