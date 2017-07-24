@@ -52,6 +52,13 @@
 
         </div>
 
+        <div id='coordinate' class="col-md-12 col-xs-12 col-sm-12">
+            <label>基准坐标选项: </label>
+            <input type="checkbox" name="longitude" ng-checked="{{coordinate['longitude']}}"> 经度
+            <input type="checkbox" name="latitude"  ng-checked="{{coordinate['latitude']}}"> 纬度
+            <input type="checkbox" name="Altitude" ng-checked="{{coordinate['Altitude']}}"> 高程
+        </div>
+
     </div>
     <div class="portlet-body form">
         <div class="form-horizontal" >
