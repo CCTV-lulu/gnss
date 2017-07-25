@@ -199,7 +199,7 @@ function estpos(obs, rs, dts,vars, svh, nav,opt,NX ,sol, vsat,azel,vare,H,v,sst)
                 H[j][k]=Ht[j][k];
         }*/
 
-        for(j=0;j<Ht.length;j++)H[j]=Ht[j];
+        //for(j=0;j<Ht.length;j++)H[j]=Ht[j];
         if (nv<nx) {
             break;
         }
@@ -252,6 +252,7 @@ function estpos(obs, rs, dts,vars, svh, nav,opt,NX ,sol, vsat,azel,vare,H,v,sst)
             for(j=NX-1;j>=nx;j--)H.splice(j,1);
             for(j=0;j<nv;j++){v[j]=vt[j];vare[j]=vart[j];sst[j]=sstt[j];};
             valsol_m(azel,vsat,obs.length,opt,vt,nv,4,sol.dop);
+            H2enu(H,Ht,sol.rr);
             return 0;
         }
     }
@@ -273,8 +274,28 @@ function estpos(obs, rs, dts,vars, svh, nav,opt,NX ,sol, vsat,azel,vare,H,v,sst)
         sol.svh=svh;
         for(j=0;j<nv;j++){v[j]=vt[j];vare[j]=vart[j];sst[j]=sstt[j];};
         valsol_m(azel,vsat,obs.length,opt,vt,nv,4,sol.dop);
+        H2enu(H,Ht,sol.rr);
     }
     return 1;
+}
+function H2enu(H,Ht,rr) {
+    var nx=Ht.length;
+    var He,F=new Array(nx),E=[],pos=new Array(3),j,k;
+    cmn.ecef2pos(rr,pos);
+    cmn.xyz2enu(pos,E);
+    for(j=0;j<nx;j++){
+        F[j]=new Array(nx);
+        for(k=0;k<nx;k++){
+            F[j][k]=j==k?1.0:0;
+        }
+    }
+    for(j=0;j<3;j++){
+        for(k=0;k<3;k++){
+            F[j][k]=E[j][k];
+        }
+    }
+    He=math.multiply(F,Ht);
+    for(j=0;j<nx;j++)H[j]=He[j];
 }
 function raim_fde(obs,rs,dts,vars,svh,nav,opt,NX,sol,vsat,azel,vare,H,v,sst){
     var info,i,j,p;

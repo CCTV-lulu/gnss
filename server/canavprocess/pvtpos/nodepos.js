@@ -88,8 +88,8 @@ function sol_create(){        /* solution type */
     this.qr={};
     this.ns=0;   /* number of valid satellites */
     this.dop=[0,0,0,0];
-    this.HPL=0;
-    this.VPL=0;
+    this.HPL=null;
+    this.VPL=null;
     this.ex="";
     this.azel=new Array();
     this.resp=new Array();
@@ -202,7 +202,7 @@ function posPara_create(prcopt) {
     this.ele=new ele_create();
     this.prcopt=new prcopt_create(prcopt);
     this.sol={};
-    this.lowpass={};
+    //this.lowpass={};
 };module.exports.posPara_create=posPara_create;
 //实时定位中间结果暂存对象构建
 function posMiddle_create() {
@@ -270,11 +270,11 @@ function posParainit(sta_id,para) {
         /*para.sol[ca.SYS_GPS].rr=posInit[sta_id].rr[ca.SYS_GPS];
         para.sol[ca.SYS_GLO].rr=posInit[sta_id].rr[ca.SYS_GLO];
         para.sol[ca.SYS_CMP].rr=posInit[sta_id].rr[ca.SYS_CMP];
-        para.sol[ca.SYS_ALL].rr=posInit[sta_id].rr[ca.SYS_ALL];*/
+        para.sol[ca.SYS_ALL].rr=posInit[sta_id].rr[ca.SYS_ALL];
         para.lowpass[ca.SYS_GPS]=new lowpass_create();
         para.lowpass[ca.SYS_GLO]=new lowpass_create();
         para.lowpass[ca.SYS_CMP]=new lowpass_create();
-        para.lowpass[ca.SYS_ALL]=new lowpass_create();
+        para.lowpass[ca.SYS_ALL]=new lowpass_create();*/
     }
     catch(err) {
         console.log(err);
@@ -843,7 +843,7 @@ function posShowStruct(para,sys,logjson) {
     var enu=[0,0,0];
     var rd=[0,0,0];
     var rb=[0,0,0];
-    var lowpass=para.lowpass[sys];
+    //var lowpass=para.lowpass[sys];
     var sol=para.sol[sys];
     var obs=para.obs[sys];
     var prcopt=para.prcopt;
@@ -864,44 +864,35 @@ function posShowStruct(para,sys,logjson) {
     posR.week = ws[0];
     posR.tow = ws[1];
     posR.time = time;
-    if(sol.stat) {
-        if(prcopt.isrb[sys]){
-            rb[0] = prcopt.rb[sys][0];
-            rb[1] = prcopt.rb[sys][1];
-            rb[2] = prcopt.rb[sys][2];
-        }
-        else{
-            if(sol.HPL<opt.HAL){
-                calc_lowpass(lowpass,prcopt.rbinit[sys],sol.rr);
-                rb[0]=lowpass.X.ave;
-                rb[1]=lowpass.Y.ave;
-                rb[2]=lowpass.Z.ave;
-            }
-            else if(lowpass.Xa.length==0){
-                rb[0]=sol.rr[0];
-                rb[1]=sol.rr[1];
-                rb[2]=sol.rr[2];
-            }
-            else{
-                rb[0]=lowpass.X.ave;
-                rb[1]=lowpass.Y.ave;
-                rb[2]=lowpass.Z.ave;
-            }
-        }
+    if(prcopt.rb!=0){
+        rb[0]=prcopt.rb[0];
+        rb[1]=prcopt.rb[1];
+        rb[2]=prcopt.rb[2];
+
+        rd[0] = sol.rr[0] - rb[0];
+        rd[1] = sol.rr[1] - rb[1];
+        rd[2] = sol.rr[2] - rb[2];
+        cmn.ecef2pos(rb, pos);
+        cmn.ecef2enu(pos, rd, enu);
+        posR.dX =enu[0];
+        posR.dY =enu[1];
+        posR.dZ =enu[2];
+        posR.dH=math.sqrt(posR.dX*posR.dX+posR.dY*posR.dY);
+        posR.dV=math.abs(posR.dZ);
+        posR.basecoord[0]=rb[0];
+        posR.basecoord[1]=rb[1];
+        posR.basecoord[2]=rb[2];
     }
-    posR.basecoord[0]=rb[0];
-    posR.basecoord[1]=rb[1];
-    posR.basecoord[2]=rb[2];
-    cmn.ecef2pos(rb, pos);
-    rd[0] = sol.rr[0] - rb[0];
-    rd[1] = sol.rr[1] - rb[1];
-    rd[2] = sol.rr[2] - rb[2];
-    cmn.ecef2enu(pos, rd, enu);
-    posR.dX =enu[0];
-    posR.dY =enu[1];
-    posR.dZ =enu[2];
-    posR.dH=math.sqrt(posR.dX*posR.dX+posR.dY*posR.dY);
-    posR.dV=math.abs(posR.dZ);
+    else{
+        posR.dX =null;
+        posR.dY =null;
+        posR.dZ =null;
+        posR.dH=null;
+        posR.dV=null;
+        posR.basecoord[0]=null;
+        posR.basecoord[1]=null;
+        posR.basecoord[2]=null;
+    }
     posR.VPL = sol.VPL;
     posR.HPL = sol.HPL;
     posR.exsats = sol.ex;
@@ -930,6 +921,8 @@ function satShowStruct(obs,nav,sol,logjson) {
             ob.Ele = sol.azel[1 + i * 2]*ca.R2D;
         //}
         if(ob.sys==ca.SYS_GPS){
+            ob.rura=undefined;
+            ob.udre=undefined;
             if(nav.ura_gps[ob.sat-1]!=undefined){
                 ob.ura=nav.ura_gps[ob.sat-1].ura;
             }
@@ -940,6 +933,9 @@ function satShowStruct(obs,nav,sol,logjson) {
             time=time2string(obs[i].time);
         }
         else if(ob.sys==ca.SYS_GLO){
+            ob.ura=undefined;
+            ob.rura=undefined;
+            ob.udre=undefined;
             if(nav.geph[ob.sat-1]!=undefined){
                 ob.svh=nav.geph[ob.sat-1].svh;
                 //ob.ura=para.nav.geph[ob.sat-1].sva;
@@ -982,7 +978,7 @@ function  posOutStruct(para,sys,logjson) {
     var enu=[0,0,0];
     var rd=[0,0,0];
     var rb=[0,0,0];
-    var lowpass=para.lowpass[sys];
+    //var lowpass=para.lowpass[sys];
     var sol=para.sol[sys];
     var obs=para.obs[sys];
     var prcopt=para.prcopt;
@@ -1012,43 +1008,33 @@ function  posOutStruct(para,sys,logjson) {
     posR.VDOP = sol.dop[3];
     posR.stat=sol.stat;
     posR.minEl=prcopt.elmin[sys];
-    if(sol.stat) {
-        if(prcopt.isrb[sys]){
-            rb[0] = prcopt.rb[sys][0];
-            rb[1] = prcopt.rb[sys][1];
-            rb[2] = prcopt.rb[sys][2];
-        }
-        else{
-            if(sol.HPL<opt.HAL){
-                calc_lowpass(lowpass,prcopt.rbinit[sys],sol.rr);
-                rb[0]=lowpass.X.ave;
-                rb[1]=lowpass.Y.ave;
-                rb[2]=lowpass.Z.ave;
-            }
-            else if(lowpass.Xa.length==0){
-                rb[0]=sol.rr[0];
-                rb[1]=sol.rr[1];
-                rb[2]=sol.rr[2];
-            }
-            else{
-                rb[0]=lowpass.X.ave;
-                rb[1]=lowpass.Y.ave;
-                rb[2]=lowpass.Z.ave;
-            }
-        }
+    if(prcopt.rb!=0){
+        rb[0]=prcopt.rb[0];
+        rb[1]=prcopt.rb[1];
+        rb[2]=prcopt.rb[2];
+
+        rd[0] = sol.rr[0] - rb[0];
+        rd[1] = sol.rr[1] - rb[1];
+        rd[2] = sol.rr[2] - rb[2];
+        cmn.ecef2pos(rb, pos);
+        cmn.ecef2enu(pos, rd, enu);
+        posR.dX =enu[0];
+        posR.dY =enu[1];
+        posR.dZ =enu[2];
+        posR.dH=math.sqrt(posR.dX*posR.dX+posR.dY*posR.dY);
+        posR.dV=math.abs(posR.dZ);
     }
-    cmn.ecef2pos(rb, pos);
+    else{
+        posR.dX =null;
+        posR.dY =null;
+        posR.dZ =null;
+        posR.dH=null;
+        posR.dV=null;
+    }
+    cmn.ecef2pos(sol.rr, pos);
     posR.Lat = pos[0]*ca.R2D;
     posR.Lon = pos[1]*ca.R2D;
     posR.H = pos[2];
-    rd[0] = sol.rr[0] - rb[0];
-    rd[1] = sol.rr[1] - rb[1];
-    rd[2] = sol.rr[2] - rb[2];
-    cmn.ecef2enu(pos, rd, enu);
-    posR.dX = enu[0];
-    posR.dY = enu[1];
-    posR.dZ = enu[2];
-    cmn.ecef2pos(sol.rr, pos);
 
     posR.posNum = sol.ns;
     posR.navsys=sol.navsys;

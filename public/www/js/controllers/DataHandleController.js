@@ -70,9 +70,8 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
         if(!$scope.isAdmin){
             $scope.isReadonly = true;
         }
-
     }
-    $scope.$watch()
+
 
     $scope.commitThreshold = function () {
         var data = {

@@ -23,7 +23,6 @@ function timeset(time) {
     return cmn.epoch2time(ep);
 };
 
-
 function cont_create() {
     this.lastTime=0;
     this.beginTime=0;
@@ -121,17 +120,28 @@ function upsliceUpdate(time,dd,para,cont) {
     }
 }
 function integrity_strunt(posR,hist,para,cont) {
-    var dH = math.sqrt(posR.dX * posR.dX + posR.dY * posR.dY);
-    var dV = math.abs(posR.dZ);
+    //var dH = math.sqrt(posR.dX * posR.dX + posR.dY * posR.dY);
+    //var dV = math.abs(posR.dZ);
+    var dH = posR.dH;
+    var dV = posR.dV;
     var haserr=0;
     var time = posR.time;
     var fail=new fail_create();
+    if(posR.HPL==null || posR.VPL==null)
+        return;
+    if(para.rb_lowpass>0){
+        if(posR.HPL<hist.HAL){
+            cmn.lowpass_add(cont.rb_lowpass[0],posR.X);
+            cmn.lowpass_add(cont.rb_lowpass[1],posR.Y);
+            cmn.lowpass_add(cont.rb_lowpass[2],posR.Z);
+        }
+    }
     fail.startTime=time;
     if (posR.posNum <= posR.navsys.length + 3) {
         fail.type.push(opt.hpl_cant);
         haserr=1;
     }
-    if (dH >= hist.Her) {
+    if (dH!=null && dH >= hist.Her) {
         fail.type.push(opt.her_exceed);
         haserr=1;
     }
@@ -142,23 +152,25 @@ function integrity_strunt(posR,hist,para,cont) {
     if(fail.type.length>0){
         cont.integrity.push(fail);
     }
-    /*if(haserr>0){
-        return ;
-    }*/
-    if(para.err_hist>0){
-        if(dH>opt.HAL){
-            accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, opt.HAL);
-        }
-         else{
-            accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, dH);
-        }
-        if(dV>opt.VAL){
-            accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, opt.VAL);
-        }
-        else{
-            accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, dV);
-        }
+    cont.len++;
 
+    if(para.err_hist>0){
+        if(dH!=null){
+            if(dH>opt.HAL){
+                accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, opt.HAL);
+            }
+            else{
+                accuracyUpdate(cont.herr_hist.X, cont.herr_hist.Y,hist.section, dH);
+            }
+        }
+        if(dV!=null){
+            if(dV>opt.VAL){
+                accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, opt.VAL);
+            }
+            else{
+                accuracyUpdate(cont.verr_hist.X, cont.verr_hist.Y,hist.section, dV);
+            }
+        }
     }
     if(para.dop_hist>0){
         if(posR.HDOP>opt.HDOP){
@@ -179,10 +191,12 @@ function integrity_strunt(posR,hist,para,cont) {
         arrayUpdate(cont.sat_hist.X, cont.sat_hist.Y,1, posR.posNum);
     }
     if(para.acc95>0){
-        cont.acc95_h.push(dH);
-        cont.acc95_v.push(dV);
-        //acc95_postUpdate(cont.acc95_h, dH);
-        //acc95_postUpdate(cont.acc95_v, dV);
+        if(dH!=null){
+            cont.acc95_h.push(dH);
+        }
+        if(dV!=null){
+            cont.acc95_v.push(dV);
+        }
     }
     if(para.PL_hist>0){
         if(posR.HPL>opt.HAL){
@@ -198,6 +212,7 @@ function integrity_strunt(posR,hist,para,cont) {
             arrayUpdate(cont.vpl_hist.X, cont.vpl_hist.Y,hist.section, posR.VPL);
         }
     }
+
 
     if(para.slice.sat_num.flag>0 && cont.slice.sat_num.X.length<=hist.lastlen){
         sliceUpdate(time,posR.ns,para.slice.sat_num,cont.slice.sat_num);

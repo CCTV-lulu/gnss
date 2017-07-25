@@ -18,13 +18,7 @@ var config = {
     "ionoopt": 1,
     "tropopt": 1,
     "rbinit": [300, 300, 300, 300],
-    "isrb": [0, 0, 0, 0],
-    "rb":[
-        [],
-        [],
-        [],
-        []
-    ],
+    "rb":0,
     "mul_vare": 5,
     "init_vare": 100,
     "exsats": [
@@ -58,7 +52,7 @@ function handleAllThreshold(allConfig) {
         var config = {};
         oneConfig.config.elmin.forEach(function (oneElmin,index) {
             config[index.toString()] = {}
-            config[index.toString()].config = {elmin:oneElmin, rb: oneConfig.config.rb[index]}
+            config[index.toString()].config = {elmin:oneElmin, rb: oneConfig.config.rb}
         })
         Object.keys(config).forEach(function(sys){
             config[sys].threshold = oneConfig.threshold ? oneConfig.threshold[sys]:{}
@@ -134,6 +128,8 @@ module.exports = {
             var newThreshold = stationConfig.threshold || {};
             newThreshold[singal] = threshold;
             var newConfig = stationConfig.config||{};
+            console.log('------------config')
+            console.log(newConfig)
             newConfig.elmin[parseInt(singal)] = config.elmin;
             // newConfig.rb[parseInt(singal)]=config.rb;
 
@@ -163,11 +159,12 @@ module.exports = {
             if (!stationConfig) {
                 return defer.resolve({status: false, message: '请刷新'})
             }
-
-            var newHandleData = stationConfig.handleData || {};
             var newConfig = stationConfig.config||{};
-            newHandleData[singal] = handleData;
-            newHandleData[singal].elmin = 5;
+            var newHandleData = stationConfig.handleData || {};
+            if (handleData !=undefined){
+                newHandleData[singal] = handleData;
+                newHandleData[singal].elmin = 5;
+            }
             var newRb=[];
             if(config!=undefined){
                 Object.keys(config.rb).forEach(function (index) {
@@ -178,7 +175,7 @@ module.exports = {
                         newRb.push(parseFloat(config.rb[index]).toFixed(7))
                     }
                 })
-                newConfig.rb=[newRb,newRb,newRb,newRb]
+                newConfig.rb=newRb
             }
 
             StationConfig.update({staId: staId}, {$set: {handleData:newHandleData,config: newConfig}}, function (err) {

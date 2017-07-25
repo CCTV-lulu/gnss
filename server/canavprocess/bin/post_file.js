@@ -5,7 +5,7 @@ var cmn=require('../routes/comn');
 var opt=require('../config/optcomm.json');
 var readline=require('readline');
 var statis=require('../statistics_process');
-var test_file='/home/long/document/data/rover_20170704_log';
+var test_file='E:/nodejs/data/rover_20170723_log';
 
 var stream=fs.createReadStream(test_file);
 var readfile=new create_filestream(test_file);
@@ -22,6 +22,7 @@ function statis_option_create() {
     this.dop_hist=0;
     this.PL_hist=0;
     this.acc95=0;
+    this.rb_lowpass=0;
     this.slice=new function () {
         this.sat_num={"flag":0,"extre_min":0,"extre_max":0};
         this.her_num={"flag":0,"extre_min":0,"extre_max":0};
@@ -55,6 +56,7 @@ function option_init(option) {
     option.dop_hist=1;
     option.PL_hist=1;
     option.acc95=1;
+    option.rb_lowpass=1;
     option.slice.sat_num.flag=1;
     option.slice.sat_num.extre_min=1.0;
     option.slice.sat_num.extre_max=3.0;
@@ -101,8 +103,8 @@ function option_init(option) {
 }
 function satis_init(para) {
     para.id=0;
-    para.bt=cmn.epoch2time([2017,6,4,0,0,0]);
-    para.et=cmn.epoch2time([2017,6,4,23,59,59]);
+    para.bt=cmn.epoch2time([2017,6,23,0,0,0]);
+    para.et=cmn.epoch2time([2017,6,23,23,59,59]);
     para.hist[ca.SYS_GPS]=new hist_create();
     para.hist[ca.SYS_GLO]=new hist_create();
     para.hist[ca.SYS_CMP]=new hist_create();

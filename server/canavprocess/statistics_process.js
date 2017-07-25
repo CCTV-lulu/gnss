@@ -17,6 +17,7 @@ function acc95_create() {
     this.count=0;
 };
 function sta_result() {
+    this.len=0;
     this.sat_hist={"X":[],"Y":[]};
     this.herr_hist={"X":[],"Y":[]};
     this.verr_hist={"X":[],"Y":[]};
@@ -29,6 +30,7 @@ function sta_result() {
     this.integrity=[];
     this.continuity=1.0;
     this.availability=1.0;
+    this.rb_lowpass=[new ca.stats_t(),new ca.stats_t(),new ca.stats_t()];
     this.slice=new function () {
         this.sat_num={"flag":0,"X":[],"Y":[]};
         this.her_num={"flag":0,"X":[],"Y":[]};
@@ -82,30 +84,41 @@ module.exports.statistic_get=function () {
         var fails=outage_event(cont.integrity,hist);
         cont.continuity=get_continuity(fails,statistic_result[sys]);
         cont.availability=get_availability(fails,statistic_result[sys]);
-        cont.integrity=(cont.acc95_h.length-cont.integrity.length)/cont.acc95_h.length;
+        cont.integrity=(cont.len-cont.integrity.length)/cont.len;
 
         if(para.sat_hist>0){
             for(var i=0;i<cont.sat_hist.X.length;i++){
-                if(cont.sat_hist.X[i]==undefined){
-                    cont.sat_hist.X[i]=i;
-                    cont.sat_hist.Y[i]=0;
-                }
-                if(hist.vert_axis>0){
-                    cont.sat_hist.Y[i]=cont.sat_hist.Y[i]/cont.acc95_h.length;
+                if(cont.sat_hist.X[i]!=undefined){
+                    if(hist.vert_axis>0){
+                        cont.sat_hist.Y[i]=cont.sat_hist.Y[i]/cont.len;
+                    }
+                    //cont.sat_hist.X[i]=i;
+                    //cont.sat_hist.Y[i]=0;
                 }
             }
         }
         if(para.err_hist>0){
-            histUpdate(cont.herr_hist,hist,cont.acc95_h.length);
-            histUpdate(cont.verr_hist,hist,cont.acc95_h.length);
+            histUpdate(cont.herr_hist,hist,cont.len);
+            histUpdate(cont.verr_hist,hist,cont.len);
         }
         if(para.dop_hist>0){
-            histUpdate(cont.hdop_hist,hist,cont.acc95_h.length);
-            histUpdate(cont.vdop_hist,hist,cont.acc95_h.length);
+            histUpdate(cont.hdop_hist,hist,cont.len);
+            histUpdate(cont.vdop_hist,hist,cont.len);
         }
         if(para.PL_hist>0){
-            histUpdate(cont.hpl_hist,hist,cont.acc95_h.length);
-            histUpdate(cont.vpl_hist,hist,cont.acc95_h.length);
+            histUpdate(cont.hpl_hist,hist,cont.len);
+            histUpdate(cont.vpl_hist,hist,cont.len);
+        }
+        if(para.rb_lowpass>0){
+            if(cont.rb_lowpass[0].N==0){
+                cont.rb_lowpass[0]=null;
+            }
+            if(cont.rb_lowpass[1].N==0){
+                cont.rb_lowpass[1]=null;
+            }
+            if(cont.rb_lowpass[2].N==0){
+                cont.rb_lowpass[2]=null;
+            }
         }
         cont.slice.sat_num.flag=para.slice.sat_num.flag;
         cont.slice.her_num.flag=para.slice.her_num.flag;
@@ -166,13 +179,14 @@ function get_acc95(acc95) {
 }
 function histUpdate(stas,hist,count) {
     for(var i=0;i<stas.X.length;i++){
-        if(stas.X[i]==undefined){
-            stas.X[i]=i*hist.section;
-            stas.Y[i]=0;
+        if(stas.X[i]!=undefined){
+            if(hist.vert_axis>0){
+                stas.Y[i]=stas.Y[i]/count;
+            }
+            //stas.X[i]=i*hist.section;
+            //stas.Y[i]=0;
         }
-        if(hist.vert_axis>0){
-            stas.Y[i]=stas.Y[i]/count;
-        }
+
     }
 }
 function upslice(slice,len) {

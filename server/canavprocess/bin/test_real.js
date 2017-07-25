@@ -3,8 +3,8 @@
 var fs = require('fs');
 var os=require('os');
 var parse=require('../realtime_process.js');
-var test_file= 'E:/nodejs/data/rover_20170709';
-var log_file= 'E:/nodejs/data/rover_20170709_real_log';
+var test_file= 'E:/nodejs/data/rover_20170723';
+var log_file= 'E:/nodejs/data/rover_20170723_real_log';
 var stream;
 var sta_id=0;
 var len=300;

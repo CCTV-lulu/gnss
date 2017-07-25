@@ -129,6 +129,9 @@ function ecef2pos(r, pos){
     pos[2]=math.sqrt(r2+z*z)-v;
 }module.exports.ecef2pos=ecef2pos;
 function xyz2enu(pos, E){
+    E[0]=new Array(3);
+    E[1]=new Array(3);
+    E[2]=new Array(3);
     var sinp=math.sin(pos[0]),cosp=math.cos(pos[0]),
         sinl=math.sin(pos[1]),cosl=math.cos(pos[1]);
     E[0][0]=-sinl;      E[0][1]=cosl;       E[0][2]=0.0;

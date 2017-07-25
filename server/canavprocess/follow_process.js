@@ -111,7 +111,7 @@ module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
     opt.buff_len=len*6;
     rtcm.time=prcopt.bt;
     rtcm.realtime=1;
-    //var opt_init = getProopt(sta_id);
+    // var opt_init = getProopt(sta_id);
     if(opt_init!=0){
         para = new nodepos.posPara_create(opt_init);
         nodepos.posParainit(sta_id, para);
@@ -126,14 +126,14 @@ module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
 
 function follow_pos(para,obs,nav,prcopt,sol,sys,logjson) {
     prcopt.sys = sys;
-    sol.ex="";
-    sol.VPL=0;
-    sol.HPL=0;
+    sol.ex="-";
+    sol.VPL=null;
+    sol.HPL=null;
     pnt.pntpos_RAIM(obs, nav, prcopt, sol);
     logjson.posR[sys] = new nodepos.posResult();
     nodepos.posOutStruct(para, sys, logjson);
     //nodepos.posShowStruct(para, sys, logjson);
     logjson.posR[sys].trackNum = obs.length;
     //logjson.time=sol.time;
-    //console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
+    console.log(sys,sol.time,cmn.time2string_Local(sol.time), sol.pos[2], logjson.posR[sys].HPL,logjson.posR[sys].VPL,logjson.posR[sys].posNum,logjson.posR[sys].trackNum);
 }
