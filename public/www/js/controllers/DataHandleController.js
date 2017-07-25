@@ -72,6 +72,7 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
         }
 
     }
+    $scope.$watch()
 
     $scope.commitThreshold = function () {
         var data = {
