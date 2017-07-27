@@ -28,6 +28,7 @@ function statis_option_create(handleData) {
     this.dop_hist = 0;
     this.PL_hist = 0;
     this.acc95 = 0;
+    this.rb_lowpass=0;
     this.slice = new function () {
         this.sat_num = {"flag": 0, "extre_min": 0, "extre_max": 0};
         this.her_num = {"flag": 0, "extre_min": 0, "extre_max": 0};
@@ -58,6 +59,7 @@ function hist_create() {
 var UPMINVPL = 126;
 var UPMINHPL = 556;
 function option_init(option, myOption) {
+    option.rb_lowpass=1;
     option.sat_hist = myOption.sat_hist || 0;
     option.err_hist = myOption.err_hist || 0;
     option.dop_hist = myOption.dop_hist || 0;

@@ -33,15 +33,12 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                     if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.HPL === undefined) {
                         hpl_num_is_able = true;
                         $('input[name=hpl_num]')[0].checked = false;
-                        console.log(threshold[indexs[i]])
                     }
                     if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.VPL === undefined) {
                         vpl_num_is_able = true;
                         $('input[name=vpl_num]')[0].checked = false;
-                        console.log(threshold[indexs[i]])
                     }
                 }
-
 
             } else {
 
@@ -188,6 +185,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         } else {
             Prompt.promptBox('warning', '请选择要查询的基站！！')
         }
+        $scope.show = $scope.showCoordinate;
     };
     function beStartBatchProcess(findData) {
         BatchProcess.startBatchProcess(findData, function (data) {
@@ -402,6 +400,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     //结束配置阈值参数
 
     function showResult(data, username) {
+
         $('#dataStatisticsChartLoding').hide();
         $("#dataStatisticsChart").css("opacity", 1);
         showTime(data, username);
@@ -413,7 +412,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         showPL('HPL', data, 'hpl_hist');
 
         showAvailability('content', data);
-
+        showCoordinate('container',data)
         showStaNum('StaNum', data);
 
     }
@@ -439,8 +438,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
-        series.push({name:"VDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
-        series.push({name:"HDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+        series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+        series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -512,13 +511,10 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         })
     }
 
-
     function showDop(type, data, showType) {
-
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
         var names = ['GPSDOP', 'GLSDOP', 'BDSDOP', 'GROUPDOP'];
-
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
@@ -533,9 +529,12 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
 
         });
-        if (series.length == 0) return;
-        series.push({name:"VDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
-        series.push({name:"HDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+        // if (series.length == 0) return;
+        if(series.length !=0){
+            series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+            series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+        }
+
         $('#' + type + '_container').show();
         Highcharts.setOptions({
             lang: {
@@ -627,8 +626,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
-        series.push({name:"VDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
-        series.push({name:"HDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+        series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+        series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -807,11 +806,33 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             $scope.processResult[key] = {};
             $scope.processResult[key].availability = value.availability;
             $scope.processResult[key].continuity = value.continuity;
-            $scope.processResult[key].acc95_h = value.acc95_h;
-            $scope.processResult[key].acc95_v = value.acc95_v;
+            if(value.acc95_h.mean==undefined){
+                $scope.processResult[key].acc95_h='NA'
+            }else {
+                $scope.processResult[key].acc95_h = value.acc95_h.mean;
+            }
+            if(value.acc95_v.mean == undefined){
+                $scope.processResult[key].acc95_v = 'NA'
+            }else {
+                $scope.processResult[key].acc95_v = value.acc95_v.mean;
+            }
             $scope.processResult[key].integrity = value.integrity
         });
 
+    }
+    function showCoordinate(type,result) {
+        $scope.coordinateInfo= {};
+        $('#' + type + '_loading').hide();
+        $('#' + type + '_content').show();
+        $('#' + type + '_container').show();
+        Object.keys(result).forEach(function (key) {
+            var value = result[key];
+            $scope.coordinateInfo[key] = {};
+            $scope.coordinateInfo[key].longitude = value.rb_lowpass[0].ave
+            $scope.coordinateInfo[key].latitude = value.rb_lowpass[1].ave
+            $scope.coordinateInfo[key].Altitude = value.rb_lowpass[2].ave
+
+        });
     }
 
 

@@ -128,8 +128,6 @@ module.exports = {
             var newThreshold = stationConfig.threshold || {};
             newThreshold[singal] = threshold;
             var newConfig = stationConfig.config||{};
-            console.log('------------config')
-            console.log(newConfig)
             newConfig.elmin[parseInt(singal)] = config.elmin;
             // newConfig.rb[parseInt(singal)]=config.rb;
 
@@ -169,15 +167,15 @@ module.exports = {
             if(config!=undefined){
                 Object.keys(config.rb).forEach(function (index) {
                     if (index==2){
-
-                        newRb.push(parseFloat(config.rb[index]).toFixed(2))
+                        newRb.push(parseFloat(parseFloat(config.rb[index]).toFixed(2)))
                     }else {
-                        newRb.push(parseFloat(config.rb[index]).toFixed(7))
+                        newRb.push(parseFloat(parseFloat(config.rb[index]).toFixed(7)))
                     }
                 })
                 newConfig.rb=newRb
             }
-
+            console.log('------------config')
+            console.log(newConfig)
             StationConfig.update({staId: staId}, {$set: {handleData:newHandleData,config: newConfig}}, function (err) {
 
                 if (err) {

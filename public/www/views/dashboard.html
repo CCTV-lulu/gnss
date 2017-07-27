@@ -36,8 +36,8 @@
             <td>{{bdInfo.exsats}}</td>
             <td>{{bdInfo.HDOP.toFixed(6)}}</td>
             <td>{{bdInfo.VDOP.toFixed(6)}}</td>
-            <td>{{bdInfo.dH.toFixed(6).replace('-','')}}</td>
-            <td>{{bdInfo.dV.toFixed(6).replace('-','')}}</td>
+            <td>{{bdInfo.dH.toFixed(6).replace('-','')||'-'}}</td>
+            <td>{{bdInfo.dV.toFixed(6).replace('-','')||'-'}}</td>
             <td>{{bdInfo.HPL.toFixed(6)}}</td>
             <td>{{bdInfo.VPL.toFixed(6)}}</td>
         </tr>

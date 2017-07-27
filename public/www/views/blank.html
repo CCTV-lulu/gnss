@@ -52,11 +52,10 @@
 
         </div>
 
-        <div id='coordinate' class="col-md-12 col-xs-12 col-sm-12">
+        <div  class="col-md-12 col-xs-12 col-sm-12">
             <label>基准坐标选项: </label>
-            <input type="checkbox" name="longitude" ng-checked="{{coordinate['longitude']}}"> 经度
-            <input type="checkbox" name="latitude"  ng-checked="{{coordinate['latitude']}}"> 纬度
-            <input type="checkbox" name="Altitude" ng-checked="{{coordinate['Altitude']}}"> 高程
+            <input type="checkbox" name="coordinate" ng-model="showCoordinate">
+
         </div>
 
     </div>
@@ -137,48 +136,45 @@
 <div class="row" id="dataStatisticsChart" style="opacity: 0">
     <div class="col-md-12">
 
-        <div class="portlet light bordered" ng-show="true">
-            <div class="portlet-title">
-                <div class="caption font-dark">
-                    <span class="caption-subject bold uppercase">基准点坐标信息</span>
+        <div class="portlet light bordered " id="coordinate_container" ng-show="show" style="margin-top: 20px">
+                <div class="portlet-title" >
+                    <div class="caption">
+                        <i class="icon-settings font-dark "></i>
+                        <span class="caption-subject font-dark bold uppercase">基准点信息</span>
+                    </div>
                 </div>
-                <div class="tools"></div>
-            </div>
-            <div class="portlet-body">
-                <table class="table" height="250px">
-                    <thead>
-                    <tr style="text-align: center">
-                        <th></th>
-                        <th>GPS</th>
-                        <th>GLS</th>
-                        <th>BDS</th>
-                        <th>组合</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr style="text-align: center">
-                        <td>经度</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    <tr style="text-align: center">
-                        <td>纬度</td>
-                        <td>11</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    <tr style="text-align: center">
-                        <td>高程</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    </tbody>
-                </table>
-            </div>
+                <div class="portlet-body">
+                    <div id="coordinate_loading" class="display-none">
+                        <img src="assets/img/loading.gif" alt="loading"/></div>
+                    <div id="coordinate_content" >
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td></td>
+                                <th> 经度</th>
+                                <th> 纬度</th>
+                                <th> 高程</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="coordinateInfo">
+                            <tr ng-repeat="(key, value) in coordinateInfo" ng-model="coordinateInfo">
+                                <td>{{sysNav[key]}}</td>
+                                <td>{{value.longitude.toFixed(7)+'°'}} </td>
+                                <td>{{value.latitude.toFixed(7)+'°'}} </td>
+                                <td>{{value.Altitude.toFixed(2)+'m'}} </td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
         </div>
-    </div>
+
+
+
+
         <div class="row">
             <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="StaNum_container">
                 <div class="portlet light ">
@@ -475,8 +471,8 @@
                                 <tbody id="startInfo">
                                 <tr ng-repeat="(key, value) in processResult" ng-model="processResult">
                                     <td>{{sysNav[key]}}</td>
-                                    <td>{{value.acc95_h.mean}} </td>
-                                    <td>{{value.acc95_v.mean}} </td>
+                                    <td>{{value.acc95_h}} </td>
+                                    <td>{{value.acc95_v}} </td>
                                     <td>{{value.continuity}} </td>
                                     <td>{{value.availability}} </td>
                                     <td>{{value.integrity}} </td>

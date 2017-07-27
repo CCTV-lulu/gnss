@@ -132,6 +132,16 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         $scope.utcTime = dataInfo.timestamp
         if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
+            console.log("---------------jsjdj")
+            console.log($scope.gpInfo.dV)
+            if($scope.gpInfo.dV === null){
+                $scope.gpInfo.dV = '-'
+                console.log($scope.gpInfo.dV)
+            }
+            if($scope.gpInfo.dV == undefined){
+                $scope.gpInfo.dV = 'NA'
+            }else {}
+
         }
         if (dataInfo.posR[1]) {
             $scope.glInfo = dataInfo.posR[1]
@@ -142,7 +152,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if (dataInfo.posR[3]) {
             $scope.groupInfo = dataInfo.posR[3]
         }
-
     }
 
     function updataChart(chartData) {
