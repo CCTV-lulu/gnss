@@ -167,9 +167,9 @@ module.exports = {
             if(config!=undefined){
                 Object.keys(config.rb).forEach(function (index) {
                     if (index==2){
-                        newRb.push(parseFloat(parseFloat(config.rb[index]).toFixed(2)))
+                        newRb.push(parseFloat(config.rb[index]).toFixed(2))
                     }else {
-                        newRb.push(parseFloat(parseFloat(config.rb[index]).toFixed(7)))
+                        newRb.push(parseFloat(config.rb[index]).toFixed(7))
                     }
                 })
                 newConfig.rb=newRb

@@ -70,19 +70,19 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
         if(!$scope.isAdmin){
             $scope.isReadonly = true;
         }
-        function change(){
-            if( !isNaN($scope.config.rb[0])||!isNaN($scope.config.rb[1])||!isNaN($scope.config.rb[2])){
-                var first= $scope.config.rb[0]
-                $scope.config.rb[0] = first+"°"
-                var second= $scope.config.rb[1]
-                $scope.config.rb[1] = second+"°"
-                var third= $scope.config.rb[2]
-                $scope.config.rb[2] = third+"m"
-            }
-        };
-        $scope.$watch('config.rb[0]',change())
-        $scope.$watch('config.rb[1]',change())
-        $scope.$watch('config.rb[2]',change())
+        // function change(){
+        //     if( !isNaN($scope.config.rb[0])||!isNaN($scope.config.rb[1])||!isNaN($scope.config.rb[2])){
+        //         var first= $scope.config.rb[0]
+        //         $scope.config.rb[0] = first+"°"
+        //         var second= $scope.config.rb[1]
+        //         $scope.config.rb[1] = second+"°"
+        //         var third= $scope.config.rb[2]
+        //         $scope.config.rb[2] = third+"m"
+        //     }
+        // };
+        // $scope.$watch('config.rb[0]',change())
+        // $scope.$watch('config.rb[1]',change())
+        // $scope.$watch('config.rb[2]',change())
     }
 
 

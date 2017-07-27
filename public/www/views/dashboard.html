@@ -25,73 +25,73 @@
         <tbody>
         <tr style="text-align: center">
             <td>北斗</td>
-            <td>{{bdInfo.Lon.toFixed(6)+'°'}}</td>
-            <td >{{bdInfo.Lat.toFixed(6)+'°'}}</td>
-            <td>{{bdInfo.H.toFixed(2)+'m'}}</td>
+            <td>{{showCompany(bdInfo.Lon)}}</td>
+            <td >{{showCompany(bdInfo.Lat)}}</td>
+            <td>{{showValueTwo(gpInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{bdInfo.posNum}}</span>
+                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
                 </div>
             </td>
-            <td>{{bdInfo.trackNum}}</td>
-            <td>{{bdInfo.exsats}}</td>
-            <td>{{bdInfo.HDOP.toFixed(6)}}</td>
-            <td>{{bdInfo.VDOP.toFixed(6)}}</td>
-            <td>{{bdInfo.dH.toFixed(6).replace('-','')||'-'}}</td>
-            <td>{{bdInfo.dV.toFixed(6).replace('-','')||'-'}}</td>
-            <td>{{bdInfo.HPL.toFixed(6)}}</td>
-            <td>{{bdInfo.VPL.toFixed(6)}}</td>
+            <td>{{showValue(bdInfo.trackNum)}}</td>
+            <td>{{showValue(bdInfo.exsats)}}</td>
+            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
+            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(bdInfo.dH)}}</td>
+            <td>{{handleDataReplace(bdInfo.dV)}}</td>
+            <td>{{handleDataSix(bdInfo.HPL)}}</td>
+            <td>{{handleDataSix(bdInfo.VPL)}}</td>
         </tr>
         <tr style="text-align: center">
             <td>GPS</td>
-            <td>{{gpInfo.Lon.toFixed(6)+'°'}}</td>
-            <td >{{gpInfo.Lat.toFixed(6)+'°'}}</td>
-            <td>{{gpInfo.H.toFixed(2)+'m'}}</td>
+            <td>{{showCompany(bdInfo.Lon)}}</td>
+            <td >{{showCompany(bdInfo.Lat)}}</td>
+            <td>{{showValueTwo(gpInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{gpInfo.posNum}}</span>
+                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
             </div>
             </td>
-            <td>{{gpInfo.trackNum}}</td>
-            <td>{{gpInfo.exsats}}</td>
-            <td>{{gpInfo.HDOP.toFixed(6)}}</td>
-            <td>{{gpInfo.VDOP.toFixed(6)}}</td>
-            <td>{{gpInfo.dH.toFixed(6).replace('-','')}}</td>
-            <td>{{gpInfo.dV.toFixed(6).replace('-','')}}</td>
-            <td>{{gpInfo.HPL.toFixed(6)}}</td>
-            <td>{{gpInfo.VPL.toFixed(6)}}</td>
+            <td>{{showValue(bdInfo.trackNum)}}</td>
+            <td>{{showValue(bdInfo.exsats)}}</td>
+            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
+            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(bdInfo.dH)}}</td>
+            <td>{{handleDataReplace(bdInfo.dV)}}</td>
+            <td>{{handleDataSix(bdInfo.HPL)}}</td>
+            <td>{{handleDataSix(bdInfo.VPL)}}</td>
         <tr style="text-align: center">
             <td>GLONASS</td>
-            <td>{{glInfo.Lon.toFixed(6)+'°'}}</td>
-            <td >{{glInfo.Lat.toFixed(6)+'°'}}</td>
-            <td>{{glInfo.H.toFixed(2)+'m'}}</td>
+            <td>{{showCompany(bdInfo.Lon)}}</td>
+            <td >{{showCompany(bdInfo.Lat)}}</td>
+            <td>{{showValueTwo(gpInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{glInfo.posNum}}</span>
+                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
             </div>
             </td>
-            <td>{{glInfo.trackNum}}</td>
-            <td>{{glInfo.exsats}}</td>
-            <td>{{glInfo.HDOP.toFixed(6)}}</td>
-            <td>{{glInfo.VDOP.toFixed(6)}}</td>
-            <td>{{glInfo.dH.toFixed(6).replace('-','')}}</td>
-            <td>{{glInfo.dV.toFixed(6).replace('-','')}}</td>
-            <td>{{glInfo.HPL.toFixed(6)}}</td>
-            <td>{{glInfo.VPL.toFixed(6)}}</td>
+            <td>{{showValue(bdInfo.trackNum)}}</td>
+            <td>{{showValue(bdInfo.exsats)}}</td>
+            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
+            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(bdInfo.dH)}}</td>
+            <td>{{handleDataReplace(bdInfo.dV)}}</td>
+            <td>{{handleDataSix(bdInfo.HPL)}}</td>
+            <td>{{handleDataSix(bdInfo.VPL)}}</td>
         <tr style="text-align: center">
             <td>组合</td>
-            <td>{{groupInfo.Lon.toFixed(6)+'°'}}</td>
-            <td >{{groupInfo.Lat.toFixed(6)+'°'}}</td>
-            <td>{{groupInfo.H.toFixed(2)+'m'}}</td>
+            <td>{{showCompany(bdInfo.Lon)}}</td>
+            <td >{{showCompany(bdInfo.Lat)}}</td>
+            <td>{{showValueTwo(gpInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{groupInfo.posNum}}</span>
+                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
             </div>
             </td>
-            <td>{{groupInfo.trackNum}}</td>
-            <td>{{groupInfo.exsats}}</td>
-            <td>{{groupInfo.HDOP.toFixed(6)}}</td>
-            <td>{{groupInfo.VDOP.toFixed(6)}}</td>
-            <td>{{groupInfo.dH.toFixed(6).replace('-','')}}</td>
-            <td>{{groupInfo.dV.toFixed(6).replace('-','')}}</td>
-            <td>{{groupInfo.HPL.toFixed(6)}}</td>
-            <td>{{groupInfo.VPL.toFixed(6)}}</td>
+            <td>{{showValue(bdInfo.trackNum)}}</td>
+            <td>{{showValue(bdInfo.exsats)}}</td>
+            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
+            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(bdInfo.dH)}}</td>
+            <td>{{handleDataReplace(bdInfo.dV)}}</td>
+            <td>{{handleDataSix(bdInfo.HPL)}}</td>
+            <td>{{handleDataSix(bdInfo.VPL)}}</td>
         </tbody>
     </table>
 </div>

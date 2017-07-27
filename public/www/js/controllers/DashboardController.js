@@ -101,10 +101,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
 
         }
-        //if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
+        // if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
         //    $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
         //
-        //}
+        // }
         if (staInfo.posR[3]&&getDxDy(staInfo.posR[3])) {
             $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
         }
@@ -132,16 +132,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         $scope.utcTime = dataInfo.timestamp
         if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
-            console.log("---------------jsjdj")
-            console.log($scope.gpInfo.dV)
-            if($scope.gpInfo.dV === null){
-                $scope.gpInfo.dV = '-'
-                console.log($scope.gpInfo.dV)
-            }
-            if($scope.gpInfo.dV == undefined){
-                $scope.gpInfo.dV = 'NA'
-            }else {}
-
         }
         if (dataInfo.posR[1]) {
             $scope.glInfo = dataInfo.posR[1]
@@ -153,6 +143,53 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.groupInfo = dataInfo.posR[3]
         }
     }
+    $scope.showValue = function(value){
+        if(value === null){
+            return '-'
+        }
+        if(value === undefined){
+            return 'NA'
+        }
+        return value
+    }
+    $scope.handleDataSix = function (value) {
+        if(value === null){
+           return "-"
+        }
+        if(value === undefined){
+            return 'NA'
+        }
+        return value.toFixed(6)
+    }
+    $scope.showValueTwo = function (value) {
+        if(value === null){
+            return "-"
+        }
+        if(value === undefined){
+            return 'NA'
+        }
+        return value.toFixed(2)+'m'
+    }
+    $scope.showCompany = function (value) {
+        if(value === null){
+            return '-'
+        }
+        if(value === undefined){
+            return 'NA'
+        }
+        return value.toFixed(6)+'°'
+    }
+    $scope.handleDataReplace = function (value) {
+        if(value === null){
+            return '-'
+        }
+        if(value === undefined){
+            return 'NA'
+        }
+        return value.toFixed(6).replace('-','')
+    }
+
+
 
     function updataChart(chartData) {
         $scope.latestData = [];
@@ -298,7 +335,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if(length>100){
             return false
         }
-        return [isNaN(rotat) ? 0 : rotat, length]
+
+        if(isNaN(rotat)){
+            return false
+        }
+        return [ rotat, length]
     }
 
 
