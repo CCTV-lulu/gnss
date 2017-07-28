@@ -88,12 +88,16 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
 
 
     $scope.commitThreshold = function () {
+        var date = new Date()
         var data = {
             staId: $scope.station,
+            rbUpDate:date.toLocaleString(),
             // signal: $scope.signal,
             // handleData: $scope.threshold,
             config:$scope.config,
         };
+        console.log("-------------date")
+        console.log(data.rbUpDate)
         Threshold.setHandleData(data,function(allHandleData){
 
             if(allHandleData.status){

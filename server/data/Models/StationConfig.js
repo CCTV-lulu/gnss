@@ -8,7 +8,8 @@ module.exports.init = function () {
         config:Object,
         threshold: Object,
         handleData:Object,
-        rb:Object
+        rbUpDate:String,
+
     });
 
     stationConfigSchema.method({

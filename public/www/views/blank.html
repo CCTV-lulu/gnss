@@ -21,7 +21,7 @@
             <div class="form-group">
                 <select id='station' ng-model="station" class='form-control select2'>
                     <option ng-if="!isAdmin"  value={{stationInfoId}} selected>{{stationInfoName}}</option>
-                    <option ng-if="isAdmin" value='{{blankStation.staId}}' ng-repeat='blankStation in allStations'>{{blankStation.name}}</option>
+                    <option ng-model="stationName" ng-if="isAdmin" value='{{blankStation.staId}}' ng-repeat='blankStation in allStations'>{{blankStation.name}}</option>
                 </select>
             </div>
         </div>

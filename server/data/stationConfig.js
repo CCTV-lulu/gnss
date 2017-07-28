@@ -57,6 +57,7 @@ function handleAllThreshold(allConfig) {
         Object.keys(config).forEach(function(sys){
             config[sys].threshold = oneConfig.threshold ? oneConfig.threshold[sys]:{}
             config[sys].handleData = oneConfig.handleData ? oneConfig.handleData[sys]:{}
+            config[sys].rbUpDate = oneConfig.rbUpDate ? oneConfig.rbUpDate:{}
         })
         allThreshold[oneConfig.staId]=config
     });
@@ -72,7 +73,8 @@ module.exports = {
             staId: station.staId,
             config: config,
             threshold: {},
-            handleData:{}
+            handleData:{},
+            rbUpDate:station.rbUpDate
 
         };
         StationConfig.create(newStationConfig, function (err, data) {
@@ -106,7 +108,6 @@ module.exports = {
             if (err) {
                 defer.resolve({status: false, message: '拉取数据失败'})
             } else {
-
                 var allThreshold = handleAllThreshold(AllStationConfig);
                 defer.resolve({status: true, allThreshold: allThreshold})
             }
@@ -146,7 +147,7 @@ module.exports = {
         return defer.promise;
     },
 
-    setStationHandleData: function (staId, singal, handleData,config) {
+    setStationHandleData: function (staId, singal, handleData,config,rbUpDate) {
 
         var self = this;
         var defer = Promise.defer();
@@ -174,9 +175,11 @@ module.exports = {
                 })
                 newConfig.rb=newRb
             }
-            console.log('------------config')
-            console.log(newConfig)
-            StationConfig.update({staId: staId}, {$set: {handleData:newHandleData,config: newConfig}}, function (err) {
+            var newRbUpDate = stationConfig.rbUpDate
+            if(rbUpDate != undefined){
+                newRbUpDate = rbUpDate
+            }
+            StationConfig.update({staId: staId}, {$set: {handleData:newHandleData,config: newConfig,rbUpDate:newRbUpDate}}, function (err) {
 
                 if (err) {
                     return defer.resolve({status: false, message: '保存失败'})

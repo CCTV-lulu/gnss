@@ -344,7 +344,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
     function getThreshold(){
         Threshold.getHandleData(function(allThreshold){
-
             $scope.allThreshold = allThreshold.allThreshold;
             showThreshold()
             //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
@@ -357,6 +356,22 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
     $scope.$watch('station',function(station){
+        Threshold.getHandleData(function (allThreshold) {
+            $scope.stationInfo = allThreshold.allThreshold[station]
+            $scope.rbUpDate = $scope.stationInfo[0].rbUpDate
+            var stationName = ''
+            $scope.allStations.forEach(function (oneStation) {
+                if(oneStation.staId == station){
+                    stationName = oneStation.name
+                }
+            })
+            if(JSON.stringify($scope.rbUpDate) == '{}'){
+               Prompt.promptBox('warning',stationName+'未设置基准坐标')
+            }else {
+               Prompt.promptBox('success',stationName+'基准坐标更新时间为：'+$scope.rbUpDate)
+            }
+        })
+
         if(!station||!$scope.allThreshold) return;
         showThreshold()
         //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}

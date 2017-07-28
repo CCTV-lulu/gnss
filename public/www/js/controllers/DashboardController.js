@@ -335,7 +335,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if(length>100){
             return false
         }
-
+        console.log('----------------type')
+        console.log(rotat)
         if(isNaN(rotat)){
             return false
         }
