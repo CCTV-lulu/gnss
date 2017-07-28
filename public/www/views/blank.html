@@ -35,16 +35,16 @@
 
         <div class="col-md-12 col-xs-12 col-sm-12">
             <label>定位系统: </label>
-            <input type="checkbox" name="sys" value= 2  ng-click="setOptions()" ng-model ='sys.BDS'> BDS
-            <input type="checkbox" name="sys" value= 0  ng-click="setOptions()" ng-model='sys.GPS'> GPS
-            <input type="checkbox" name="sys" value= 1  ng-click="setOptions()" ng-model='sys.GLS'> GLS
-            <input type="checkbox" name="sys" value= 3  ng-click="setOptions()" ng-model='sys.GROUP'> 组合
+            <input type="checkbox" name="sys" value= 2  ng-click="setOptions()" ng-model ='sys.BDS' ng-checked="BDS"> BDS
+            <input type="checkbox" name="sys" value= 0  ng-click="setOptions()" ng-model='sys.GPS' ng-checked="GPS"> GPS
+            <input type="checkbox" name="sys" value= 1  ng-click="setOptions()" ng-model='sys.GLS' ng-checked="GLS"> GLS
+            <input type="checkbox" name="sys" value= 3  ng-click="setOptions()" ng-model='sys.GROUP'ng-checked="GROUP"> 组合
         </div>
 
         <div id='options' class="col-md-12 col-xs-12 col-sm-12">
             <label>统计选项: </label>
             <input type="checkbox" name="sat_hist" ng-checked="{{option['sat_hist']}}"> 卫星数
-            <input type="checkbox" name="err_hist"  ng-checked="{{option['err_hist']}}"> 定位误差
+            <input type="checkbox" name="err_hist"  ng-checked="{{option['err_hist']}}" ng-model="showHist"> 定位误差
             <input type="checkbox" name="dop_hist" ng-checked="{{option['dop_hist']}}"> DOP值
             <input type="checkbox" name="PL_hist" ng-checked="{{option['PL_hist']}}"> 保护水平
             <input type="checkbox" name="hpl_num" ng-disabled = optionsAble.hpl_num_is_able ng-checked="{{filter.option['hpl_num']}}"> HPL超限时间
@@ -54,7 +54,7 @@
 
         <div  class="col-md-12 col-xs-12 col-sm-12">
             <label>基准坐标选项: </label>
-            <input type="checkbox" name="coordinate" ng-model="showCoordinate">
+            <input type="checkbox" name="coordinate"  ng-model="showCoordinate">
 
         </div>
 
@@ -193,7 +193,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="VErrHist_container">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="VErrHist_container" ng-show="showVErrHist">
                 <div class="portlet light ">
                     <div class="portlet-title" >
                         <div class="caption">
@@ -210,7 +210,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="HErrHist_container">
+            <div class="col-md-12 col-xs-12 col-sm-12 display-none" id="HErrHist_container" ng-show="showHErrHist">
                 <div class="portlet light ">
                     <div class="portlet-title" id="_width">
                         <div class="caption">

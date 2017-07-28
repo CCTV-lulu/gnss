@@ -5,9 +5,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     var currentStation;
     var isAdmin;
     var currentProcess ;
-
+    var sysStaues;
+    console.log(sysStaues)
     //getStation($rootScope.rootIsAdmin);
-
     init();
     initThreshold()
 
@@ -60,27 +60,27 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         $(".loading").animate({"width": "0%"}, 0);
         DateTable.dateTable();
         $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
-        $scope.option = {
-            sat_hist: false,
-            err_hist: false,
-            dop_hist: false,
-            PL_hist: false,
-            hpl_num: false,
-            vpl_num: false
-        };
+        // $scope.option = {
+        //     sat_hist: false,
+        //     err_hist: false,
+        //     dop_hist: false,
+        //     PL_hist: false,
+        //     hpl_num: false,
+        //     vpl_num: false
+        // };
+        //
+        // $scope.sys = {
+        //     'GPS': false,
+        //     'GLS': false,
+        //     'BDS': false,
+        //     'GROUP': false
+        // };
 
-        $scope.sys = {
-            'GPS': false,
-            'GLS': false,
-            'BDS': false,
-            'GROUP': false
-        };
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
         initResult();
         initStation();
         initOption()
-
     }
 
     function initStation() {
@@ -140,18 +140,22 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 options[this.name] = 1;
             }
         });
+        $('input[name=coordinate]').each(function () {
+            if(this.checked){
+               options.coordinate = 1;
+            }
+        })
         return {
             sys: sys,
-            options: options
+            options: options,
         }
 
     }
-
-
     $scope.findData = function () {
-
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
+        sysStaues=$scope.sys;
+        console.log(sysStaues)
         if (stationId) {
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
@@ -168,24 +172,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             findData.sys = filer.sys;
             findData.options = filer.options
 
-//<<<<<<< HEAD
             beStartBatchProcess(findData)
-//=======
-//            BatchProcess.startBatchProcess(findData, function (data) {
-//                if(data.status=='isFollow'){
-//                   Prompt.promptBox("warning", "正在进行预处理，请等待")
-//                }else {
-//                    startBatchProcess(data)
-//                }
-//
-//            })
-//
-//>>>>>>> blank
 
         } else {
             Prompt.promptBox('warning', '请选择要查询的基站！！')
         }
         $scope.show = $scope.showCoordinate;
+        $scope.showVErrHist = $scope.showHist;
+        $scope.showHErrHist = $scope.showHist;
     };
     function beStartBatchProcess(findData) {
         BatchProcess.startBatchProcess(findData, function (data) {
@@ -452,9 +446,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 series.push(info)
             }
         });
-        if (series.length == 0) return;
-        series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
-        series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+        // if (series.length == 0) return;
+        if(series.length !=0){
+            series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+            series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+        }
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
@@ -544,11 +540,10 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
 
         });
-        // if (series.length == 0) return;
-        if(series.length !=0){
-            series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
-            series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
-        }
+        if (series.length == 0) return;
+        series.push({name:"WARNINGVDOP",data:[[$scope.threshold.VDOP,0],[$scope.threshold.VDOP,1]]});
+        series.push({name:"WARNINGHDOP",data:[[$scope.threshold.HDOP,0],[$scope.threshold.HDOP,1]]})
+
 
         $('#' + type + '_container').show();
         Highcharts.setOptions({

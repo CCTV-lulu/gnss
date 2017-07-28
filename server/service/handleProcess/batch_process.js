@@ -59,7 +59,7 @@ function hist_create() {
 var UPMINVPL = 126;
 var UPMINHPL = 556;
 function option_init(option, myOption) {
-    option.rb_lowpass=1;
+    option.rb_lowpass=myOption.coordinate||0;
     option.sat_hist = myOption.sat_hist || 0;
     option.err_hist = myOption.err_hist || 0;
     option.dop_hist = myOption.dop_hist || 0;
