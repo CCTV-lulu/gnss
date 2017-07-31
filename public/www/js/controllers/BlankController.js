@@ -5,8 +5,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     var currentStation;
     var isAdmin;
     var currentProcess ;
-    var sysStaues;
-    console.log(sysStaues)
     //getStation($rootScope.rootIsAdmin);
     init();
     initThreshold()
@@ -60,28 +58,28 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         $(".loading").animate({"width": "0%"}, 0);
         DateTable.dateTable();
         $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
-        // $scope.option = {
-        //     sat_hist: false,
-        //     err_hist: false,
-        //     dop_hist: false,
-        //     PL_hist: false,
-        //     hpl_num: false,
-        //     vpl_num: false
-        // };
-        //
-        // $scope.sys = {
-        //     'GPS': false,
-        //     'GLS': false,
-        //     'BDS': false,
-        //     'GROUP': false
-        // };
 
+        $scope.sys = {
+            'GPS': localStorage.GPS,
+            'GLS': localStorage.GLS,
+            'BDS': localStorage.BDS,
+            'GROUP': localStorage.GROUP
+        }
+         $scope.option = {
+            sat_hist: localStorage.sat_hist,
+            err_hist: localStorage.err_hist,
+            dop_hist: localStorage.dop_hist,
+            PL_hist: localStorage.PL_hist,
+            hpl_num: localStorage.hpl_num,
+            vpl_num: localStorage.vpl_num
+        };
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
         initResult();
         initStation();
         initOption()
     }
+
 
     function initStation() {
         $rootScope.$watch('rootIsAdmin', function (rootIsAdmin) {
@@ -154,8 +152,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     $scope.findData = function () {
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
-        sysStaues=$scope.sys;
-        console.log(sysStaues)
         if (stationId) {
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
@@ -178,9 +174,35 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             Prompt.promptBox('warning', '请选择要查询的基站！！')
         }
         $scope.show = $scope.showCoordinate;
-        $scope.showVErrHist = $scope.showHist;
-        $scope.showHErrHist = $scope.showHist;
+        $scope.showVErrHist = $scope.option.err_hist;
+        $scope.showHErrHist = $scope.option.err_hist;
+
+        // $scope.option = {
+        //     sat_hist: false,
+        //     err_hist: false,
+        //     dop_hist: false,
+        //     PL_hist: false,
+        //     hpl_num: false,
+        //     vpl_num: false
+        // };
+        // $scope.sys = {
+        //     'GPS': false,
+        //     'GLS': false,
+        //     'BDS': false,
+        //     'GROUP': false
+        // };
+
+        Object.keys($scope.sys).forEach(function (key) {
+            localStorage[key]=$scope.sys[key]
+        })
+        Object.keys($scope.option).forEach(function (key) {
+            localStorage[key] = $scope.option[key]
+        })
+        localStorage.coordinate = $scope.showCoordinate
+        console.log('local -----------1')
+        console.log(localStorage)
     };
+
     function beStartBatchProcess(findData) {
         BatchProcess.startBatchProcess(findData, function (data) {
                 if(data.status == 'unFind'){
