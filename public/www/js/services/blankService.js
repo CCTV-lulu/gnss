@@ -1,8 +1,12 @@
-MetronicApp.factory('DateTable',  function() {
-    var dateTable = function() {
-        $('#reportrange span').html(moment().subtract('hours', 1).format('YYYY-MM-DD') + ' - ' + moment().format('YYYY-MM-DD'));
+MetronicApp.factory('DateTable', function ($rootScope) {
+    var dateTable = function () {
+        var currentDay = {start:moment().subtract('hours', 1).format('YYYY-MM-DD'), end: moment().format('YYYY-MM-DD')};
+        var time = JSON.parse(localStorage.getItem($rootScope.rootUserInfo.username + "_searchDateRange"))||currentDay;
+        $('#reportrange span').html(time.start+'-'+time.end);
         $('#reportrange').daterangepicker(
             {
+                startDate: time.start,
+                endDate: time.end,
                 maxDate: moment(),
                 dateLimit: {
                     days: 30
@@ -36,49 +40,59 @@ MetronicApp.factory('DateTable',  function() {
                     firstDay: 1
                 }
             }, function (start, end, label) {
-
                 $('#reportrange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
-
+                localStorage.setItem($rootScope.rootUserInfo.username + "_searchDateRange", JSON.stringify({
+                    start: start.format('YYYY-MM-DD'),
+                    end: end.format('YYYY-MM-DD')
+                }))
             }
         );
     }
 
-    function getDaysInOneMonth(year, month){
+    function getDaysInOneMonth(year, month) {
         month = parseInt(month, 10);
-        var d= new Date(year, month, 0);
+        var d = new Date(year, month, 0);
         return d.getDate();
     }
 
-    var allDate = function(startDate) {
+    var allDate = function (startDate) {
         var allDate = [];
         var startYear = Number(startDate.substring(0, 4));
         var startMonth = Number(startDate.substring(5, 7));
         var startDay = Number(startDate.substring(8, 10));
-        var endYear = Number(startDate.substring(13,17));
-        var endMonth = Number(startDate.substring(18,20));
-        var endDay = Number(startDate.substring(21,23));
+        var endYear = Number(startDate.substring(13, 17));
+        var endMonth = Number(startDate.substring(18, 20));
+        var endDay = Number(startDate.substring(21, 23));
         if (startMonth == endMonth && startDay != endDay) {
             var allDays = endDay - startDay + 1;
-            for(var i=0;i<allDays;i++) {
+            for (var i = 0; i < allDays; i++) {
                 var nowDay = startDay + i;
-                if(nowDay < 10){nowDay = '0' + nowDay}
+                if (nowDay < 10) {
+                    nowDay = '0' + nowDay
+                }
                 allDate.push(startYear + '-' + startDate.substring(5, 7) + '-' + nowDay)
             }
-        }else if(startMonth == endMonth && startDay == endDay) {
+        } else if (startMonth == endMonth && startDay == endDay) {
             var nowDay = startDay;
-            if(nowDay < 10){nowDay = '0' + nowDay}
+            if (nowDay < 10) {
+                nowDay = '0' + nowDay
+            }
             allDate.push(startYear + '-' + startDate.substring(5, 7) + '-' + nowDay)
         } else {
-            var allDays = getDaysInOneMonth(startYear,startMonth) - startDay + 1;
-            for(var i=0;i<allDays;i++) {
+            var allDays = getDaysInOneMonth(startYear, startMonth) - startDay + 1;
+            for (var i = 0; i < allDays; i++) {
                 var lastDay = startDay + i;
-                if(lastDay < 10){lastDay = '0' + lastDay}
+                if (lastDay < 10) {
+                    lastDay = '0' + lastDay
+                }
                 allDate.push(startYear + '-' + startDate.substring(5, 7) + '-' + lastDay)
             }
-            for(var j=0;j<endDay;j++) {
+            for (var j = 0; j < endDay; j++) {
                 var nextDay = j + 1;
-                if(nextDay < 10){nextDay = '0' + nextDay}
-                allDate.push(endYear + '-' + startDate.substring(18,20) + '-' + nextDay)
+                if (nextDay < 10) {
+                    nextDay = '0' + nextDay
+                }
+                allDate.push(endYear + '-' + startDate.substring(18, 20) + '-' + nextDay)
             }
         }
 
