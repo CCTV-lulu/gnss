@@ -1,8 +1,11 @@
 MetronicApp.factory('DateTable', function ($rootScope) {
     var dateTable = function () {
-        var currentDay = {start:moment().subtract('hours', 1).format('YYYY-MM-DD'), end: moment().format('YYYY-MM-DD')};
-        var time = JSON.parse(localStorage.getItem($rootScope.rootUserInfo.username + "_searchDateRange"))||currentDay;
-        $('#reportrange span').html(time.start+'-'+time.end);
+        var currentDay = {
+            start: moment().subtract('hours', 1).format('YYYY-MM-DD'),
+            end: moment().format('YYYY-MM-DD')
+        };
+        var time = getOptionLocal("searchDateRange", currentDay);
+        $('#reportrange span').html(time.start + '-' + time.end);
         $('#reportrange').daterangepicker(
             {
                 startDate: time.start,
@@ -41,18 +44,27 @@ MetronicApp.factory('DateTable', function ($rootScope) {
                 }
             }, function (start, end, label) {
                 $('#reportrange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
-                localStorage.setItem($rootScope.rootUserInfo.username + "_searchDateRange", JSON.stringify({
+                var value = JSON.stringify({
                     start: start.format('YYYY-MM-DD'),
                     end: end.format('YYYY-MM-DD')
-                }))
+                });
+                setOptionLocal("searchDateRange", value)
             }
         );
     }
 
+    function getOptionLocal(key, value) {
+        return JSON.parse(localStorage.getItem($rootScope.rootUserInfo.username + "_" + key)) || value
+    }
+
+    function setOptionLocal(key, value) {
+        return localStorage.setItem($rootScope.rootUserInfo.username + "_" + key, value)
+    }
+
     function getDaysInOneMonth(year, month) {
         month = parseInt(month, 10);
-        var d = new Date(year, month, 0);
-        return d.getDate();
+        var date = new Date(year, month, 0);
+        return date.getDate();
     }
 
     var allDate = function (startDate) {
@@ -101,91 +113,94 @@ MetronicApp.factory('DateTable', function ($rootScope) {
     return {dateTable: dateTable, allDate: allDate}
 
 })
-    .factory('DataAnalyseChart', function() {
-    function lineChart(data,key1,key2,id) {
-        console.log(data)
-        console.log(data[key1])
-        var xAxis = [];
-        data[key1][key2].X.forEach(function(data_x) {
-            if(typeof data_x === 'number' && isFinite(data_x)) {
-                var value = data_x.toString().split(".");
-                if(value.length == 1) {
-                    xAxis.push(value.toString()+".00000")
-                }else if(value.length > 1) {
-                    if(value[1].length > 5){
-                        xAxis.push(data_x.toFixed(5))
-                    }else{
-                        xAxis.push(data_x)
+    .factory('DataAnalyseChart', function () {
+        function lineChart(data, key1, key2, id) {
+            console.log(data)
+            console.log(data[key1])
+            var xAxis = [];
+            data[key1][key2].X.forEach(function (data_x) {
+                if (typeof data_x === 'number' && isFinite(data_x)) {
+                    var value = data_x.toString().split(".");
+                    if (value.length == 1) {
+                        xAxis.push(value.toString() + ".00000")
+                    } else if (value.length > 1) {
+                        if (value[1].length > 5) {
+                            xAxis.push(data_x.toFixed(5))
+                        } else {
+                            xAxis.push(data_x)
+                        }
+                    } else {
+                        return
                     }
-                }else {return}
-            }else {
-                xAxis.push(data_x)
-            }
-        });
-        $('#' + id + '_loading').hide();
-        $('#' + id + '_content').show();
-        Highcharts.setOptions({
-            lang: {
-                resetZoom: '重置',
-                resetZoomTitle: '重置缩放比例'
-            }
-        });
-        $('#'+id).highcharts({
+                } else {
+                    xAxis.push(data_x)
+                }
+            });
+            $('#' + id + '_loading').hide();
+            $('#' + id + '_content').show();
+            Highcharts.setOptions({
+                lang: {
+                    resetZoom: '重置',
+                    resetZoomTitle: '重置缩放比例'
+                }
+            });
+            $('#' + id).highcharts({
 
-            exporting: {
-                enabled: false
-            },
-            chart: {
-                type: 'line',
-                zoomType: 'x',
-                panning: true,
-                panKey: 'shift',
-                selectionMarkerFill: 'rgba(0,0,0, 0.2)',
-                resetZoomButton: {
-                    position:{
-                        align: 'right',
-                        verticalAlign: 'top',
-                        x: 0,
-                        y: -30
-                    },
-                    theme: {
-                        fill: 'white',
-                        stroke: 'silver',
-                        r: 0,
-                        states: {
-                            hover: {
-                                fill: '#41739D',
-                                style: {
-                                    color: 'white'
+                exporting: {
+                    enabled: false
+                },
+                chart: {
+                    type: 'line',
+                    zoomType: 'x',
+                    panning: true,
+                    panKey: 'shift',
+                    selectionMarkerFill: 'rgba(0,0,0, 0.2)',
+                    resetZoomButton: {
+                        position: {
+                            align: 'right',
+                            verticalAlign: 'top',
+                            x: 0,
+                            y: -30
+                        },
+                        theme: {
+                            fill: 'white',
+                            stroke: 'silver',
+                            r: 0,
+                            states: {
+                                hover: {
+                                    fill: '#41739D',
+                                    style: {
+                                        color: 'white'
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            },
-            subtitle: {
-                text: '双击选中区域放大图标，按住shift点击拖动'
-            },
-            xAxis: {
-                categories: xAxis
-            },
-            series: [{
-                name: id,
-                data: data[key1][key2].Y
-            }]
-        });
-    }
-    return {lineChart: lineChart}
-
-})
-    .factory('EventData', function() {
-    var table = function(results) {
-        var type = {'0':'卫星数不足','1':'hpl超限','2':'误差超限','3':'数据有中断'}
-        for(var i=0;i<results.integrity.length;i++) {
-            results.integrity[i].type = type[results.integrity[i].type];
-            results.integrity[i].lastTime = (results.integrity[i].lastTime.time + results.integrity[i].lastTime.sec) * 1000;
+                },
+                subtitle: {
+                    text: '双击选中区域放大图标，按住shift点击拖动'
+                },
+                xAxis: {
+                    categories: xAxis
+                },
+                series: [{
+                    name: id,
+                    data: data[key1][key2].Y
+                }]
+            });
         }
-        return results.integrity;
-    }
-    return {table: table}
-})
+
+        return {lineChart: lineChart}
+
+    })
+    .factory('EventData', function () {
+        var table = function (results) {
+            var type = {'0': '卫星数不足', '1': 'hpl超限', '2': '误差超限', '3': '数据有中断'}
+            for (var i = 0; i < results.integrity.length; i++) {
+                results.integrity[i].type = type[results.integrity[i].type];
+                results.integrity[i].lastTime = (results.integrity[i].lastTime.time + results.integrity[i].lastTime.sec) * 1000;
+            }
+            return results.integrity;
+        }
+        return {table: table}
+    })
