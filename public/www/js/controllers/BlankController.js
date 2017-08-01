@@ -11,7 +11,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function getSingal() {
         var indexs = [];
-        $('input[name=sys]').each(function () {
+        $('#sys').find('input').each(function () {
             if (this.checked) {
                 indexs.push(Number(this.value))
             }
@@ -60,18 +60,19 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
 
         $scope.sys = {
-            'GPS': localStorage.GPS,
-            'GLS': localStorage.GLS,
-            'BDS': localStorage.BDS,
-            'GROUP': localStorage.GROUP
+            'GPS': getOptionLocal('GPS'),
+            'GLS': getOptionLocal('GPS'),
+            'BDS': getOptionLocal('BDS'),
+            'GROUP': getOptionLocal('GROUP')
         }
          $scope.option = {
-            sat_hist: localStorage.sat_hist,
-            err_hist: localStorage.err_hist,
-            dop_hist: localStorage.dop_hist,
-            PL_hist: localStorage.PL_hist,
-            hpl_num: localStorage.hpl_num,
-            vpl_num: localStorage.vpl_num
+            sat_hist:getOptionLocal('sat_hist'),
+            err_hist: getOptionLocal('err_hist'),
+            dop_hist: getOptionLocal('dop_hist'),
+            PL_hist: getOptionLocal('PL_hist'),
+            hpl_num: getOptionLocal('hpl_num'),
+            vpl_num: getOptionLocal('vpl_num'),
+             coordinate: getOptionLocal('coordinate')
         };
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
@@ -79,6 +80,25 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         initStation();
         initOption()
     }
+    recordOption()
+
+    function getOptionLocal(key){
+        return localStorage.getItem($rootScope.rootUserInfo.username +"_"+key) || false
+    }
+
+    function setOptionLocal(key, value){
+        return localStorage.setItem($rootScope.rootUserInfo.username +"_"+key, value)
+    }
+
+    function recordOption(){
+        $('#options').find('input').change(function(){
+            setOptionLocal($(this).attr('name'),this.checked)
+        })
+        $('#sys').find('input').change(function(){
+            setOptionLocal($(this).attr('name'),this.checked)
+        })
+    }
+
 
 
     function initStation() {
@@ -127,8 +147,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function getFilter() {
         var sys = [];
-        var options = {}
-        $('input[name=sys]').each(function () {
+        var options = {};
+        $('#sys').find('input').each(function () {
             if (this.checked) {
                 sys.push(Number(this.value))
             }
@@ -145,7 +165,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         })
         return {
             sys: sys,
-            options: options,
+            options: options
         }
 
     }
@@ -192,15 +212,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         //     'GROUP': false
         // };
 
-        Object.keys($scope.sys).forEach(function (key) {
-            localStorage[key]=$scope.sys[key]
-        })
-        Object.keys($scope.option).forEach(function (key) {
-            localStorage[key] = $scope.option[key]
-        })
-        localStorage.coordinate = $scope.showCoordinate
-        console.log('local -----------1')
-        console.log(localStorage)
     };
 
     function beStartBatchProcess(findData) {

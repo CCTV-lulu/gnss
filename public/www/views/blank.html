@@ -33,12 +33,12 @@
             <button class="col-md-8 btn btn-circle green"  ng-disabled="!mySwitch" ng-click="stopData()"> 暂 停</button>
         </div>
 
-        <div class="col-md-12 col-xs-12 col-sm-12">
+        <div class="col-md-12 col-xs-12 col-sm-12" id="sys">
             <label>定位系统: </label>
-            <input type="checkbox" name="sys" value= 2  ng-click="setOptions()" ng-model ='sys.BDS' ng-checked="{{sys['BDS']}}"> BDS
-            <input type="checkbox" name="sys" value= 0  ng-click="setOptions()" ng-model='sys.GPS'  ng-checked="{{sys['GPS']}}"> GPS
-            <input type="checkbox" name="sys" value= 1  ng-click="setOptions()" ng-model='sys.GLS' ng-checked="{{sys['GLS']}}"> GLS
-            <input type="checkbox" name="sys" value= 3  ng-click="setOptions()" ng-model='sys.GROUP' ng-checked="{{sys['GROUP']}}"> 组合
+            <input type="checkbox" name="BDS" value= 2  ng-click="setOptions()" ng-model ='sys.BDS' ng-checked="{{sys['BDS']}}"> BDS
+            <input type="checkbox" name="GPS" value= 0  ng-click="setOptions()" ng-model='sys.GPS'  ng-checked="{{sys['GPS']}}"> GPS
+            <input type="checkbox" name="GLS" value= 1  ng-click="setOptions()" ng-model='sys.GLS' ng-checked="{{sys['GLS']}}"> GLS
+            <input type="checkbox" name="GROUP" value= 3  ng-click="setOptions()" ng-model='sys.GROUP' ng-checked="{{sys['GROUP']}}"> 组合
         </div>
 
         <div id='options' class="col-md-12 col-xs-12 col-sm-12">
@@ -49,14 +49,15 @@
             <input type="checkbox" name="PL_hist" ng-checked="{{option['PL_hist']}}" ng-model="option.PL_hist"> 保护水平
             <input type="checkbox" name="hpl_num" ng-disabled = optionsAble.hpl_num_is_able ng-checked="{{filter.option['hpl_num']}}" ng-model="option.hpl_num"> HPL超限时间
             <input type="checkbox" name="vpl_num" ng-disabled = optionsAble.vpl_num_is_able  ng-checked="{{filter.option['vpl_num']}}" ng-model="option.vpl_num"> VPL超限时间
-
-        </div>
-
-        <div  class="col-md-12 col-xs-12 col-sm-12">
+            <br>
             <label>基准坐标选项: </label>
-            <input type="checkbox" name="coordinate"  ng-model="showCoordinate" ng-checked="showCoordinate">
-
+            <input type="checkbox" ng-model="option.coordinate" name="coordinate"  ng-checked="{{option['coordinate']}}">
         </div>
+
+        <!--<div  class="col-md-12 col-xs-12 col-sm-12">-->
+
+
+        <!--</div>-->
 
     </div>
     <div class="portlet-body form">
