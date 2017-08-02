@@ -445,10 +445,15 @@ function setStaHandleData(req, res) {
 
 
 
-function createWaring(req, res) {
+function createWaring(req, res,err) {
+    if(err){
+        console.log("---------------")
+        console.log(err)
+        // return res.send({status:false,message:'数据异常'})
+    }
     Station.findByStaId(req.body.staId).then(function (result) {
         if(!result){
-            return res.send({status:false})
+            return res.send({status:false,message:'查询基站被删除，请刷新'})
         }
         var username = req.user.username
         var path = CSVPath + "/" + username;

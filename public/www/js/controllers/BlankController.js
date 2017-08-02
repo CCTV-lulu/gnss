@@ -191,24 +191,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         } else {
             Prompt.promptBox('warning', '请选择要查询的基站！！')
         }
-        $scope.show = $scope.showCoordinate;
-        $scope.showVErrHist = $scope.option.err_hist;
-        $scope.showHErrHist = $scope.option.err_hist;
+        $scope.showCoordinate = $scope.option.coordinate
 
-        // $scope.option = {
-        //     sat_hist: false,
-        //     err_hist: false,
-        //     dop_hist: false,
-        //     PL_hist: false,
-        //     hpl_num: false,
-        //     vpl_num: false
-        // };
-        // $scope.sys = {
-        //     'GPS': false,
-        //     'GLS': false,
-        //     'BDS': false,
-        //     'GROUP': false
-        // };
 
     };
 
@@ -478,6 +462,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 series.push(info)
             }
         });
+        var filer = getFilter();
+        if(filer.options.err_hist === undefined)  return;
         // if (series.length == 0) return;
         if (series.length != 0) {
             series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});

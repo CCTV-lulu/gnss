@@ -5,7 +5,7 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
 
     function init() {
         $(".loading").animate({"width": "0%"}, 0);
-        DateTable.dateTable();
+        DateTable.date();
         $scope.sysNav = ['GPS', 'GLS', 'BDS', '组合'];
         $scope.filter = {
             sys: [true, true, true, true],
@@ -101,11 +101,15 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
 
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
+        console.log('=============================')
+
         if (stationId) {
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
             var str = startDate.replace(new RegExp('-', 'gm'), '-')
                 .replace(new RegExp(' ', 'gm'), '-');
+
+            console.log(str.substring(13, 23) )
 
             var findData = {};
             findData.staId = stationId;
@@ -120,8 +124,9 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
                 if (result.status) {
                     showWait(result.time);
                     getWarningCSV(result.fileName)
-                }else {
-                    Prompt.promptBox('warning', '查询基站被删除，请刷新')
+                }
+                else {
+                    Prompt.promptBox('warning', result.message)
                 }
             });
 
