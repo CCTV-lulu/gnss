@@ -94,7 +94,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             setOptionLocal($(this).attr('name'),this.checked)
         })
         $('#sys').find('input').change(function () {
-            setOptionLocal($(this).attr('name'), this.checked)
+            setOptionLocal($(this).attr('name'),this.checked)
         })
     }
 

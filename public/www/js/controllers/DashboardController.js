@@ -180,7 +180,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         return value.toFixed(6)+'°'
     }
     $scope.handleDataReplace = function (value) {
-        console.log(value)
         if(value === null){
             return '-'
         }
@@ -336,6 +335,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if(length>100){
             return false
         }
+        console.log(rotat)
         if(isNaN(rotat)){
             return false
         }

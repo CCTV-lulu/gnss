@@ -168,9 +168,9 @@ module.exports = {
             if(config!=undefined){
                 Object.keys(config.rb).forEach(function (index) {
                     if (index==2){
-                        newRb.push(parseFloat(config.rb[index]).toFixed(2))
+                        newRb.push(Number(config.rb[index]))
                     }else {
-                        newRb.push(parseFloat(config.rb[index]).toFixed(7))
+                        newRb.push(Number(config.rb[index]))
                     }
                 })
                 newConfig.rb=newRb
@@ -193,35 +193,35 @@ module.exports = {
         });
         return defer.promise;
     },
-    setHandleData:function (staId,singal) {
-        var defer = Promise.defer();
-        StationConfig.findOne({staId:staId}).exec(function (err, stationConfig) {
-            if(err){
-                return defer.resolve({status:false,message:'拉取数据失败'})
-            }
-            if(!stationConfig){
-                return defer.resolve({status:false,message:'请刷新'})
-            }
-            var config = stationConfig.config||{};
-            var newHandleData = stationConfig.handleData||{};
-            if(newHandleData[singal]===undefined){
-                newHandleData[singal]={};
-                newHandleData[singal].elmin = config.elmin[parseInt(singal)];
-                newHandleData[singal].rb = config.rb[parseInt(singal)];
-            }else {
-                newHandleData[singal].elmin = config.elmin[parseInt(singal)];
-                newHandleData[singal].rb = config.rb[parseInt(singal)];
-            }
-            StationConfig.update({staId:staId},{$set:{handleData:newHandleData}},function (err,result) {
-                if(err){
-                    return defer.resolve({status: false, message: '保存失败'})
-                }
-                return defer.resolve(result)
-            })
-
-        })
-        return defer.promise;
-    },
+    // setHandleData:function (staId,singal) {
+    //     var defer = Promise.defer();
+    //     StationConfig.findOne({staId:staId}).exec(function (err, stationConfig) {
+    //         if(err){
+    //             return defer.resolve({status:false,message:'拉取数据失败'})
+    //         }
+    //         if(!stationConfig){
+    //             return defer.resolve({status:false,message:'请刷新'})
+    //         }
+    //         var config = stationConfig.config||{};
+    //         var newHandleData = stationConfig.handleData||{};
+    //         if(newHandleData[singal]===undefined){
+    //             newHandleData[singal]={};
+    //             newHandleData[singal].elmin = config.elmin[parseInt(singal)];
+    //             newHandleData[singal].rb = config.rb[parseInt(singal)];
+    //         }else {
+    //             newHandleData[singal].elmin = config.elmin[parseInt(singal)];
+    //             newHandleData[singal].rb = config.rb[parseInt(singal)];
+    //         }
+    //         StationConfig.update({staId:staId},{$set:{handleData:newHandleData}},function (err,result) {
+    //             if(err){
+    //                 return defer.resolve({status: false, message: '保存失败'})
+    //             }
+    //             return defer.resolve(result)
+    //         })
+    //
+    //     })
+    //     return defer.promise;
+    // },
     // setRb:function (staId,data) {
     //     var defer =  Promise.defer();
     //     StationConfig.findOne({staId:staId}).exec(function (err,stationConfig) {

@@ -305,6 +305,7 @@ function getStatInfo(number, id) {
 }
 function initStationOpt(staId) {
     AllStationsConfig[staId] = undefined;
+
     parse.initStationPara(staId);
 }
 module.exports = {

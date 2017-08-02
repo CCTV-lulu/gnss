@@ -436,10 +436,9 @@ function setStaHandleData(req, res) {
     StationConfig.setStationHandleData(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.handleData,thresholdInfo.config,thresholdInfo.rbUpDate).then(function (result) {
         if (result.status) {
 
-            StationSocketStatus.initStationOpt(thresholdInfo.staId)
+            StationSocketStatus.initStationOpt(thresholdInfo.staId);
             return res.send(result)
         }
-        // StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
 
     })
 
@@ -448,11 +447,6 @@ function setStaHandleData(req, res) {
 
 
 function createWaring(req, res,err) {
-    if(err){
-        console.log("---------------")
-        console.log(err)
-        // return res.send({status:false,message:'数据异常'})
-    }
     Station.findByStaId(req.body.staId).then(function (result) {
         if(!result){
             return res.send({status:false,message:'查询基站被删除，请刷新'})
