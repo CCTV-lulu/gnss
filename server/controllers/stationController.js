@@ -435,6 +435,8 @@ function setStaHandleData(req, res) {
     var thresholdInfo = req.body;
     StationConfig.setStationHandleData(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.handleData,thresholdInfo.config,thresholdInfo.rbUpDate).then(function (result) {
         if (result.status) {
+
+            StationSocketStatus.initStationOpt(thresholdInfo.staId)
             return res.send(result)
         }
         // StationConfig.setHandleData(thresholdInfo.staId,thresholdInfo.signal)
