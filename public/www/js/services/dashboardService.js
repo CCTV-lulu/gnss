@@ -84,16 +84,16 @@ MetronicApp.factory('DataArray', function() {
             },
             series: [
                 {
-                name: "北斗",
+                name: "BDS",
                 type: 'scatter',
                 data: data.bdsatpos
             }, {
-                name: "gls",
+                name: "GLS",
                 type: 'scatter',
                 data: data.glsatpos
             },
                 {
-                name: "gps",
+                name: "GPS",
                 type: 'scatter',
                 data: data.gpsatpos
             }]

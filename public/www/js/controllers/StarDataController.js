@@ -89,21 +89,40 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
         if($rootScope.rootSingalType.name === 'BDS'){
             $scope.signal = true
         }
-        var starInfos =$scope.starInfo
-        starInfos.forEach(function (star) {
-            Object.keys(star).forEach(function (key) {
-                if(star[key] === null){
-                    var index = starInfos.indexOf(star)
-                    starInfos[index][key]="-";
-                    $scope.starInfo = starInfos
-                }
-                if(star[key] === undefined){
-                    var index = starInfos.indexOf(star)
-                    starInfos[index][key] = 'NA'
-                    $scope.starInfo = starInfos
-                }
-            })
-        })
+        // var starInfos =$scope.starInfo
+        // starInfos.forEach(function (star) {
+        //     Object.keys(star).forEach(function (key) {
+        //         if(star[key] === null){
+        //             var index = starInfos.indexOf(star)
+        //             starInfos[index][key]="-";
+        //             $scope.starInfo = starInfos
+        //         }
+        //         if(star[key] === undefined){
+        //             var index = starInfos.indexOf(star)
+        //             starInfos[index][key] = 'NA'
+        //             $scope.starInfo = starInfos
+        //         }
+        //     })
+        // })
+
+        $scope.handleDataTwo =  function (value) {
+            if(value === null){
+                return '-'
+            }
+            if(value === undefined){
+                return 'NA'
+            }
+            return value.toFixed(2)
+        }
+        $scope.handleDataInt = function (value) {
+            if(value === null){
+                return '-'
+            }
+            if(value === undefined){
+                return 'NA'
+            }
+            return parseInt(value)
+        }
 
     }
     $scope.parseInt = function(number) {

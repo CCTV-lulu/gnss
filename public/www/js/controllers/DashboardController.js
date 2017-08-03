@@ -68,10 +68,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
                             showChart(data.stationData[i]);
-                            showDxDy(data.stationData, 'gpsDxDy');
-                            showDxDy(data.stationData, 'glsDxDy');
-                            showDxDy(data.stationData, 'bdsDxDy');
-                            showDxDy(data.stationData, 'groupDxDy');
+                            showDxDy(data.stationData, 'GPSDXDY');
+                            showDxDy(data.stationData, 'GLSDXDY');
+                            showDxDy(data.stationData, 'DBSDXDY');
+                            showDxDy(data.stationData, 'GROUPDXDY');
                             showH(data.stationData, 'H');
 
                             settingSys(data.stationData[i]);
@@ -101,10 +101,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
 
         }
-        // if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
-        //    $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
-        //
-        // }
+        if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
+           $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
+
+        }
         if (staInfo.posR[3]&&getDxDy(staInfo.posR[3])) {
             $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
         }
@@ -461,7 +461,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     function showH(allSta, type) {
         var types = {
             'gpsDH': 0,
-            //'glsDH': 1,
+            'glsDH': 1,
             'bdsDH': 2,
             'groupDH': 3
         };
@@ -574,18 +574,18 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 }
             },
             series: [{
-                name: 'gpsDH',
+                name: 'GPSDH',
                 data: gpsY
             }
-                //, {
-                //    name: 'glsDH',
-                //    data: glsY
-                //}
                 , {
-                    name: 'bdsDH',
+                   name: 'GLSDH',
+                   data: glsY
+                }
+                , {
+                    name: 'DBSDH',
                     data: dbsY
                 }, {
-                    name: 'groupDH',
+                    name: 'GROUPDH',
                     data: groupY
                 }
             ]

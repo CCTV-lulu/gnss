@@ -559,8 +559,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         });
         if (series.length == 0) return;
-        series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
-        series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
+        if(type == 'Hdop'){
+          series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
+        }
+        if(type == 'Vdop'){
+            series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
+        }
+
+
 
 
         $('#' + type + '_container').show();
@@ -638,7 +644,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSPL', 'GLSPL', 'BDSPL', 'GroupPL'];
+        var names = ['GPSPL', 'GLSPL', 'BDSPL', 'GROUPPL'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
@@ -654,8 +660,13 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
-        series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
-        series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
+        if(type == 'VPL'){
+           series.push({name: "WARNINGVPL", data: [[$scope.threshold.VPL, 0], [$scope.threshold.VPL, 1]]});
+        }
+        if( type =='HPL'){
+           series.push({name: "WARNINGHPL", data: [[$scope.threshold.HPL, 0], [$scope.threshold.HPL, 1]]})
+        }
+
         $('#' + type + '_container').show();
 
         Highcharts.setOptions({
