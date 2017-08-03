@@ -23,9 +23,14 @@ logProcess.init()
 module.exports = function (app) {
 
     app.post('/logs', upload.single('log_file'), function (req, res, next) {
+        console.log("----------------logResolvePath-")
+        console.log(logResolvePath)
         var logPath = config.logPath.toString() + req.file.originalname;
         var logResolvePath = cwd + logPath;
-        var name = fs.rename(req.file.path, logResolvePath, function () {
+        var name = fs.rename(req.file.path, logResolvePath, function (err,data) {
+            console.log("--------err-------")
+            console.log(err)
+            console.log(data)
             logProcess.addLogPath(logPath,function(result){
                 if(result.status){
                  return res.send('ok')
