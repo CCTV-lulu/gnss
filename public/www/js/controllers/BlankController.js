@@ -446,7 +446,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSERRHIST', 'GLSERRHIST', 'BDSERRHIST', 'GROUPERRHIST'];
+        var names = ['GPSERRHIST', 'GLOERRHIST', 'BDSERRHIST', 'MULTIERRHIST'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
@@ -466,8 +466,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         if(filer.options.err_hist === undefined)  return;
         // if (series.length == 0) return;
         if (series.length != 0) {
-            series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
-            series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
+            if(type == 'HErrHist'){
+                series.push({name: "WARNINGDH", data: [[$scope.threshold.dH, 0], [$scope.threshold.dH, 1]]});
+            }
+            if(type == 'VErrHist'){
+                series.push({name: "WARNINGDV", data: [[$scope.threshold.dV, 0], [$scope.threshold.dV, 1]]})
+            }
+
+            
         }
         $('#' + type + '_container').show();
 
@@ -543,7 +549,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function showDop(type, data, showType) {
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSDOP', 'GLSDOP', 'BDSDOP', 'GROUPDOP'];
+        var names = ['GPSDOP', 'GLODOP', 'BDSDOP', 'MULTIDOP'];
         var series = [];
         Object.keys(data).forEach(function (key) {
             var info = {name: names[Number(key)], data: []};
@@ -644,7 +650,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
-        var names = ['GPSPL', 'GLSPL', 'BDSPL', 'GROUPPL'];
+        var names = ['GPSPL', 'GLOPL', 'BDSPL', 'MULTIPL'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {
@@ -739,7 +745,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     function showTime(data, username) {
-        var signals = ['GPS', 'GLS', 'BDS', 'GROUP'];
+        var signals = ['GPS', 'GLO', 'BDS', 'MULTI'];
         for (var sys in data) {
             var sysIndex = parseInt(sys);
             if (data[sys].up_slice.vpl_num == 1) {
@@ -767,7 +773,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function showStaNum(type, data) {
         //var showData = data[type];
-        var names = ['GPSSTANUM', 'GLSSTANUM', 'BDSSTANUM', 'GROUPSTANUM'];
+        var names = ['GPSSTANUM', 'GLOSTANUM', 'BDSSTANUM', 'MULTISTANUM'];
 
         var series = [];
         Object.keys(data).forEach(function (key) {

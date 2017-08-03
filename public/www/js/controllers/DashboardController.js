@@ -70,8 +70,8 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             showChart(data.stationData[i]);
                             showDxDy(data.stationData, 'GPSDXDY');
                             showDxDy(data.stationData, 'GLSDXDY');
-                            showDxDy(data.stationData, 'DBSDXDY');
-                            showDxDy(data.stationData, 'GROUPDXDY');
+                            showDxDy(data.stationData, 'BDSDXDY');
+                            showDxDy(data.stationData, 'MULTIDXDY');
                             showH(data.stationData, 'H');
 
                             settingSys(data.stationData[i]);
@@ -94,19 +94,19 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     function updateDxDy(staInfo){
 
         if (staInfo.posR[0]&&getDxDy(staInfo.posR[0])) {
-            $scope.seriesList.gpsDxDy.addPoint(getDxDy(staInfo.posR[0]), true, true);
+            $scope.seriesList.GPSDXDY.addPoint(getDxDy(staInfo.posR[0]), true, true);
 
         }
         if (staInfo.posR[1]&&getDxDy(staInfo.posR[1])){
-            $scope.seriesList.glsDxDy.addPoint(getDxDy(staInfo.posR[1]), true, true);
+            $scope.seriesList.GLSDXDY.addPoint(getDxDy(staInfo.posR[1]), true, true);
 
         }
         if (staInfo.posR[2]&&getDxDy(staInfo.posR[2])) {
-           $scope.seriesList.dbsDxDy.addPoint(getDxDy(staInfo.posR[2]), true, true);
+           $scope.seriesList.BDSDXDY.addPoint(getDxDy(staInfo.posR[2]), true, true);
 
         }
         if (staInfo.posR[3]&&getDxDy(staInfo.posR[3])) {
-            $scope.seriesList.groupDxDy.addPoint(getDxDy(staInfo.posR[3]), true, true);
+            $scope.seriesList.MULTIDXDY.addPoint(getDxDy(staInfo.posR[3]), true, true);
         }
     }
 
@@ -114,16 +114,16 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
 
         if (staInfo.posR[0]) {
-            $scope.seriesList.gpsDH.addPoint([staInfo.posR[0].H], true, true);
+            $scope.seriesList.GPSDH.addPoint([staInfo.posR[0].H], true, true);
 
         }
 
         if (staInfo.posR[2]) {
-            $scope.seriesList.bdsDH.addPoint([ staInfo.posR[2].H], true, true);
+            $scope.seriesList.BDSDH.addPoint([ staInfo.posR[2].H], true, true);
 
         }
         if (staInfo.posR[3]) {
-            $scope.seriesList.groupDH.addPoint([staInfo.posR[3].H], true, true);
+            $scope.seriesList.MULTIDH.addPoint([staInfo.posR[3].H], true, true);
         }
 
     }
@@ -345,10 +345,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
     function showDxDy(data, type) {
         var types = {
-            'gpsDxDy': 0,
-            'glsDxDy': 1,
-            'bdsDxDy': 2,
-            'groupDxDy': 3
+            'GPSDXDY': 0,
+            'GLSDXDY': 1,
+            'BDSDXDY': 2,
+            'MULTIDXDY': 3
         };
         var show_date = [];
 
@@ -582,10 +582,10 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                    data: glsY
                 }
                 , {
-                    name: 'DBSDH',
+                    name: 'BDSDH',
                     data: dbsY
                 }, {
-                    name: 'GROUPDH',
+                    name: 'MULTIDH',
                     data: groupY
                 }
             ]
