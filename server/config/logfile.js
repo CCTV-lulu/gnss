@@ -24,9 +24,11 @@ module.exports = function (app) {
 
     app.post('/logs', upload.single('log_file'), function (req, res, next) {
         console.log("----------------logResolvePath-")
-        console.log(logResolvePath)
         var logPath = config.logPath.toString() + req.file.originalname;
+        console.log(config.logPath.toString())
+        console.log(req.file.originalname)
         var logResolvePath = cwd + logPath;
+        console.log(logResolvePath)
         var name = fs.rename(req.file.path, logResolvePath, function (err,data) {
             console.log("--------err-------")
             console.log(err)
