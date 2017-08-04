@@ -4,7 +4,6 @@ var config = require('./config')[env];
 var multer = require('multer'); // v1.0.5
 var path = require('path');
 var cwd = config.cwd;
-
 var upload = multer({dest: cwd + '/uploads/'}); // for parsing multipart/form-data，
 var StationConfig = require('../data/stationConfig.js');
 
@@ -21,7 +20,8 @@ var logProcess = new LogProcess();
 logProcess.init()
 
 module.exports = function (app) {
-
+            console.log("--------------cwd")
+            console.log(cwd)
     app.post('/logs', upload.single('log_file'), function (req, res, next) {
         console.log("----------------logResolvePath--------------")
         // console.log(req.file)

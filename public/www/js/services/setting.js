@@ -1,7 +1,7 @@
 MetronicApp.factory('settingInfo', function () {
     return {
 
-
+        //
         server: "101.37.150.119",
         //
         // server : 'localhost' ,
