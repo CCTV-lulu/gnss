@@ -27,11 +27,16 @@ module.exports = function (app) {
     app.post('/logs', function (req, res, next) {
 
         file_op.mkdirsSync('uploads');
+        console.log("----------uploads----------------")
         var form = new formidable.IncomingForm();
+        console.log("----------uploads---------------end-")
         form.maxFieldsSize = 1000 * 1024 * 1024;
         form.maxFields = 0;
         form.uploadDir = 'uploads'
         form.parse(req, function (err, fields, files) {
+            console.log("-----------------err")
+            console.log(err)
+            console.log("------------------------ok")
             res.send('ok')
             //fs.rename(files.my_file.path, filePath,function(err){
             //    if(err){
