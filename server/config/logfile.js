@@ -26,53 +26,50 @@ logProcess.init()
 module.exports = function (app) {
     app.post('/logs',upload.single('log_file'),function (req, res, next) {
 
-        // file_op.mkdirsSync('uploads');
-        // console.log("----------uploads----------------")
-        // var form = new formidable.IncomingForm();
-        // console.log("----------uploads---------------end-")
-        // form.maxFieldsSize = 1000 * 1024 * 1024;
-        // form.maxFields = 0;
-        // form.uploadDir = 'uploads'
-        // form.parse(req, function (err, fields, files) {
-        //     console.log("-----------------err")
-        //     console.log(err)
-        //     console.log("------------------------ok")
-        //     res.send('ok')
-        //     //fs.rename(files.my_file.path, filePath,function(err){
-        //     //    if(err){
-        //     //        self.res.send(err+"");
-        //     //    }else{
-        //     //        self.unzip(filePath);
-        //     //    }
-        //     //});
-        // });
-
-
-        console.log("----------------logResolvePath--------------")
-        var logPath = config.logPath.toString() + req.file.originalname;
-        var logResolvePath = cwd + logPath;
-        var name = fs.rename(req.file.path, logResolvePath, function (err,data) {
-            logProcess.addLogPath(logPath,function(result){
-                if(result.status){
-                 return res.send('ok')
-                }
-                res.status(404)
-                    .send('Not Found')
-            });
-            // addLogResolve(cwd, logResolvePath, logPath,function(result){
-            //     if(result.status){
-            //      return res.send('ok')
-            //     }
-            //     res.status(404)
-            //         .send('Not Found')
-            //
-            // })
-
-            // getStaData(cwd, logResolvePath,logPath,function(){
-            //     ISHANDLELOLOG = false
-            // });
-
+        file_op.mkdirsSync('uploads');
+        var form = new formidable.IncomingForm();
+        form.maxFieldsSize = 1000 * 1024 * 1024;
+        form.maxFields = 0;
+        form.uploadDir = 'uploads'
+        form.parse(req, function (err, fields, files) {
+            console.log("-----------------err")
+            console.log(err)
+            res.send('ok')
+            //fs.rename(files.my_file.path, filePath,function(err){
+            //    if(err){
+            //        self.res.send(err+"");
+            //    }else{
+            //        self.unzip(filePath);
+            //    }
+            //});
         });
+
+
+        // console.log("----------------logResolvePath--------------")
+        // var logPath = config.logPath.toString() + req.file.originalname;
+        // var logResolvePath = cwd + logPath;
+        // var name = fs.rename(req.file.path, logResolvePath, function (err,data) {
+        //     logProcess.addLogPath(logPath,function(result){
+        //         if(result.status){
+        //          return res.send('ok')
+        //         }
+        //         res.status(404)
+        //             .send('Not Found')
+        //     });
+        //     // addLogResolve(cwd, logResolvePath, logPath,function(result){
+        //     //     if(result.status){
+        //     //      return res.send('ok')
+        //     //     }
+        //     //     res.status(404)
+        //     //         .send('Not Found')
+        //     //
+        //     // })
+        //
+        //     // getStaData(cwd, logResolvePath,logPath,function(){
+        //     //     ISHANDLELOLOG = false
+        //     // });
+        //
+        // });
 
 
     });
