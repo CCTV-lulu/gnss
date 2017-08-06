@@ -20,19 +20,43 @@ var LogProcess = require('../service/LogProcess.js')
 var logProcess = new LogProcess();
 logProcess.init()
 
+
+
+
+
+
+
+
+
+
 module.exports = function (app) {
 
-    app.post('/logs', upload.single('log_file'), function (req, res, next) {
-        var logPath = config.logPath.toString() + req.file.originalname;
-        var logResolvePath = cwd + logPath;
-        var name = fs.rename(req.file.path, logResolvePath, function () {
-            logProcess.addLogPath(logPath,function(result){
-                if(result.status){
-                 return res.send('ok')
-                }
-                res.status(404)
-                    .send('Not Found')
+    app.post('/logs',  function (req, res, next) {
+
+            //file_op.rm('uploads');
+            var file_op    = require('../util/file_operate');
+            var formidable = require('formidable');
+            file_op.mkdirsSync('uploads');
+            var form = new formidable.IncomingForm();
+            form.maxFieldsSize = 20 * 1024 * 1024;
+            form.maxFields = 0;
+            form.uploadDir = 'uploads'
+            form.parse(req, function(err, fields, files) {
+                console.log(err)
+                console.log(fields)
+                console.log(files.log_file.name)
+                console.log('-------------------')
+
+                //fs.rename(files.my_file.path, filePath,function(err){
+                //    if(err){
+                //        self.res.send(err+"");
+                //    }else{
+                //        self.unzip(filePath);
+                //    }
+                //});
             });
+
+        //res.send('asdfas')
             // addLogResolve(cwd, logResolvePath, logPath,function(result){
             //     if(result.status){
             //      return res.send('ok')
@@ -46,7 +70,7 @@ module.exports = function (app) {
             //     ISHANDLELOLOG = false
             // });
 
-        });
+        //});
 
 
     });
