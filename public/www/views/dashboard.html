@@ -24,7 +24,7 @@
         </thead>
         <tbody>
         <tr style="text-align: center">
-            <td>北斗</td>
+            <td>BDS</td>
             <td>{{showCompany(bdInfo.Lon)}}</td>
             <td >{{showCompany(bdInfo.Lat)}}</td>
             <td>{{showValueTwo(gpInfo.H)}}</td>
@@ -34,12 +34,12 @@
             </td>
             <td>{{showValue(bdInfo.trackNum)}}</td>
             <td>{{showValue(bdInfo.exsats)}}</td>
-            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
-            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
+            <td>{{handleDataTwo(bdInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(bdInfo.VDOP)}}</td>
             <td>{{handleDataReplace(bdInfo.dH)}}</td>
             <td>{{handleDataReplace(bdInfo.dV)}}</td>
-            <td>{{handleDataSix(bdInfo.HPL)}}</td>
-            <td>{{handleDataSix(bdInfo.VPL)}}</td>
+            <td>{{handleDataTwo(bdInfo.HPL)}}</td>
+            <td>{{handleDataTwo(bdInfo.VPL)}}</td>
         </tr>
         <tr style="text-align: center">
             <td>GPS</td>
@@ -52,12 +52,12 @@
             </td>
             <td>{{showValue(gpInfo.trackNum)}}</td>
             <td>{{showValue(gpInfo.exsats)}}</td>
-            <td>{{handleDataSix(gpInfo.HDOP)}}</td>
-            <td>{{handleDataSix(gpInfo.VDOP)}}</td>
+            <td>{{handleDataTwo(gpInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(gpInfo.VDOP)}}</td>
             <td>{{handleDataReplace(gpInfo.dH)}}</td>
             <td>{{handleDataReplace(gpInfo.dV)}}</td>
-            <td>{{handleDataSix(gpInfo.HPL)}}</td>
-            <td>{{handleDataSix(gpInfo.VPL)}}</td>
+            <td>{{handleDataTwo(gpInfo.HPL)}}</td>
+            <td>{{handleDataTwo(gpInfo.VPL)}}</td>
         <tr style="text-align: center">
             <td>GLONASS</td>
             <td>{{showCompany(glInfo.Lon)}}</td>
@@ -69,12 +69,12 @@
             </td>
             <td>{{showValue(glInfo.trackNum)}}</td>
             <td>{{showValue(glInfo.exsats)}}</td>
-            <td>{{handleDataSix(glInfo.HDOP)}}</td>
-            <td>{{handleDataSix(glInfo.VDOP)}}</td>
+            <td>{{handleDataTwo(glInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(glInfo.VDOP)}}</td>
             <td>{{handleDataReplace(glInfo.dH)}}</td>
             <td>{{handleDataReplace(glInfo.dV)}}</td>
-            <td>{{handleDataSix(glInfo.HPL)}}</td>
-            <td>{{handleDataSix(glInfo.VPL)}}</td>
+            <td>{{handleDataTwo(glInfo.HPL)}}</td>
+            <td>{{handleDataTwo(glInfo.VPL)}}</td>
         <tr style="text-align: center">
             <td>组合</td>
             <td>{{showCompany(groupInfo.Lon)}}</td>
@@ -86,12 +86,12 @@
             </td>
             <td>{{showValue(groupInfo.trackNum)}}</td>
             <td>{{showValue(groupInfo.exsats)}}</td>
-            <td>{{handleDataSix(groupInfo.HDOP)}}</td>
-            <td>{{handleDataSix(groupInfo.VDOP)}}</td>
+            <td>{{handleDataTwo(groupInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(groupInfo.VDOP)}}</td>
             <td>{{handleDataReplace(groupInfo.dH)}}</td>
             <td>{{handleDataReplace(groupInfo.dV)}}</td>
-            <td>{{handleDataSix(groupInfo.HPL)}}</td>
-            <td>{{handleDataSix(groupInfo.VPL)}}</td>
+            <td>{{handleDataTwo(groupInfo.HPL)}}</td>
+            <td>{{handleDataTwo(groupInfo.VPL)}}</td>
         </tbody>
     </table>
 </div>

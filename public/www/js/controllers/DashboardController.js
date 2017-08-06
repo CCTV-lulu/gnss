@@ -152,14 +152,14 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         }
         return value
     }
-    $scope.handleDataSix = function (value) {
+    $scope.handleDataTwo = function (value) {
         if(value === null){
            return "-"
         }
         if(value === undefined){
             return 'NA'
         }
-        return value.toFixed(6)
+        return value.toFixed(2)
     }
     $scope.showValueTwo = function (value) {
         if(value === null){
@@ -186,7 +186,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if(value === undefined){
             return 'NA'
         }
-        return value.toFixed(6).replace('-','')
+        return value.toFixed(2).replace('-','')
     }
 
 
