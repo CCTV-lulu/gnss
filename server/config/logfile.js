@@ -4,7 +4,6 @@ var config = require('./config')[env];
 var multer = require('multer'); // v1.0.5
 var path = require('path');
 var cwd = config.cwd;
-
 var upload = multer({dest: cwd + '/uploads/'}); // for parsing multipart/form-data，
 var StationConfig = require('../data/stationConfig.js');
 
@@ -16,16 +15,12 @@ var os = require('os');
 var lock = require('lockfile')
 var LogProcess = require('../service/LogProcess.js')
 
+var formidable = require('formidable');
+var file_op = require('../util/file_operate');
+
 //
 var logProcess = new LogProcess();
 logProcess.init()
-
-
-
-
-
-
-
 
 
 
@@ -46,7 +41,9 @@ module.exports = function (app) {
                 console.log(fields)
                 console.log(files.log_file.name)
                 console.log('-------------------')
-
+                if(!err){
+                    return res.send('ok')
+                }
                 //fs.rename(files.my_file.path, filePath,function(err){
                 //    if(err){
                 //        self.res.send(err+"");
@@ -54,6 +51,7 @@ module.exports = function (app) {
                 //        self.unzip(filePath);
                 //    }
                 //});
+
             });
 
         //res.send('asdfas')

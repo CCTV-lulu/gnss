@@ -71,9 +71,12 @@ function pos_config(sta_id,prcopt) {
 module.exports.parser_pos=function(sta_id,data,prcopt) {
     var rtcm=rtcm_init(sta_id);
     var para=pos_config(sta_id,prcopt);
+
+
     var pos_list = [];
 
     if(para!=0){
+        // console.log(typeof para.prcopt.rb[0])
         var navsys=[];
         var results=[];
         for(var i=0;i<para.prcopt.navsys.length;i++){

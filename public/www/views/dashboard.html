@@ -24,7 +24,7 @@
         </thead>
         <tbody>
         <tr style="text-align: center">
-            <td>北斗</td>
+            <td>BDS</td>
             <td>{{showCompany(bdInfo.Lon)}}</td>
             <td >{{showCompany(bdInfo.Lat)}}</td>
             <td>{{showValueTwo(gpInfo.H)}}</td>
@@ -34,64 +34,64 @@
             </td>
             <td>{{showValue(bdInfo.trackNum)}}</td>
             <td>{{showValue(bdInfo.exsats)}}</td>
-            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
-            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
+            <td>{{handleDataTwo(bdInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(bdInfo.VDOP)}}</td>
             <td>{{handleDataReplace(bdInfo.dH)}}</td>
             <td>{{handleDataReplace(bdInfo.dV)}}</td>
-            <td>{{handleDataSix(bdInfo.HPL)}}</td>
-            <td>{{handleDataSix(bdInfo.VPL)}}</td>
+            <td>{{handleDataTwo(bdInfo.HPL)}}</td>
+            <td>{{handleDataTwo(bdInfo.VPL)}}</td>
         </tr>
         <tr style="text-align: center">
             <td>GPS</td>
-            <td>{{showCompany(bdInfo.Lon)}}</td>
-            <td >{{showCompany(bdInfo.Lat)}}</td>
+            <td>{{showCompany(gpInfo.Lon)}}</td>
+            <td >{{showCompany(gpInfo.Lat)}}</td>
             <td>{{showValueTwo(gpInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
+                <span data-counter="counterup" >{{showValue(gpInfo.posNum)}}</span>
             </div>
             </td>
-            <td>{{showValue(bdInfo.trackNum)}}</td>
-            <td>{{showValue(bdInfo.exsats)}}</td>
-            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
-            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
-            <td>{{handleDataReplace(bdInfo.dH)}}</td>
-            <td>{{handleDataReplace(bdInfo.dV)}}</td>
-            <td>{{handleDataSix(bdInfo.HPL)}}</td>
-            <td>{{handleDataSix(bdInfo.VPL)}}</td>
+            <td>{{showValue(gpInfo.trackNum)}}</td>
+            <td>{{showValue(gpInfo.exsats)}}</td>
+            <td>{{handleDataTwo(gpInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(gpInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(gpInfo.dH)}}</td>
+            <td>{{handleDataReplace(gpInfo.dV)}}</td>
+            <td>{{handleDataTwo(gpInfo.HPL)}}</td>
+            <td>{{handleDataTwo(gpInfo.VPL)}}</td>
         <tr style="text-align: center">
             <td>GLONASS</td>
-            <td>{{showCompany(bdInfo.Lon)}}</td>
-            <td >{{showCompany(bdInfo.Lat)}}</td>
-            <td>{{showValueTwo(gpInfo.H)}}</td>
+            <td>{{showCompany(glInfo.Lon)}}</td>
+            <td >{{showCompany(glInfo.Lat)}}</td>
+            <td>{{showValueTwo(glInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
+                <span data-counter="counterup" >{{showValue(glInfo.posNum)}}</span>
             </div>
             </td>
-            <td>{{showValue(bdInfo.trackNum)}}</td>
-            <td>{{showValue(bdInfo.exsats)}}</td>
-            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
-            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
-            <td>{{handleDataReplace(bdInfo.dH)}}</td>
-            <td>{{handleDataReplace(bdInfo.dV)}}</td>
-            <td>{{handleDataSix(bdInfo.HPL)}}</td>
-            <td>{{handleDataSix(bdInfo.VPL)}}</td>
+            <td>{{showValue(glInfo.trackNum)}}</td>
+            <td>{{showValue(glInfo.exsats)}}</td>
+            <td>{{handleDataTwo(glInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(glInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(glInfo.dH)}}</td>
+            <td>{{handleDataReplace(glInfo.dV)}}</td>
+            <td>{{handleDataTwo(glInfo.HPL)}}</td>
+            <td>{{handleDataTwo(glInfo.VPL)}}</td>
         <tr style="text-align: center">
             <td>组合</td>
-            <td>{{showCompany(bdInfo.Lon)}}</td>
-            <td >{{showCompany(bdInfo.Lat)}}</td>
-            <td>{{showValueTwo(gpInfo.H)}}</td>
+            <td>{{showCompany(groupInfo.Lon)}}</td>
+            <td >{{showCompany(groupInfo.Lat)}}</td>
+            <td>{{showValueTwo(groupInfo.H)}}</td>
             <td><div class="number">
-                <span data-counter="counterup" >{{showValue(bdInfo.posNum)}}</span>
+                <span data-counter="counterup" >{{showValue(groupInfo.posNum)}}</span>
             </div>
             </td>
-            <td>{{showValue(bdInfo.trackNum)}}</td>
-            <td>{{showValue(bdInfo.exsats)}}</td>
-            <td>{{handleDataSix(bdInfo.HDOP)}}</td>
-            <td>{{handleDataSix(bdInfo.VDOP)}}</td>
-            <td>{{handleDataReplace(bdInfo.dH)}}</td>
-            <td>{{handleDataReplace(bdInfo.dV)}}</td>
-            <td>{{handleDataSix(bdInfo.HPL)}}</td>
-            <td>{{handleDataSix(bdInfo.VPL)}}</td>
+            <td>{{showValue(groupInfo.trackNum)}}</td>
+            <td>{{showValue(groupInfo.exsats)}}</td>
+            <td>{{handleDataTwo(groupInfo.HDOP)}}</td>
+            <td>{{handleDataTwo(groupInfo.VDOP)}}</td>
+            <td>{{handleDataReplace(groupInfo.dH)}}</td>
+            <td>{{handleDataReplace(groupInfo.dV)}}</td>
+            <td>{{handleDataTwo(groupInfo.HPL)}}</td>
+            <td>{{handleDataTwo(groupInfo.VPL)}}</td>
         </tbody>
     </table>
 </div>
@@ -178,10 +178,10 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="bdsDxDy_loading">
+                        <div id="BDSDXDY_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="bdsDxDy_content" class="display-none">
-                            <div id="bdsDxDy" class="chart" style="height: 350px;"></div>
+                        <div id="BDSDXDY_content" class="display-none">
+                            <div id="BDSDXDY" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -196,10 +196,10 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="gpsDxDy_loading">
+                        <div id="GPSDXDY_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="gpsDxDy_content" class="display-none">
-                            <div id="gpsDxDy" class="chart" style="height: 350px;"></div>
+                        <div id="GPSDXDY_content" class="display-none">
+                            <div id="GPSDXDY" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -213,10 +213,10 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="glsDxDy_loading">
+                        <div id="GLSDXDY_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="glsDxDy_content" class="display-none">
-                            <div id='glsDxDy' class="chart" style="height: 350px;"></div>
+                        <div id="GLSDXDY_content" class="display-none">
+                            <div id='GLSDXDY' class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>
@@ -231,10 +231,10 @@
                         </div>
                     </div>
                     <div class="portlet-body">
-                        <div id="groupDxDy_loading">
+                        <div id="MULTIDXDY_loading">
                             <img src="assets/img/loading.gif" alt="loading"/></div>
-                        <div id="groupDxDy_content" class="display-none">
-                            <div id="groupDxDy" class="chart" style="height: 350px;"></div>
+                        <div id="MULTIDXDY_content" class="display-none">
+                            <div id="MULTIDXDY" class="chart" style="height: 350px;"></div>
                         </div>
                     </div>
                 </div>

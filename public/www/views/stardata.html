@@ -28,16 +28,16 @@
 
                     <tbody id="startInfo">
                     <tr ng-repeat="star in starInfo" ng-model="stationsInfo">
-                        <td>{{ star.sat }}</td>
-                        <td>{{ star.svh }}</td>
-                        <td>{{ star.Ele}}</td>
-                        <td>{{ star.Azi}}</td>
-                        <td>{{ star.ura }}</td>
-                        <td ng-show="signal">{{ star.rura }}</td>
-                        <td ng-show="signal">{{ star.udre }}</td>
-                        <td>{{ star.week }}</td>
-                        <td>{{ star.tow }}</td>
-                        <td>{{star.time}}</td>
+                        <td>{{ handleDataInt(star.sat) }}</td>
+                        <td>{{ handleDataInt(star.svh)}}</td>
+                        <td>{{ handleDataInt(star.Ele)}}</td>
+                        <td>{{ handleDataInt(star.Azi)}}</td>
+                        <td>{{ handleDataTwo(star.ura) }}</td>
+                        <td ng-show="signal">{{ handleDataTwo(star.rura) }}</td>
+                        <td ng-show="signal">{{ handleDataTwo(star.udre) }}</td>
+                        <td>{{ handleDataInt(star.week) }}</td>
+                        <td>{{ handleDataInt(star.tow) }}</td>
+                        <td>{{handleDataInt(star.time)}}</td>
                     </tr>
 
                     </tbody>

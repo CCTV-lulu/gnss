@@ -356,11 +356,7 @@ MetronicApp.controller('HeaderController',
             }
 
             function setCurrentStationStatus (stationId,data){
-                console.log('-----setCurrentStationStatus')
-                console.log(stationId)
-                console.log($rootScope.stationId)
                 if(stationId == $rootScope.stationId){
-                    console.log('-----setsetCurrentStationStatus')
                     $rootScope.RootCurrentStationStatus = data;
                 }
             }
