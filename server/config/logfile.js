@@ -33,7 +33,7 @@ module.exports = function (app) {
             var formidable = require('formidable');
             file_op.mkdirsSync('uploads');
             var form = new formidable.IncomingForm();
-            form.maxFieldsSize = 20 * 1024 * 1024;
+            form.maxFieldsSize = 1000 * 1024 * 1024;
             form.maxFields = 0;
             form.uploadDir = 'uploads'
             form.parse(req, function(err, fields, files) {
