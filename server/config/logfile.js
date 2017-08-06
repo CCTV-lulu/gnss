@@ -39,7 +39,7 @@ module.exports = function (app) {
             form.parse(req, function(err, fields, files) {
                 console.log(err)
                 console.log(fields)
-                console.log(files.log_file)
+                console.log(files.log_file.name)
                 console.log('-------------------')
                 if(!err){
                     return res.send('ok')
