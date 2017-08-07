@@ -15,8 +15,8 @@ var os = require('os');
 var lock = require('lockfile')
 var LogProcess = require('../service/LogProcess.js')
 
-var formidable = require('formidable');
-var file_op = require('../util/file_operate');
+// var formidable = require('formidable');
+// var file_op = require('../util/file_operate');
 
 //
 var logProcess = new LogProcess();
