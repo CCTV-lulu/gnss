@@ -15,8 +15,8 @@ function StatisticsProcess(username, stationId, config, filter) {
     this.processId = null;
 }
 
-StatisticsProcess.initProcess = function () {
-    // taskManagement.stopProcessByUsername(this.username);
+StatisticsProcess.initProcess = function (username) {
+    taskManagement.stopProcessByUsername(username);
 };
 
 StatisticsProcess.getProcessById = function (id) {
@@ -42,7 +42,7 @@ StatisticsProcess.prototype.isHandleFollow = function (cb) {
 StatisticsProcess.prototype.init = function (cb) {
     var self = this;
     self.checkFile(function () {
-        StatisticsProcess.initProcess();
+        StatisticsProcess.initProcess(self.username);
         var batchChildProcess = child_process.fork('./server/service/handleProcess/batch_process');
         batchChildProcess.on('message', function (batchProcessResult) {
             if (batchProcessResult.status === 200) {

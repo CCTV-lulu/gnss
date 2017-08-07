@@ -17,6 +17,8 @@ function startBatchProcess(req, res) {
                 return res.send({status:'unFind'})
             }
             batchProcessInfo.username = user.username;
+            console.log("----------e------------username")
+            console.log(user.username)
             var statisticsProcess = new StatisticsProcess(user.username, batchProcessInfo.sta_id, result.stationConfig, batchProcessInfo);
             statisticsProcess.init(function (result) {
                 res.send(result);
