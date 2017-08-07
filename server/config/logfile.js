@@ -37,12 +37,14 @@ module.exports = function (app) {
             form.maxFields = 0;
             form.uploadDir = 'uploads'
             form.parse(req, function(err, fields, files) {
-                console.log(err)
-                console.log(fields)
-                console.log(files.log_file.name)
-                console.log('-------------------')
+
                 if(!err){
+                    console.log(fields)
+                    console.log(files.log_file.name)
                     return res.send('ok')
+                }else{
+                    res.status(404)
+                             .send('Not Found')
                 }
                 //fs.rename(files.my_file.path, filePath,function(err){
                 //    if(err){
