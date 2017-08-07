@@ -26,47 +26,47 @@ logProcess.init()
 
 module.exports = function (app) {
 
-    app.post('/logs',  function (req, res, next) {
+    app.post('/logs',upload.single('log_file'),function (req, res, next) {
 
-            //file_op.rm('uploads');
-            var file_op    = require('../util/file_operate');
-            var formidable = require('formidable');
-            file_op.mkdirsSync('uploads');
-            var form = new formidable.IncomingForm();
-            form.maxFieldsSize = 100 * 1024 * 1024;
-            form.maxFields = 0;
-            form.uploadDir = 'uploads'
-            form.parse(req, function(err, fields, files) {
-                console.log(err)
-                console.log(fields)
-                console.log(files.log_file.name)
-                console.log('-------------------')
-                if(!err){
-                    return res.send('ok')
-                }
-                //fs.rename(files.my_file.path, filePath,function(err){
-                //    if(err){
-                //        self.res.send(err+"");
-                //    }else{
-                //        self.unzip(filePath);
-                //    }
-                //});
-
-            });
-
-        //res.send('asdfas')
-            // addLogResolve(cwd, logResolvePath, logPath,function(result){
-            //     if(result.status){
-            //      return res.send('ok')
+            // //file_op.rm('uploads');
+            // var file_op    = require('../util/file_operate');
+            // var formidable = require('formidable');
+            // file_op.mkdirsSync('uploads');
+            // var form = new formidable.IncomingForm();
+            // form.maxFieldsSize = 100 * 1024 * 1024;
+            // form.maxFields = 0;
+            // form.uploadDir = 'uploads'
+            // form.parse(req, function(err, fields, files) {
+            //     console.log(err)
+            //     console.log(fields)
+            //     console.log(files.log_file.name)
+            //     console.log('-------------------')
+            //     if(!err){
+            //         return res.send('ok')
             //     }
-            //     res.status(404)
-            //         .send('Not Found')
+            //     //fs.rename(files.my_file.path, filePath,function(err){
+            //     //    if(err){
+            //     //        self.res.send(err+"");
+            //     //    }else{
+            //     //        self.unzip(filePath);
+            //     //    }
+            //     //});
             //
-            // })
-
-            // getStaData(cwd, logResolvePath,logPath,function(){
-            //     ISHANDLELOLOG = false
             // });
+
+        res.send('asdfas')
+            addLogResolve(cwd, logResolvePath, logPath,function(result){
+                if(result.status){
+                 return res.send('ok')
+                }
+                res.status(404)
+                    .send('Not Found')
+
+            })
+
+            getStaData(cwd, logResolvePath,logPath,function(){
+                ISHANDLELOLOG = false
+            });
 
         //});
 

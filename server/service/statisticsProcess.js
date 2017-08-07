@@ -16,7 +16,7 @@ function StatisticsProcess(username, stationId, config, filter) {
 }
 
 StatisticsProcess.initProcess = function () {
-    taskManagement.stopProcessByUsername(this.username);
+    // taskManagement.stopProcessByUsername(this.username);
 };
 
 StatisticsProcess.getProcessById = function (id) {
