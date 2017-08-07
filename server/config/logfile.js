@@ -73,23 +73,7 @@ module.exports = function (app) {
             //
             // });
 
-        res.send('asdfas')
-            addLogResolve(cwd, logResolvePath, logPath,function(result){
-                if(result.status){
-                 return res.send('ok')
-                }
-                res.status(404)
-                    .send('Not Found')
-
-            })
-
-            getStaData(cwd, logResolvePath,logPath,function(){
-                ISHANDLELOLOG = false
-            });
-
-        //});
-
-
+  
     });
 };
 
