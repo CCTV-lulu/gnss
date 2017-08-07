@@ -15,8 +15,8 @@ var os = require('os');
 var lock = require('lockfile')
 var LogProcess = require('../service/LogProcess.js')
 
-var formidable = require('formidable');
-var file_op = require('../util/file_operate');
+// var formidable = require('formidable');
+// var file_op = require('../util/file_operate');
 
 //
 var logProcess = new LogProcess();
@@ -26,7 +26,8 @@ logProcess.init()
 
 module.exports = function (app) {
 
-    app.post('/logs',  function (req, res, next) {
+    app.post('/logs',upload.single('log_file'),function (req, res, next) {
+
 
             //file_op.rm('uploads');
             var file_op    = require('../util/file_operate');
@@ -60,15 +61,31 @@ module.exports = function (app) {
             // addLogResolve(cwd, logResolvePath, logPath,function(result){
             //     if(result.status){
             //      return res.send('ok')
-            //     }
-            //     res.status(404)
-            //         .send('Not Found')
-            //
-            // })
 
-            // getStaData(cwd, logResolvePath,logPath,function(){
-            //     ISHANDLELOLOG = false
+            //     }
+            //     //fs.rename(files.my_file.path, filePath,function(err){
+            //     //    if(err){
+            //     //        self.res.send(err+"");
+            //     //    }else{
+            //     //        self.unzip(filePath);
+            //     //    }
+            //     //});
+            //
             // });
+
+        res.send('asdfas')
+            addLogResolve(cwd, logResolvePath, logPath,function(result){
+                if(result.status){
+                 return res.send('ok')
+                }
+                res.status(404)
+                    .send('Not Found')
+
+            })
+
+            getStaData(cwd, logResolvePath,logPath,function(){
+                ISHANDLELOLOG = false
+            });
 
         //});
 
