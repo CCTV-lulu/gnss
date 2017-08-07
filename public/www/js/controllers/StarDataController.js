@@ -49,10 +49,8 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
 
 
     function init(stationId){
-        console.log(stationId)
         if(stationId == undefined) return;
         getStationStatus.getStationStatus(stationId, 1, function (data) {
-            console.log('---------------------------startINfo   ')
             $scope.starsInfo =[]
             showStarInfo(data, function(){
                 if(listenRootCurrentStationStatus === true) return;
@@ -71,10 +69,8 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     function showStarInfo(data,sucFuc,failFuc){
         sucFuc = sucFuc? sucFuc: function(){};
         failFuc = failFuc? failFuc: function(){};
-            console.log('-----------showStarInfo-------------')
-    console.log(data)
         if(data.stationData != false) {
-            console.log('--------stationData----------------')
+
             if (data.stationData.length == 0) {
                 return failFuc()
             }
@@ -88,7 +84,6 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
             $scope.starsInfo= starInfo;
             $scope.starInfo = starInfo[$rootScope.rootSingalType.staId];
             $scope.showDataloading = false;
-            console.log('-------------------------------end')
             sucFuc()
         }
         if($rootScope.rootSingalType.name === 'BDS'){

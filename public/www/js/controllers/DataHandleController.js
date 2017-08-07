@@ -79,6 +79,7 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
                 var third= $scope.config.rb[2]
                 $scope.config.rb[2] = Number(third).toFixed(2)
             }
+
         };
         $scope.$watch('config.rb[0]',change())
         $scope.$watch('config.rb[1]',change())
@@ -96,21 +97,24 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
             // handleData: $scope.threshold,
             config:$scope.config,
         };
-        console.log("-------------date")
-        console.log(data.rbUpDate)
-        Threshold.setHandleData(data,function(allHandleData){
+        if(!isNaN($scope.config.rb[0])&&!isNaN($scope.config.rb[1])&&!isNaN($scope.config.rb[2])){
+            Threshold.setHandleData(data,function(allHandleData){
 
-            if(allHandleData.status){
-                $scope.allThreshold = allHandleData.allThreshold;
+                if(allHandleData.status){
+                    $scope.allThreshold = allHandleData.allThreshold;
+                    showThreshold()
+                    Prompt.promptBox('success','保存成功')
+                }else{
 
-                showThreshold()
-                Prompt.promptBox('success','保存成功')
-            }else{
+                    Prompt.promptBox('warning','请刷新')
+                }
 
-                Prompt.promptBox('warning','请刷新')
-            }
+            })
+        }else{
+            Prompt.promptBox('warning','请输入数字或完善信息')
 
-        })
+        }
+
     };
     // $scope.clearConfig = function () {
     //     var data={
