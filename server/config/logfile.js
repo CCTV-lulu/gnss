@@ -26,7 +26,7 @@ logProcess.init()
 
 module.exports = function (app) {
 
-    app.post('/logs',upload.single('log_file'),function (req, res, next) {
+    app.post('/logs',function (req, res, next) {
 
 
             //file_op.rm('uploads');
