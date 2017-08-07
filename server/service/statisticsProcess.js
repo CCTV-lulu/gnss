@@ -61,7 +61,6 @@ StatisticsProcess.prototype.init = function (cb) {
             if (message == 0) {
 
             } else if (message === 2) {
-                console.log("----------")
                 return self.updateBatchProcessDate(-2, function () {
                     self.stop()
                 });
