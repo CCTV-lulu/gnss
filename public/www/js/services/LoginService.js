@@ -50,9 +50,10 @@ MetronicApp.factory('Show', function ($rootScope) {
                 //除掉后加载页面具体内容
                 $rootScope.rootIsAdmin = data.roles.includes('admin');
                 $rootScope.rootUserInfo =  data.user;
-                $rootScope.activeUser = data.user.username
+                $rootScope.activeUser = data.user.username;
+
                 if ($location.path() == "/login") {
-                    $location.path('/dashboard.html/' + staId)
+                    $location.path('/dashboard')
                 } else {
                     $location.path($location.path())
                 }

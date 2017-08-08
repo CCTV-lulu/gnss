@@ -369,7 +369,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         Threshold.getHandleData(function (allThreshold) {
             $scope.stationInfo = allThreshold.allThreshold[station]
-            $scope.rbUpDate = $scope.stationInfo[0].rbUpDate
+            $scope.rbUpDate = $scope.stationInfo[$scope.signal].rbUpDate
             var stationName = '';
             if($scope.isAdmin){
                 $scope.allStations.forEach(function (oneStation) {
@@ -864,15 +864,15 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             $scope.processResult[key] = {};
             $scope.processResult[key].availability = value.availability;
             $scope.processResult[key].continuity = value.continuity;
-            if (value.acc95_h.mean == undefined) {
+            if (value.acc95_h == undefined) {
                 $scope.processResult[key].acc95_h = 'NA'
             } else {
-                $scope.processResult[key].acc95_h = value.acc95_h.mean;
+                $scope.processResult[key].acc95_h = value.acc95_h;
             }
-            if (value.acc95_v.mean == undefined) {
+            if (value.acc95_v == undefined) {
                 $scope.processResult[key].acc95_v = 'NA'
             } else {
-                $scope.processResult[key].acc95_v = value.acc95_v.mean;
+                $scope.processResult[key].acc95_v = value.acc95_v;
             }
             $scope.processResult[key].integrity = value.integrity
         });

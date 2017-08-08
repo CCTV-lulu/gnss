@@ -23,11 +23,14 @@ MetronicApp.controller('HeaderController',
 
 
             function subscribe(staId) {
-                if (!staId) {
+                console.log(staId)
+                if (staId == undefined ) {
                     staId = "*"
                 }
+
                 if (!$rootScope.client) {
                     $rootScope.client = new Faye.Client('/faye', {timeout: 20});
+
                     $rootScope.client.subscribe('/channel/' + staId, function (message) {
                         var type=['GPS','GLS','BDS','MULTI'];
                         $rootScope.warnning = "基站名称："+message.stationName+'信号类型：'+type[message.sys] + '警告内容：'+message.warningContent;
@@ -316,7 +319,7 @@ MetronicApp.controller('HeaderController',
 
             $scope.changeStartDataStation = function (name, staId) {
                 var currentStationInfo = getCurrentStationInfo({name: name, staId: staId});
-                if (currentStationInfo.originStation.staId == staId) {
+                if (currentStationInfo.realTimeStation.staId == staId) {
                     return;
                     //Prompt.promptBox('warning', '切换成功！！');
                 }
@@ -325,11 +328,11 @@ MetronicApp.controller('HeaderController',
                     staId: staId
                 };
                 $rootScope.stationId = staId;
-                currentStationInfo.originStation.name = name;
-                currentStationInfo.originStation.staId = staId;
+                currentStationInfo.realTimeStation.name = name;
+                currentStationInfo.realTimeStation.staId = staId;
                 saveCurrentStationInfoStorage(currentStationInfo);
 
-                $scope.originStation = currentStationInfo.originStation.name;
+                $scope.realTimeStation = currentStationInfo.realTimeStation.name;
 
             };
 

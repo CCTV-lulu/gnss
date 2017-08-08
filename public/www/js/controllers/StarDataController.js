@@ -4,17 +4,18 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     var stationId =  $rootScope.stationId;
     var rootSingalTypeId= $rootScope.rootSingalType ? $rootScope.rootSingalType.staId : undefined;
     init(stationId);
-
+    console.log("-------------------------1")
     var listenRootCurrentStationStatus;
 
     var listenStationId = $rootScope.$watch('stationId',function(newStationId){
+
         if(newStationId == undefined || stationId == newStationId) return;
         stationId = newStationId;
         $scope.starInfo = [];
         if(listenRootCurrentStationStatus){
             listenRootCurrentStationStatus()
         }
-
+        console.log("---------------------------------------2")
         init(newStationId)
     });
 
@@ -24,7 +25,7 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     });
 
     function show(newRootSingalType){
-        if(newRootSingalType==undefined || rootSingalTypeId == newRootSingalType.staId) return;
+        if(newRootSingalType==undefined|| rootSingalTypeId == newRootSingalType.staId) return;
         rootSingalTypeId = newRootSingalType.staId;
         $scope.starInfo = $scope.starsInfo ? $scope.starsInfo[newRootSingalType.staId]:[];
 
@@ -49,10 +50,12 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
 
 
     function init(stationId){
+        console.log("--------------------------------start")
         if(stationId == undefined) return;
         getStationStatus.getStationStatus(stationId, 1, function (data) {
             $scope.starsInfo =[]
             showStarInfo(data, function(){
+
                 if(listenRootCurrentStationStatus === true) return;
                 listenRootCurrentStationStatus = $rootScope.$watch('RootCurrentStationStatus',function(data){
                     if(!data) return;
