@@ -368,7 +368,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     $scope.$watch('station', function (station) {
 
         Threshold.getHandleData(function (allThreshold) {
+            if(station == undefined) return
             $scope.stationInfo = allThreshold.allThreshold[station]
+            if($scope.signal == undefined) return
             $scope.rbUpDate = $scope.stationInfo[$scope.signal].rbUpDate
             var stationName = '';
             if($scope.isAdmin){

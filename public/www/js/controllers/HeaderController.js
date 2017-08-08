@@ -23,7 +23,6 @@ MetronicApp.controller('HeaderController',
 
 
             function subscribe(staId) {
-                console.log(staId)
                 if (staId == undefined ) {
                     staId = "*"
                 }
