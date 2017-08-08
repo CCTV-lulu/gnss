@@ -556,6 +556,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             if (!data[key][showType]) return;
             var currentRate = 0;
             data[key][showType].X.forEach(function (x, index) {
+                if(!x) return;
                 currentRate += data[key][showType].Y[index];
                 info.data.push([x, currentRate])
             });
@@ -658,6 +659,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
             data[key][showType].X.forEach(function (x, index) {
+                if(!x) return;
                 currentRate += data[key][showType].Y[index];
                 info.data.push([x, currentRate])
             });
