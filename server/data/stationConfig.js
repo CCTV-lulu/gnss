@@ -17,6 +17,7 @@ var config = {
     "err": [100, 0.003, 0.003, 0.0, 0.1],
     "ionoopt": 1,
     "tropopt": 1,
+    "rbopt":1,
     "rbinit": [300, 300, 300, 300],
     "rb":0,
     "mul_vare": 5,

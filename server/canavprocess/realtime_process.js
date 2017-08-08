@@ -71,12 +71,9 @@ function pos_config(sta_id,prcopt) {
 module.exports.parser_pos=function(sta_id,data,prcopt) {
     var rtcm=rtcm_init(sta_id);
     var para=pos_config(sta_id,prcopt);
-
-
     var pos_list = [];
 
     if(para!=0){
-        // console.log(typeof para.prcopt.rb[0])
         var navsys=[];
         var results=[];
         for(var i=0;i<para.prcopt.navsys.length;i++){
@@ -161,6 +158,14 @@ module.exports.procset=function (sta_id,prcopt) {
     try{
         if(stationPara.hasOwnProperty(sta_id)){
             // var prcopt=getProopt(sta_id);
+            if(prcopt.rbopt>0){
+                var rb=[0,0,0];
+                cmn.pos2ecef(prcopt.rb,rb);
+                prcopt.rb[0]=rb[0];
+                prcopt.rb[1]=rb[1];
+                prcopt.rb[2]=rb[2];
+                prcopt.rbopt=0;
+            }
             var prcUp=stationPara[sta_id].prcopt;
             prcUp.mode=prcopt.mode;           /* positioning mode (PMODE_???) */
             prcUp.nf=prcopt.nf;             /* number of frequencies (1:L1,2:L1+L2,3:L1+L2+L5) */
@@ -177,11 +182,8 @@ module.exports.procset=function (sta_id,prcopt) {
             prcUp.tropopt=prcopt.tropopt;        /* troposphere option (TROPOPT_???) */
             prcUp.eratio=prcopt.eratio; /* code/phase error ratio */
             prcUp.err=prcopt.err;      /* measurement error factor */
-            prcUp.rbinit=prcopt.rbinit;
-            prcUp.isrb=prcopt.isrb;
+            prcUp.rbopt=prcopt.rbopt;      /* measurement error factor */
             prcUp.rb=prcopt.rb;      /* base position for relative mode {x,y,z} (ecef) (m) */
-            prcUp.mul_vare=prcopt.mul_vare;
-            prcUp.init_vare=prcopt.init_vare;
             prcUp.exsats=prcopt.exsats; /* excluded satellites (1:excluded,2:included) */
             prcUp.maxgdop=prcopt.maxgdop;
             prcUp.threshold_PFD=prcopt.threshold_PFD;

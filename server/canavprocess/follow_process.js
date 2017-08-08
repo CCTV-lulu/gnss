@@ -24,6 +24,7 @@ function getProopt(sta_id) {
     if (fs.existsSync(staopt)) {
         try {
             var prcopt = JSON.parse(fs.readFileSync(staopt));
+
             return prcopt;
         }
         catch (err) {
@@ -113,6 +114,14 @@ module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
     rtcm.realtime=1;
     // var opt_init = getProopt(sta_id);
     if(opt_init!=0){
+        if(opt_init.rbopt>0){
+            var rb=[0,0,0];
+            cmn.pos2ecef(opt_init.rb,rb);
+            opt_init.rb[0]=rb[0];
+            opt_init.rb[1]=rb[1];
+            opt_init.rb[2]=rb[2];
+            opt_init.rbopt=0;
+        }
         para = new nodepos.posPara_create(opt_init);
         nodepos.posParainit(sta_id, para);
         return 0;

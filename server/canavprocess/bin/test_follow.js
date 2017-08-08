@@ -3,8 +3,8 @@
 var fs = require('fs');
 var os=require('os');
 var parse=require('../follow_process');
-var test_file=  'E:/nodejs/data/rover_20170723';
-var log_file= 'E:/nodejs/data/rover_20170723_log';
+var test_file=  'D:/nodejs/data/rover_20170723';
+var log_file= 'D:/nodejs/data/rover_20170723_log';
 console.log('test file:' + test_file);
 var stream;
 var sta_id=0;

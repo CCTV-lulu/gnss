@@ -5,7 +5,7 @@ var cmn=require('../routes/comn');
 var opt=require('../config/optcomm.json');
 var readline=require('readline');
 var statis=require('../statistics_process');
-var test_file='E:/nodejs/data/rover_20170723_log';
+var test_file='D:/nodejs/data/rover_20170723_log';
 
 var stream=fs.createReadStream(test_file);
 var readfile=new create_filestream(test_file);

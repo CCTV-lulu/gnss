@@ -4,7 +4,7 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     var stationId =  $rootScope.stationId;
     var rootSingalTypeId= $rootScope.rootSingalType ? $rootScope.rootSingalType.staId : undefined;
     init(stationId);
-    console.log("-------------------------1")
+
     var listenRootCurrentStationStatus;
 
     var listenStationId = $rootScope.$watch('stationId',function(newStationId){
@@ -15,7 +15,6 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
         if(listenRootCurrentStationStatus){
             listenRootCurrentStationStatus()
         }
-        console.log("---------------------------------------2")
         init(newStationId)
     });
 
@@ -50,7 +49,6 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
 
 
     function init(stationId){
-        console.log("--------------------------------start")
         if(stationId == undefined) return;
         getStationStatus.getStationStatus(stationId, 1, function (data) {
             $scope.starsInfo =[]
@@ -73,9 +71,8 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
         sucFuc = sucFuc? sucFuc: function(){};
         failFuc = failFuc? failFuc: function(){};
         if(data.stationData != false) {
-
             if (data.stationData.length == 0) {
-                return failFuc()
+                return sucFuc()
             }
 
             var starInfos = data.stationData[0].obsinfo;
@@ -87,33 +84,26 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
             $scope.starsInfo= starInfo;
             $scope.starInfo = starInfo[$rootScope.rootSingalType.staId];
             $scope.showDataloading = false;
-            sucFuc()
         }
         if($rootScope.rootSingalType.name === 'BDS'){
             $scope.signal = true
         }
-        // var starInfos =$scope.starInfo
-        // starInfos.forEach(function (star) {
-        //     Object.keys(star).forEach(function (key) {
-        //         if(star[key] === null){
-        //             var index = starInfos.indexOf(star)
-        //             starInfos[index][key]="-";
-        //             $scope.starInfo = starInfos
-        //         }
-        //         if(star[key] === undefined){
-        //             var index = starInfos.indexOf(star)
-        //             starInfos[index][key] = 'NA'
-        //             $scope.starInfo = starInfos
-        //         }
-        //     })
-        // })
+        sucFuc()
 
-        $scope.handleDataTwo =  function (value) {
+
+    }
+    $scope.parseInt = function(number) {
+        return parseInt(number)
+    }
+    $scope.handleDataTwo =  function (value) {
             if(value === null){
                 return '-'
             }
             if(value === undefined){
                 return 'NA'
+            }
+            if(isNaN(value)){
+                return value
             }
             return value.toFixed(2)
         }
@@ -126,11 +116,6 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
             }
             return parseInt(value)
         }
-
-    }
-    $scope.parseInt = function(number) {
-        return parseInt(number)
-    }
 
 
     $scope.showDataloading = true;
