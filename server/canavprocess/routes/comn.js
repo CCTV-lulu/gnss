@@ -116,6 +116,7 @@ function pos2ecef(pos, r){
     r[2]=(v*(1.0-e2)+pos[2])*sinp;
 }module.exports.pos2ecef=pos2ecef;
 //直角坐标转大地坐标
+
 function ecef2pos(r, pos){
     var e2=ca.FE_WGS84*(2.0-ca.FE_WGS84),r2=dot(r,r,2),z,zk,v=ca.RE_WGS84,sinp;
     for (z=r[2],zk=0.0;math.abs(z-zk)>=1E-4;) {

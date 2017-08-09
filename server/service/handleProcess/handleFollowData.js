@@ -77,10 +77,9 @@ function getDateFromLog(cwd, logResolvePath, cb) {
 
 process.on('message', function (message) {
     if (message == 'close') {
-        return process.exit(1)
+        return process.exit(0)
     }
     if (message.status === 'handleData') {
-
         followProcess(message.cwd, message.filePath, message.config, function () {
             process.send({status: 'endOne', stationName: message.stationId, filePath: message.filePath})
         })

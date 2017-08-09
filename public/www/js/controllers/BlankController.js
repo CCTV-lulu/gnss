@@ -4,7 +4,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     //var timeDelay;
     var currentStation;
     var isAdmin;
-    var currentProcess ;
+    var currentProcess;
     //getStation($rootScope.rootIsAdmin);
     init();
     initThreshold()
@@ -64,8 +64,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             'BDS': getOptionLocal('BDS'),
             'GROUP': getOptionLocal('GROUP')
         }
-         $scope.option = {
-            sat_hist:getOptionLocal('sat_hist'),
+        $scope.option = {
+            sat_hist: getOptionLocal('sat_hist'),
             err_hist: getOptionLocal('err_hist'),
             dop_hist: getOptionLocal('dop_hist'),
             PL_hist: getOptionLocal('PL_hist'),
@@ -75,26 +75,28 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         };
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
+
         initResult();
         initStation();
         initOption()
     }
+
     recordOption()
 
-    function getOptionLocal(key){
-        return localStorage.getItem($rootScope.rootUserInfo.username +"_"+key) || false
+    function getOptionLocal(key) {
+        return localStorage.getItem($rootScope.rootUserInfo.username + "_" + key) || false
     }
 
-    function setOptionLocal(key, value){
-        return localStorage.setItem($rootScope.rootUserInfo.username +"_"+key, value)
+    function setOptionLocal(key, value) {
+        return localStorage.setItem($rootScope.rootUserInfo.username + "_" + key, value)
     }
 
-    function recordOption(){
-        $('#options').find('input').change(function(){
-            setOptionLocal($(this).attr('name'),this.checked)
+    function recordOption() {
+        $('#options').find('input').change(function () {
+            setOptionLocal($(this).attr('name'), this.checked)
         })
         $('#sys').find('input').change(function () {
-            setOptionLocal($(this).attr('name'),this.checked)
+            setOptionLocal($(this).attr('name'), this.checked)
         })
     }
 
@@ -116,31 +118,43 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         setOptions();
         $scope.$watch('station', function (station) {
             if (station == undefined || currentStation == station) return;
+            console.log(station)
             currentStation = station;
             setOptions()
         })
 
     }
 
+        $scope.$watch('station', function (station) {
+        if(station == undefined) return;
+        localStorage.setItem('showStation', station)
+        Threshold.getHandleData(function (allThreshold) {
+            if (station == undefined) return
+            $scope.stationInfo = allThreshold.allThreshold[station]
+            if ($scope.signal == undefined) return
+            $scope.rbUpDate = $scope.stationInfo[$scope.signal].rbUpDate
+            var stationName = '';
+            if ($scope.isAdmin) {
+                $scope.allStations.forEach(function (oneStation) {
+                    if (oneStation.staId == station) {
+                        stationName = oneStation.name
+                    }
+                })
+            } else {
+                stationName = $scope.stationInfoName
+            }
 
-    function getStation(isAdmin) {
+            if (JSON.stringify($scope.rbUpDate) == '{}') {
+                Prompt.promptBox('warning', stationName + '未设置基准坐标')
+            } else {
+                Prompt.promptBox('success', stationName + '基准坐标更新时间为：' + $scope.rbUpDate)
+            }
+        })
 
-        if (isAdmin) {
-            $scope.allStations = $rootScope.allStations;
-
-            $rootScope.$watch('allStations', function (allStations) {
-                if (allStations == undefined) return;
-                $scope.allStations = allStations;
-                $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
-            });
-
-        } else {
-            $scope.station = $rootScope.stationId;
-            $scope.stationInfoId = $rootScope.stationId;
-            $scope.stationInfoName = $rootScope.stationName;
-
-        }
-    }
+        if (!station || !$scope.allThreshold) return;
+        showThreshold()
+        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
+    });
 
 
     function getFilter() {
@@ -167,6 +181,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         }
 
     }
+
     $scope.findData = function () {
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
@@ -198,17 +213,17 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function beStartBatchProcess(findData) {
         BatchProcess.startBatchProcess(findData, function (data) {
-                if(data.status == 'unFind'){
-                     $('#dataStatisticsChartLoding').hide();
-                    Prompt.promptBox("warning", "查询基站被删除,请刷新页面")
-                }
-                else {
-                    startBatchProcess(data)
-                }
+            if (data.status == 'unFind') {
+                $('#dataStatisticsChartLoding').hide();
+                Prompt.promptBox("warning", "查询基站被删除,请刷新页面")
+            }
+            else {
+                startBatchProcess(data)
+            }
 
-            })
+        })
     }
-    
+
     $scope.stopData = stopBatchProcess;
 
     function startBatchProcess(data) {
@@ -340,7 +355,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             $rootScope.$watch('allStations', function (allStations) {
                 if (allStations == undefined) return;
                 $scope.allStations = allStations;
-                $scope.station = $scope.allStations[0] ? $scope.allStations[0].staId : ''
+                $scope.station = localStorage.getItem('showStation') ||($scope.allStations[0] ? $scope.allStations[0].staId : '')
 
             });
 
@@ -365,35 +380,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         showThreshold()
         //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
-    $scope.$watch('station', function (station) {
 
-        Threshold.getHandleData(function (allThreshold) {
-            if(station == undefined) return
-            $scope.stationInfo = allThreshold.allThreshold[station]
-            if($scope.signal == undefined) return
-            $scope.rbUpDate = $scope.stationInfo[$scope.signal].rbUpDate
-            var stationName = '';
-            if($scope.isAdmin){
-                $scope.allStations.forEach(function (oneStation) {
-                    if (oneStation.staId == station) {
-                    stationName = oneStation.name
-                    }
-                })
-            }else{
-                stationName =  $scope.stationInfoName
-            }
-
-            if (JSON.stringify($scope.rbUpDate) == '{}') {
-                Prompt.promptBox('warning', stationName + '未设置基准坐标')
-            } else {
-                Prompt.promptBox('success', stationName + '基准坐标更新时间为：' + $scope.rbUpDate)
-            }
-        })
-
-        if (!station || !$scope.allThreshold) return;
-        showThreshold()
-        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
-    });
 
     function showThreshold() {
         if (!$scope.isAdmin) {
@@ -463,6 +450,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             if (!data[key][showType]) return;
             var currentRate = 0
             data[key][showType].Y.forEach(function (y, index) {
+                if (!y) return;
                 currentRate += y;
                 info.data.push([data[key][showType].X[index], currentRate])
             });
@@ -471,19 +459,19 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         var filer = getFilter();
-        if(filer.options.err_hist === undefined)  return;
+        if (filer.options.err_hist === undefined)  return;
         // if (series.length == 0) return;
         if (series.length != 0) {
-            if(type == 'HErrHist'){
-                if($scope.threshold == undefined) return
+            if (type == 'HErrHist') {
+                if ($scope.threshold == undefined) return
                 series.push({name: "WARNINGDH", data: [[$scope.threshold.dH, 0], [$scope.threshold.dH, 1]]});
             }
-            if(type == 'VErrHist'){
-                if($scope.threshold == undefined) return
+            if (type == 'VErrHist') {
+                if ($scope.threshold == undefined) return
                 series.push({name: "WARNINGDV", data: [[$scope.threshold.dV, 0], [$scope.threshold.dV, 1]]})
             }
 
-            
+
         }
         $('#' + type + '_container').show();
 
@@ -566,7 +554,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             if (!data[key][showType]) return;
             var currentRate = 0;
             data[key][showType].X.forEach(function (x, index) {
-                if(!x) return;
+                if (!x) return;
                 currentRate += data[key][showType].Y[index];
                 info.data.push([x, currentRate])
             });
@@ -576,16 +564,14 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         });
         if (series.length == 0) return;
-        if(type == 'Hdop'){
-            if($scope.threshold == undefined) return
-          series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
+        if (type == 'Hdop') {
+            if ($scope.threshold == undefined) return
+            series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
         }
-        if(type == 'Vdop'){
-            if($scope.threshold == undefined) return
+        if (type == 'Vdop') {
+            if ($scope.threshold == undefined) return
             series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
         }
-
-
 
 
         $('#' + type + '_container').show();
@@ -671,7 +657,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
             data[key][showType].X.forEach(function (x, index) {
-                if(!x) return;
+                if (!x) return;
                 currentRate += data[key][showType].Y[index];
                 info.data.push([x, currentRate])
             });
@@ -680,13 +666,13 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
-        if(type == 'VPL'){
-            if($scope.threshold == undefined) return
-           series.push({name: "WARNINGVPL", data: [[$scope.threshold.VPL, 0], [$scope.threshold.VPL, 1]]});
+        if (type == 'VPL') {
+            if ($scope.threshold == undefined) return
+            series.push({name: "WARNINGVPL", data: [[$scope.threshold.VPL, 0], [$scope.threshold.VPL, 1]]});
         }
-        if( type =='HPL'){
-            if($scope.threshold == undefined) return
-           series.push({name: "WARNINGHPL", data: [[$scope.threshold.HPL, 0], [$scope.threshold.HPL, 1]]})
+        if (type == 'HPL') {
+            if ($scope.threshold == undefined) return
+            series.push({name: "WARNINGHPL", data: [[$scope.threshold.HPL, 0], [$scope.threshold.HPL, 1]]})
         }
 
         $('#' + type + '_container').show();
@@ -880,17 +866,18 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         });
 
     }
-    function showCoordinate(type,result) {
-        $scope.coordinateInfo= {};
+
+    function showCoordinate(type, result) {
+        $scope.coordinateInfo = {};
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
         $('#' + type + '_container').show();
         Object.keys(result).forEach(function (key) {
             var value = result[key];
             $scope.coordinateInfo[key] = {};
-            $scope.coordinateInfo[key].longitude = value.rb_lowpass[0].ave
-            $scope.coordinateInfo[key].latitude = value.rb_lowpass[1].ave
-            $scope.coordinateInfo[key].Altitude = value.rb_lowpass[2].ave
+            $scope.coordinateInfo[key].longitude = value.new_rb_log[0]
+            $scope.coordinateInfo[key].latitude = value.new_rb_log[1]
+            $scope.coordinateInfo[key].Altitude = value.new_rb_log[2]
 
         });
     }

@@ -155,9 +155,12 @@ function batch_process(batchProcessFiler, config, processId) {
                         hpl_num: batchProcessFiler.options.hpl_num,
                         vpl_num: batchProcessFiler.options.vpl_num
                     }
-                }
 
-                fs.writeFile('./public/chartImage/' + batchProcessFiler.username + '/' + PROESSID + '/' + batchProcessFiler.username + '.json', JSON.stringify(data), function (err) {
+                }
+                var info = getOriginXYZ(data)
+                var newInfo = handleXYZ(info)
+                var newData = addRbLog(data,newInfo)
+                fs.writeFile('./public/chartImage/' + batchProcessFiler.username + '/' + PROESSID + '/' + batchProcessFiler.username + '.json', JSON.stringify(newData), function (err) {
                     if (err) throw err;
                     process.send({status: 200, username: batchProcessFiler.username});
                 });
@@ -168,6 +171,46 @@ function batch_process(batchProcessFiler, config, processId) {
     });
 
 
+}
+
+function getOriginXYZ(data){
+    var info = {};
+    for(var i in data){
+        info[i] = []
+        console.log("-----------------------输入")
+        console.log(data[i].rb_lowpass)
+        for(var j in data[i].rb_lowpass){
+             // console.log(data[i].rb_lowpass[j])
+            info[i].push(data[i].rb_lowpass[j].ave)
+        }
+    }
+    // console.log(info)
+    return info
+}
+
+function handleXYZ(info){
+    console.log("--------------------------info")
+    console.log(info)
+    var newInfo ={}
+    for(var i in info){
+        var xyz = []
+        if(info[i] == undefined){
+            return  info=[]
+        }
+        cmn.ecef2pos(info[i],xyz)
+        newInfo[i] = xyz;
+    }
+    console.log("--------------------newInfo")
+    console.log(newInfo)
+    return newInfo
+
+}
+
+function addRbLog(data, info){
+    for(var i in info){
+       data[i].new_rb_log =  info[i]
+    }
+    return data
 }
 
 function processOneDay(files, index, cb) {
