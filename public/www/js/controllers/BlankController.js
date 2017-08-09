@@ -71,7 +71,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             PL_hist: getOptionLocal('PL_hist'),
             hpl_num: getOptionLocal('hpl_num'),
             vpl_num: getOptionLocal('vpl_num'),
-             coordinate: getOptionLocal('coordinate')
+            coordinate: getOptionLocal('coordinate')
         };
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
@@ -475,11 +475,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         // if (series.length == 0) return;
         if (series.length != 0) {
             if(type == 'HErrHist'){
-                if($scope.threshold.dH == undefined) return
+                if($scope.threshold == undefined) return
                 series.push({name: "WARNINGDH", data: [[$scope.threshold.dH, 0], [$scope.threshold.dH, 1]]});
             }
             if(type == 'VErrHist'){
-                if($scope.threshold.dV == undefined) return
+                if($scope.threshold == undefined) return
                 series.push({name: "WARNINGDV", data: [[$scope.threshold.dV, 0], [$scope.threshold.dV, 1]]})
             }
 
@@ -577,11 +577,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         });
         if (series.length == 0) return;
         if(type == 'Hdop'){
-            if($scope.threshold.HDOP) return
+            if($scope.threshold == undefined) return
           series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
         }
         if(type == 'Vdop'){
-            if($scope.threshold.VDOP) return
+            if($scope.threshold == undefined) return
             series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
         }
 
@@ -681,11 +681,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         });
         if (series.length == 0) return;
         if(type == 'VPL'){
-            if($scope.threshold.VPL == undefined) return
+            if($scope.threshold == undefined) return
            series.push({name: "WARNINGVPL", data: [[$scope.threshold.VPL, 0], [$scope.threshold.VPL, 1]]});
         }
         if( type =='HPL'){
-            if($scope.threshold.HPL == undefined) return
+            if($scope.threshold == undefined) return
            series.push({name: "WARNINGHPL", data: [[$scope.threshold.HPL, 0], [$scope.threshold.HPL, 1]]})
         }
 
