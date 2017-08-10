@@ -270,12 +270,12 @@ function onMessage(data) {
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    console.log('---------------------on mesaage')
-    console.log(data.station)
+    // console.log('---------------------on mesaage')
+    // console.log(data.station)
     var optJson = getStationConfig([data.station]).config
-    console.log('---------------------on mesaage end');
-    console.log(optJson)
-    console.log('------------------------------------')
+    // console.log('---------------------on mesaage end');
+    // console.log(optJson)
+    // console.log('------------------------------------')
     var results = parse.parser_pos(data.station, buf, optJson);
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {

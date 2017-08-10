@@ -33,9 +33,11 @@ LogProcess.prototype.addLogPath = function (logPath,cb) {
 LogProcess.prototype.getLogRecord = function () {
     var self = this;
     try {
+        console.log("------------try-----------")
         return JSON.parse(fs.readFileSync(self.logSaveFile, {flag: 'r+', encoding: 'utf8'}))
 
     } catch (err) {
+        console.log("-----------err------------")
         return {"status": false, "infos": []}
     }
 };
