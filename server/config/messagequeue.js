@@ -196,7 +196,7 @@ function initSockectServer() {
             if (!StationSocketStatus[stationName]) {
                 StationSocketStatus[stationName] = true;
             }
-            // onMessage(data);
+            onMessage(data);
         }, function (error) {
             console.log(error)
         });
