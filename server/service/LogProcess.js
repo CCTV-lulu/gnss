@@ -33,11 +33,9 @@ LogProcess.prototype.addLogPath = function (logPath,cb) {
 LogProcess.prototype.getLogRecord = function () {
     var self = this;
     try {
-        console.log("------------try-----------")
         return JSON.parse(fs.readFileSync(self.logSaveFile, {flag: 'r+', encoding: 'utf8'}))
 
     } catch (err) {
-        console.log("-----------err------------")
         return {"status": false, "infos": []}
     }
 };
@@ -189,7 +187,7 @@ LogProcess.prototype.handleFollowData = function (dataPath, cb) {
         }
     });
     child.on('close', function (message) {
-        if (message !== 2) {
+        if (message !== 0) {
             var logRecord = self.getLogRecord();
             logRecord.status =false;
             logRecord.infos.unshift(logRecord.infos.pop())
