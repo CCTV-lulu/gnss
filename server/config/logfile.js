@@ -48,9 +48,6 @@ module.exports = function (app) {
                         })
                     })
 
-                    // console.log(fields)
-                    // console.log(files.log_file.name)
-                    // return res.send('ok')
                 }else{
                     console.log('---------------err')
                     console.log(err)
