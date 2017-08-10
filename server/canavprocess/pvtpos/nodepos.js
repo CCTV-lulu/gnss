@@ -66,6 +66,7 @@ function prcopt_create(prcopt){        /* processing options type */
     this.tropopt=prcopt.tropopt;        /* troposphere option (TROPOPT_???) */
     this.eratio=prcopt.eratio; /* code/phase error ratio */
     this.err=prcopt.err;      /* measurement error factor */
+    this.rbopt=prcopt.rbopt;
     this.rb=prcopt.rb;      /* base position for relative mode {x,y,z} (ecef) (m) */
     this.exsats=prcopt.exsats; /* excluded satellites (1:excluded,2:included) */
     this.maxgdop=prcopt.maxgdop;

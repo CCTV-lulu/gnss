@@ -177,8 +177,6 @@ function getOriginXYZ(data){
     var info = {};
     for(var i in data){
         info[i] = []
-        console.log("-----------------------输入")
-        console.log(data[i].rb_lowpass)
         for(var j in data[i].rb_lowpass){
              // console.log(data[i].rb_lowpass[j])
             info[i].push(data[i].rb_lowpass[j].ave)
@@ -189,8 +187,6 @@ function getOriginXYZ(data){
 }
 
 function handleXYZ(info){
-    console.log("--------------------------info")
-    console.log(info)
     var newInfo ={}
     for(var i in info){
         var xyz = []
@@ -200,8 +196,6 @@ function handleXYZ(info){
         cmn.ecef2pos(info[i],xyz)
         newInfo[i] = xyz;
     }
-    console.log("--------------------newInfo")
-    console.log(newInfo)
     return newInfo
 
 }

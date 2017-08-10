@@ -118,7 +118,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         setOptions();
         $scope.$watch('station', function (station) {
             if (station == undefined || currentStation == station) return;
-            console.log(station)
             currentStation = station;
             setOptions()
         })
@@ -320,12 +319,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         Prompt.promptBox("success", "数据处理完毕");
         showResult(data, username)
 
-        //$scope.integritys = EventData.table(data.result.data);
-        //if (data.result.data.continuity && data.result.data.availability) {
-        //    $scope.continuity = data.result.data.continuity;
-        //    $scope.availability = data.result.data.availability;
-        //}
-
     }
 
     //开始配置阈值参数
@@ -445,7 +438,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         var series = [];
         Object.keys(data).forEach(function (key) {
-
             var info = {name: names[Number(key)], data: []};
             if (!data[key][showType]) return;
             var currentRate = 0
@@ -868,6 +860,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     function showCoordinate(type, result) {
+         var filer = getFilter();
+        if(filer.options.coordinate == undefined||0) return
+        console.log(filer.options.coordinate)
         $scope.coordinateInfo = {};
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();
