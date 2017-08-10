@@ -58,8 +58,8 @@ function pos_config(sta_id,prcopt) {
         if(prcopt!=0){
             if(prcopt.rbopt>0){
                 var rb=[0,0,0];
-                prcopt.rb[0]=prcopt.rb[0]*ca.D2R;
-                prcopt.rb[1]=prcopt.rb[1]*ca.D2R;
+                prcopt.rb[0]=prcopt.rb[0];
+                prcopt.rb[1]=prcopt.rb[1];
                 cmn.pos2ecef(prcopt.rb,rb);
                 prcopt.rb[0]=rb[0];
                 prcopt.rb[1]=rb[1];
