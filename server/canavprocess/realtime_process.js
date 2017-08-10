@@ -56,6 +56,16 @@ function pos_config(sta_id,prcopt) {
     if (!stationPara.hasOwnProperty(sta_id)) {
         // var prcopt = getProopt(sta_id);
         if(prcopt!=0){
+            if(prcopt.rbopt>0){
+                var rb=[0,0,0];
+                prcopt.rb[0]=prcopt.rb[0]*ca.D2R;
+                prcopt.rb[1]=prcopt.rb[1]*ca.D2R;
+                cmn.pos2ecef(prcopt.rb,rb);
+                prcopt.rb[0]=rb[0];
+                prcopt.rb[1]=rb[1];
+                prcopt.rb[2]=rb[2];
+                prcopt.rbopt=0;
+            }
             stationPara[sta_id] = new nodepos.posPara_create(prcopt);
             nodepos.posParainit(sta_id, stationPara[sta_id]);
         }

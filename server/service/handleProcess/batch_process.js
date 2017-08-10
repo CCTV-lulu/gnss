@@ -178,11 +178,11 @@ function getOriginXYZ(data){
     for(var i in data){
         info[i] = []
         for(var j in data[i].rb_lowpass){
-             // console.log(data[i].rb_lowpass[j])
+
             info[i].push(data[i].rb_lowpass[j].ave)
         }
     }
-    // console.log(info)
+
     return info
 }
 
