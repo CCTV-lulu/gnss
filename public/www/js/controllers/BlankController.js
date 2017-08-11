@@ -28,11 +28,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 var vpl_num_is_able = false;
                 for (var i = 0; i < indexs.length; i++) {
 
-                    if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.HPL === undefined) {
+                    if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.HPL === undefined||threshold[indexs[i]].handleData.HPL === null) {
                         hpl_num_is_able = true;
                         $('input[name=hpl_num]')[0].checked = false;
                     }
-                    if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.VPL === undefined) {
+                    if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.VPL === undefined||threshold[indexs[i]].handleData.VPL === null) {
                         vpl_num_is_able = true;
                         $('input[name=vpl_num]')[0].checked = false;
                     }
