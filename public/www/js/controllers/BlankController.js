@@ -861,7 +861,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function showCoordinate(type, result) {
          var filer = getFilter();
-        if(filer.options.coordinate == undefined||0) return
+        if(filer.options.coordinate === undefined||filer.options.coordinate ===0) return
         console.log(filer.options.coordinate)
         $scope.coordinateInfo = {};
         $('#' + type + '_loading').hide();
@@ -870,8 +870,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         Object.keys(result).forEach(function (key) {
             var value = result[key];
             $scope.coordinateInfo[key] = {};
-            $scope.coordinateInfo[key].longitude = value.new_rb_log[0]
-            $scope.coordinateInfo[key].latitude = value.new_rb_log[1]
+            $scope.coordinateInfo[key].longitude = value.new_rb_log[0]*180/Math.PI
+            $scope.coordinateInfo[key].latitude = value.new_rb_log[1]*180/Math.PI
             $scope.coordinateInfo[key].Altitude = value.new_rb_log[2]
 
         });

@@ -114,8 +114,10 @@ module.exports.procinit=function (sta_id,bt,et,len,opt_init) {
     rtcm.realtime=1;
     // var opt_init = getProopt(sta_id);
     if(opt_init!=0){
-        if(opt_init.rbopt>0){
+        if(opt_init.rbopt>0 && opt_init.rb!=0){
             var rb=[0,0,0];
+            opt_init.rb[0]=opt_init.rb[0]*ca.D2R;
+            opt_init.rb[1]=opt_init.rb[1]*ca.D2R;
             cmn.pos2ecef(opt_init.rb,rb);
             opt_init.rb[0]=rb[0];
             opt_init.rb[1]=rb[1];

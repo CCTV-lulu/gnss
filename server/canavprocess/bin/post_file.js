@@ -133,6 +133,12 @@ function create_filestream(file) {
     });
     rd.on('close',function () {
         var sta_file=statis.statistic_get();
+        var xx=sta_file[3].rb_lowpass;
+        var rb=[xx[0].ave,xx[1].ave,xx[2].ave];
+        var pos=[0,0,0];
+        cmn.ecef2pos(rb,pos);
+        pos[0]=pos[0]*ca.R2D;
+        pos[1]=pos[1]*ca.R2D;
         var tt=0;
     });
 }
