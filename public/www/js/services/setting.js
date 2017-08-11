@@ -3,9 +3,9 @@ MetronicApp.factory('settingInfo', function () {
 
         //
         // server: "139.129.212.222",
-        // server: "101.37.150.119",
+        server: "101.37.150.119",
         //
-        server : 'localhost' ,
+        // server : 'localhost' ,
 
         port: "30000",
         socketPort: "6001"

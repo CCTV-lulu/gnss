@@ -284,12 +284,12 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
             satpos: {gpsatpos: [], glsatpos: [], bdsatpos: []},
             SNY: {gpsSNY: [[], []], glsSNY: [[], []], bdsSNY: [[], []]}
         };
-        for (var i in webIn.posR) {
-            if (webIn.posR[i].stat == 0) {
-                webIn.posR[i].HPL = 0;
-                webIn.posR[i].VPL = 0;
-            }
-        }
+        // for (var i in webIn.posR) {
+        //     if (webIn.posR[i].stat == 0) {
+        //         webIn.posR[i].HPL = 0;
+        //         webIn.posR[i].VPL = 0;
+        //     }
+        // }
 
         //console.log(webIn.satpos)
         //console.log(algoIn)
