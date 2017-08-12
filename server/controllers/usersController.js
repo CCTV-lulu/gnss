@@ -18,7 +18,6 @@ module.exports = {
 
                 var newHashPass = encryption.generateHashedPassword(result.salt,updatedUserData.password);
                 if(result.hashPass===newHashPass){
-                    console.log('============')
                     return res.send({status:false,message:"新密码与旧密码相同"})
                 }else {
                     if (updatedUserData.password && updatedUserData.password.length > 0) {

@@ -350,6 +350,7 @@ function getStationStatus(req, res, next) {
         stationData.StationSocketStatus = socketStatus;
     }
     stationData.stationData = StationSocketStatus.getStatInfo(limit, req.query.staId);
+    stationData.stationId =  req.query.staId;
 
     res.send(stationData);
 

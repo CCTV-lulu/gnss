@@ -50,14 +50,14 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
 
     function init(stationId){
         if(stationId == undefined) return;
+
         getStationStatus.getStationStatus(stationId, 1, function (data) {
             $scope.starsInfo =[]
-            showStarInfo(data, function(){
-
+            showStarInfo(data ,stationId,function(){
                 if(listenRootCurrentStationStatus === true) return;
                 listenRootCurrentStationStatus = $rootScope.$watch('RootCurrentStationStatus',function(data){
                     if(!data) return;
-                    showStarInfo(data)
+                    showStarInfo(data,stationId)
                 })
             },function(){
                 init(stationId)
@@ -67,10 +67,12 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     }
 
 
-    function showStarInfo(data,sucFuc,failFuc){
+    function showStarInfo(data, stationId,sucFuc,failFuc){
         sucFuc = sucFuc? sucFuc: function(){};
         failFuc = failFuc? failFuc: function(){};
+        if(data.stationId !== stationId) return
         if(data.stationData != false) {
+
             if (data.stationData.length == 0) {
                 return sucFuc()
             }

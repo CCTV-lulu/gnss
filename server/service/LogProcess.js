@@ -20,7 +20,7 @@ LogProcess.prototype.addLogPath = function (logPath,cb) {
     lock.lock(self.lockFile, {wait: 100, retries: 1, retryWait: 100}, function (err) {
         if (err) return cb({status: false})
         var logRecord = self.getLogRecord();
-        logRecord.infos.push({logPath: logPath});
+        logRecord.infos.unshift({logPath: logPath});
         fs.writeFileSync(self.logSaveFile, JSON.stringify(logRecord));
         lock.unlock(self.lockFile, function (err) {
             if (err) return
@@ -211,7 +211,6 @@ LogProcess.saveFollowProcess = function (stationId, chlid) {
 };
 
 LogProcess.prototype.getHandleInfo = function (stationId, filePath, cb) {
-
     StationConfig.findByStaId(stationId).then(function (result) {
         var info = {
             status: 'handleData',

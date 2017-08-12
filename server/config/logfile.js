@@ -28,7 +28,7 @@ module.exports = function (app) {
 
     app.post('/logs',function (req, res, next) {
             //file_op.rm('uploads');
-            var file_op    = require('../util/file_operate');
+            // var file_op    = require('../util/file_operate');
             var formidable = require('formidable');
             // file_op.mkdirsSync( './../uploads/');
             var form = new formidable.IncomingForm();
