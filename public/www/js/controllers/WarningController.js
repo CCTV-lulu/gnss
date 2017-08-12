@@ -101,15 +101,12 @@ angular.module('MetronicApp').controller('WarningController', function ($rootSco
 
         var startDate = $('#searchDateRange').html();
         var stationId = $('#station').val();
-        console.log('=============================')
 
         if (stationId) {
             $("#dataStatisticsChart").css("opacity", 0);
             $('#dataStatisticsChartLoding').show();
             var str = startDate.replace(new RegExp('-', 'gm'), '-')
                 .replace(new RegExp(' ', 'gm'), '-');
-
-            console.log(str.substring(13, 23) )
 
             var findData = {};
             findData.staId = stationId;

@@ -36,15 +36,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
     return fmt;
 }
 
-//function changeTimestamp(data) {
-//
-//
-//    var receiveTime = data.time.replace(new RegExp('-', 'gm'), ',')
-//        .replace(new RegExp(' ', 'gm'), ',')
-//        .replace(new RegExp(':', 'gm'), ',');
-//    var dateArr = receiveTime.split(',')
-//    return Date.UTC(parseInt(dateArr[0]), parseInt(dateArr[1]) - 1, parseInt(dateArr[2]), parseInt(dateArr[3]), parseInt(dateArr[4]), parseInt(dateArr[5])) - 18000;
-//}
+
 function updataRb(stationName,data){
     upDataRbStatus[stationName] = false;
     StationConfig.findByStaId(stationName).then(function (result) {
@@ -90,31 +82,7 @@ function saveStaInfo(data) {
 
     }
 
-    //fs.stat("../station" + data.station_id, function (err, stat) {
-    //    if (err == null) {
-    //        if (stat.isDirectory()) {
-    //            fs.readdir("../station" + data.station_id, function (err, files) {
-    //                if (err) return console.log(err);
-    //                //if (files.length > 5) {
-    //                //    for (var n = 0; n < files.length - 5; n++) {
-    //                //        fs.unlink("../station" + data.station_id + '/' + files[n], function (err) {
-    //                //            if (err) throw err;
-    //                //        })
-    //                //    }
-    //                //}
-    //                //console.log(staInfo)
-    //                writeFileSync(data, staInfo);
-    //            })
-    //        }
-    //    } else if (err.code == 'ENOENT') {
-    //        fs.mkdir("../station" + data.station_id, '0777', function (err) {
-    //            if (err) return console.log(err);
-    //            writeFileSync(data, staInfo);
-    //        });
-    //    } else {
-    //        console.log('错误：' + err);
-    //    }
-    //});
+
 }
 
 function writeFileSync(data, staInfo) {
@@ -148,23 +116,7 @@ function releaseCacheBuffer(station) {
 
 var allBuffers = {};
 
-//io.on('connection', function (socket) {
-//    var stationName = socket.handshake.query.station;
-//    console.log(socket.handshake.query.station)
-//    socket.on('disconnect', function () {
-//        StationSocketStatus[stationName] = false
-//    });
-//    StationSocketStatus[stationName] = true;
-//
-//    socket.on('' + stationName, function (data) {
-//        if (!StationSocketStatus[stationName]) {
-//            StationSocketStatus[stationName] = true;
-//        }
-//        onMessage(data);
-//    }, function (error) {
-//        console.log(error)
-//    });
-//});
+
 
 
 var upDataRbStatus={}
@@ -270,12 +222,7 @@ function onMessage(data) {
 
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
-    // console.log('---------------------on mesaage')
-    // console.log(data.station)
     var optJson = getStationConfig([data.station]).config
-    // console.log('---------------------on mesaage end');
-    // console.log(optJson)
-    // console.log('------------------------------------')
     var results = parse.parser_pos(data.station, buf, optJson);
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {

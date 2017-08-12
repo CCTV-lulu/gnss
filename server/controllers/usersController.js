@@ -8,8 +8,6 @@ module.exports = {
 
 
     changePassword: function (req, res) {
-            console.log("-------")
-            console.log(req.body)
         if (req.user.username == req.body.userId || req.user.roles.indexOf('admin') > -1) {
             var updatedUserData = {
                 password: req.body.password

@@ -152,7 +152,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         if (!station || !$scope.allThreshold) return;
         showThreshold()
-        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
 
 
@@ -282,7 +281,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 // return batchProcessErr('正在预处理，请稍后重试');
             }
             var username = data.result.userName
-            //$interval.cancel(getBatchDataPolling);
             $scope.mySwitch = false;
             localStorage.setItem($rootScope.rootUserInfo.username + '_current_result_processId', processId)
             $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
@@ -309,7 +307,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function batchProcessErr(messsage) {
         $(".loading").hide();
-        //$interval.cancel(getBatchDataPolling);
         Prompt.promptBox("warning", messsage || "处理异常请再次请求")
         $('#dataStatisticsChartLoding').hide();
     }
@@ -364,14 +361,12 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         Threshold.getHandleData(function (allThreshold) {
             $scope.allThreshold = allThreshold.allThreshold;
             showThreshold()
-            //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
         })
     }
 
     $scope.$watch('signal', function (signal) {
         if (!signal || !$scope.allThreshold) return;
         showThreshold()
-        //$scope.threshold = $scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal]:{}
     });
 
 
@@ -381,7 +376,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         }
 
         $scope.threshold = $scope.allThreshold[$scope.station] ? $scope.allThreshold[$scope.station][$scope.signal].handleData : {}
-        // $scope.config=$scope.allThreshold[$scope.station]?$scope.allThreshold[$scope.station][$scope.signal].config:{}
         if (!$scope.isAdmin) {
             $scope.isReadonly = true;
         }
@@ -826,7 +820,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function initResult() {
         var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
         if (processId === null) return;
-        //localStorage.setItem(key:1)
         $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
             showResult(data, $rootScope.rootUserInfo.username)
 
@@ -862,7 +855,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function showCoordinate(type, result) {
          var filer = getFilter();
         if(filer.options.coordinate === undefined||filer.options.coordinate ===0) return
-        console.log(filer.options.coordinate)
         $scope.coordinateInfo = {};
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();

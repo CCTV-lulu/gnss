@@ -75,7 +75,6 @@ StatisticsProcess.prototype.init = function (cb) {
 
         self.processId = StatisticsProcess.saveProcess(batchChildProcess);
         self.chlid = batchChildProcess;
-        console.log(self.processId)
         self.sendInfoToProcess({config: self.config, filter: self.filter, processId: self.processId})
     })
 

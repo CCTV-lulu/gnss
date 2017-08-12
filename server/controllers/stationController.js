@@ -4,14 +4,13 @@ var StationSocketStatus = require('../config/messagequeue');
 var json2csv = require('json2csv');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
-//var multer = require('multer'); // v1.0.5
+
 var CSVPath = './public/csv';
 var FILEPATH = '/csv';
-//var batchHandleFollowDate = require('../service/followDateService.js');
-var FollowProcess = require('../service/followProcess.js');
 
 
-//var batchProcessData = require('../batch_process_data/batch_process_data');
+
+
 
 
 var encryption = require('../utilities/cripto'),
@@ -164,120 +163,6 @@ function getUserStaThreshold(req, res) {
 }
 
 
-//function getBatchProcessStatus(userBatchProcesStatus) {
-//    var currentTime = new Date();
-//    if (!userBatchProcesStatus || !(userBatchProcesStatus.status)) {
-//        return {status: false}
-//    }
-//
-//    return {
-//        status: true,
-//        waitTime: (userBatchProcesStatus.effectiveTime * 1000) - (currentTime - userBatchProcesStatus.createTime)
-//    }
-//}
-//function setUserFindTime(req, res) {
-//    var postBody = req.body;
-//    BatchProcess.findBatchProcess(req.user.username).then(function (userBatchProcessStatus) {
-//        var userBatchProcessStatus = getBatchProcessStatus(userBatchProcessStatus)
-//        if (userBatchProcessStatus.status) {
-//            return res.send({
-//                status: 202,
-//                waitTime: parseInt(Number(userBatchProcessStatus.waitTime) / 1000) * 0.6,
-//                message: 'Continue wait'
-//            })
-//        }
-//        Station.findByStaId(postBody.sta_id)
-//            .then(function (station) {
-//                var effectiveTime = batchProcessData.getBatchProcessTime(station.stationName, postBody.allDate)
-//                if (effectiveTime == 0) {
-//                    return res.send({status: 201, message: 'not have file'})
-//                }
-//                var usersTime = Object.keys(childInfo).length
-//                var waitTime = (parseInt(Number(effectiveTime) * (1 + usersTime * 0.3)) * 0.7);
-//                console.log(waitTime)
-//                saveUserFindStaData(effectiveTime, req.user.username).then(function () {
-//                    batchProcessDate(station.stationName, postBody, req.user.username)
-//                    res.send({status: 200, waitTime: waitTime, message: 'start wait'});
-//                });
-//            })
-//    })
-//}
-
-//function downloadStaData(req, res) {
-//    BatchProcess.findBatchProcess(req.user.username).then(function (batchProcesStatus) {
-//        if (!batchProcesStatus.status) {
-//
-//            return res.download("./server/" + req.user.username + ".json")
-//        }
-//        console.log('----------------------------------------waitingDownload');
-//        return res.send({status: 202, message: 'wait'})
-//    })
-//}
-//function saveUserFindStaData(time, username) {
-//    var defer = Promise.defer();
-//    var condition = {
-//        effectiveTime: time,
-//        status: true,
-//        userName: username,
-//        createTime: new Date(),
-//        data: {}
-//    };
-//    BatchProcess.setBatchProcess(condition).then(function () {
-//        defer.resolve()
-//    });
-//    return defer.promise
-//}
-//function getUserFindStaData(req, res) {
-//    BatchProcess.findBatchProcess(req.user.username).then(function (batchProcesStatus) {
-//        if (!batchProcesStatus.status) {
-//            var integrity = batchProcesStatus.data.data.integrity;
-//            var a = {
-//                userName: batchProcesStatus.data.userName,
-//                data: {
-//                    availability: batchProcesStatus.data.data.availability,
-//                    continuity: batchProcesStatus.data.data.continuity,
-//                    integrity: integrity.slice(0, 10),
-//                    accuracy_95: batchProcesStatus.data.data.accuracy_95,
-//                    accuracy: batchProcesStatus.data.data.accuracy
-//                }
-//
-//            }
-//            fs.writeFileSync("./server/" + req.user.username + ".json", JSON.stringify(batchProcesStatus.data.data.integrity));
-//            return res.send({status: 200, result: a})
-//        }
-//
-//        return res.send({status: 202, message: 'wait'})
-//    })
-//}
-//var childInfo = {}
-//
-//function killChild(username) {
-//    if (childInfo[username] != undefined) {
-//        childInfo[username].kill()
-//    }
-//}
-//function batchProcessDate(station, filter, userName) {
-//    var child_process = require('child_process');
-//    var child = child_process.fork('./server/batch_process_data/batch_process_data.js');
-//    childInfo[userName] = child;
-//    child.on('message', function (batchProcessResult) {
-//        BatchProcess.findBatchProcess(batchProcessResult.userName).then(function (userBatchProcessStatus) {
-//            console.log(batchProcessResult)
-//            userBatchProcessStatus.data = batchProcessResult;
-//            userBatchProcessStatus.status = false;
-//            userBatchProcessStatus.save(function (err, result) {
-//                child.send({message: 'close'})
-//            });
-//        })
-//    });
-//    child.on('close', function () {
-//        console.log('closing code: ');
-//    });
-//    child.send({station: station, filter: filter, userName: userName});
-//}
-
-
-/*========new*/
 
 
 function getUserStationInfo(req, res) {
@@ -355,30 +240,6 @@ function getStationStatus(req, res, next) {
     res.send(stationData);
 
 
-    //StationStatus.where(data, limit)
-    //
-    //    .then(function (success_data) {
-    //        StationSocketStatus.StationSocketStatus[req.query.staId] = true;
-    //        var stationData = {};
-    //        if (!(StationSocketStatus.StationSocketStatus[req.query.staId])) {
-    //            stationData.StationSocketStatus = false;
-    //        } else {
-    //            var socketStatus = StationSocketStatus.StationSocketStatus[req.query.staId];
-    //            stationData.StationSocketStatus = socketStatus;
-    //        }
-    //        var result = [];
-    //
-    //        success_data.forEach(function (data) {
-    //            result.push(JSON.parse(data))
-    //        })
-    //        stationData.stationData = result;
-    //        res.send(stationData);
-    //    }, function (error) {
-    //        res.send({
-    //            status: 400,
-    //            message: error
-    //        });
-    //    })
 }
 
 
@@ -401,13 +262,6 @@ function setStaThreshold(req, res) {
     StationConfig.setStationThreshold(thresholdInfo.staId, thresholdInfo.signal, thresholdInfo.threshold,thresholdInfo.config).then(function (result) {
         if (result.status) {
 
-            // StationConfig.findByStaId(thresholdInfo.staId).then(function(config){
-            //     var newFollowProcess = new FollowProcess(thresholdInfo.staId, config.stationConfig.config)//todo
-            //     newFollowProcess.init()
-            //     res.send(result)
-            // },function(err){
-            //     res.send(result)
-            // })
 
             StationSocketStatus.initStationOpt(thresholdInfo.staId)
             return res.send(result);
@@ -419,18 +273,7 @@ function setStaThreshold(req, res) {
     })
 
 }
-// function removeConfig(req,res) {
-//     var thresholdInfo = req.body;
-//     StationConfig.removeConfig(thresholdInfo.staId,thresholdInfo.signal).then(function (result) {
-//         if (result.status) {
-//             StationSocketStatus.setConfig(thresholdInfo.staId)
-//             res.send(result);
-//         }
-//     },function (err) {
-//         console.log('--------err')
-//     })
-//
-// }
+
 
 function setStaHandleData(req, res) {
     var thresholdInfo = req.body;
@@ -563,13 +406,10 @@ module.exports = {
     deleteStation: deleteStation,
     addStation: addStation,
 
-    //setUserFindTime: setUserFindTime,
-    //getUserFindStaData: getUserFindStaData,
-    //killChild: killChild,
-    //downloadStaData: downloadStaData,
+
     getStaThreshold: getStaThreshold,
     setStaThreshold: setStaThreshold,
-    // removeConfig: removeConfig,
+
 
     setStaHandleData:setStaHandleData,
     getStaHandleData:getStaHandleData,

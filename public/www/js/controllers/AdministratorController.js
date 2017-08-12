@@ -141,8 +141,7 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
 
     $scope.$on('logout', function (event, url) {
         $scope.$emit('logout-connect-app', 'data')
-        //$('body').addClass('page-on-load');
-        //location.reload(true)
+
     });
 
 
