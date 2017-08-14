@@ -25,7 +25,7 @@ module.exports = function (app) {
 
     app.get('/getStation', auth.isInRole('user'), controllers.station.getStations);
 
-    app.post('/getStaThreshold', auth.isInRole('user'), controllers.station.getUserStaThreshold);
+    // app.post('/getStaThreshold', auth.isInRole('user'), controllers.station.getUserStaThreshold);
     app.post('/setStaThreshold', auth.isInRole('user'), controllers.station.setStaThreshold);
     //app.get('/getUserFindStaData', auth.isInRole('user'), controllers.station.getUserFindStaData);
     //app.get('/getStartInfo', function (req, res) {

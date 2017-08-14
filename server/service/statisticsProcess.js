@@ -2,7 +2,6 @@ var taskManagement = require('../service/taskManagement.js');
 var child_process = require('child_process');
 var BatchProcessModel = require('../data/batchProcess');
 var StationConfig = require('../data/stationConfig');
-var FollowData = require('../data/followData');
 var fs = require('fs')
 var rimraf = require('rimraf');
 
@@ -33,11 +32,11 @@ StatisticsProcess.prototype.stop = function () {
     taskManagement.stopProcessById(this.processId);
 };
 
-StatisticsProcess.prototype.isHandleFollow = function (cb) {
-    FollowData.getHandleInfoByStationId(this.stationId).then(function (result) {
-        return cb(result !== null)
-    })
-};
+// StatisticsProcess.prototype.isHandleFollow = function (cb) {
+//     FollowData.getHandleInfoByStationId(this.stationId).then(function (result) {
+//         return cb(result !== null)
+//     })
+// };
 
 StatisticsProcess.prototype.init = function (cb) {
     var self = this;
@@ -82,7 +81,7 @@ StatisticsProcess.prototype.init = function (cb) {
 };
 
 StatisticsProcess.prototype.checkFile = function (cb) {
-    fs.mkdir("./public/chartImage/" + this.username, function (err) {
+    fs.mkdir("./public/batchHandleResult/" + this.username, function (err) {
         cb()
     })
 };

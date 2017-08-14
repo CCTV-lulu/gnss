@@ -148,6 +148,8 @@ function initSockectServer() {
             if (!StationSocketStatus[stationName]) {
                 StationSocketStatus[stationName] = true;
             }
+            console.log("----------------------------data")
+            console.log(data)
             onMessage(data);
         }, function (error) {
             console.log(error)
@@ -224,6 +226,8 @@ function onMessage(data) {
     var buf = Buffer.from(message.data, 'base64');
     var optJson = getStationConfig([data.station]).config
     var results = parse.parser_pos(data.station, buf, optJson);
+    console.log("----------------------result")
+    console.log(results)
     //releaseCacheBuffer(message.station);
     results.forEach(function (sta_data) {
         try {

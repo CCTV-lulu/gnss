@@ -147,7 +147,7 @@ function batch_process(batchProcessFiler, config, processId) {
 
     processOneDay(files.allFilesData, 0, function (data) {
 
-        fs.mkdir('./public/chartImage/' + batchProcessFiler.username + '/' + PROESSID + '/', function () {
+        fs.mkdir('./public/batchHandleResult/' + batchProcessFiler.username + '/' + PROESSID + '/', function () {
             createImage(data, batchProcessFiler, config).then(function (results) {
                 exporter.killPool()
                 for (var sys in data) {
@@ -160,7 +160,7 @@ function batch_process(batchProcessFiler, config, processId) {
                 var info = getOriginXYZ(data)
                 var newInfo = handleXYZ(info)
                 var newData = addRbLog(data,newInfo)
-                fs.writeFile('./public/chartImage/' + batchProcessFiler.username + '/' + PROESSID + '/' + batchProcessFiler.username + '.json', JSON.stringify(newData), function (err) {
+                fs.writeFile('./public/batchHandleResult/' + batchProcessFiler.username + '/' + PROESSID + '/' + batchProcessFiler.username + '.json', JSON.stringify(newData), function (err) {
                     if (err) throw err;
                     process.send({status: 200, username: batchProcessFiler.username});
                 });
@@ -324,7 +324,7 @@ function createImage(data, filter,config) {
 function chartImage(chartInfo, username) {
     var defer = promise.defer();
     exporter.export(setTimeLine(chartInfo.series), function (err, res) {
-        fs.writeFile("./public/chartImage/" + username + '/' + PROESSID + '/' + chartInfo.fileName + ".png", res.data, 'base64', function (err) {
+        fs.writeFile("./public/batchHandleResult/" + username + '/' + PROESSID + '/' + chartInfo.fileName + ".png", res.data, 'base64', function (err) {
             defer.resolve(chartInfo.fileName)
         });
 

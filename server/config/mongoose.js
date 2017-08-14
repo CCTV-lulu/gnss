@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
     UserModel = require('../data/Models/User'),
     UserStationIdModel = require('../data/Models/UserStationId'),
     StationModel = require('../data/Models/Station'),
-    staThresholdModel = require('../data/Models/staThreshold'),
+    // staThresholdModel = require('../data/Models/staThreshold'),
     StationStatusModel = require('../data/Models/StationStatus'),
     UserStationInfo = require('../data/Models/UserStationInfo'),
     StationConfig = require('../data/Models/StationConfig'),
@@ -32,7 +32,7 @@ module.exports = function (config) {
     UserStationIdModel.init();
     StationStatusModel.init();
     StationModel.init();
-    staThresholdModel.init();
+    // staThresholdModel.init();
     batchProcessModel.init();
     followDataModel.init()
     UserStationInfo.init();

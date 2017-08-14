@@ -283,7 +283,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             var username = data.result.userName
             $scope.mySwitch = false;
             localStorage.setItem($rootScope.rootUserInfo.username + '_current_result_processId', processId)
-            $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+            $http.get('/batchHandleResult/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
                 showProcessResult(data, username)
 
             })
@@ -396,6 +396,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
                 showThreshold()
                 Prompt.promptBox('success', '保存成功')
+                setOptions()
             } else {
 
                 Prompt.promptBox('warning', '请刷新')
@@ -751,7 +752,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
 
         var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
-        $("#" + id + ' img').attr('src', '/chartImage/' + username + '/' + processId + '/' + imageName)
+        $("#" + id + ' img').attr('src', '/batchHandleResult/' + username + '/' + processId + '/' + imageName)
         $('#' + id + '_loading').hide();
         $('#' + id + '_content').show();
         $('#' + id + '_container').show();
@@ -820,7 +821,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function initResult() {
         var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
         if (processId === null) return;
-        $http.get('/chartImage/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+        $http.get('/batchHandleResult/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
             showResult(data, $rootScope.rootUserInfo.username)
 
         })

@@ -16,7 +16,7 @@ var FILEPATH = '/csv';
 var encryption = require('../utilities/cripto'),
     UserStationId = require('../data/userStationId'),
     StationStatus = require('../data/stationStatus'),
-    StaThreshold = require('../data/staThreshold'),
+    // StaThreshold = require('../data/staThreshold'),
     Station = require('../data/station'),
 
     StationConfig = require('../data/stationConfig'),
@@ -146,21 +146,21 @@ function createStation(req, res) {
     })
 }
 
-function getUserStaThreshold(req, res) {
-    StaThreshold.findStaThresholdByName(req.body.userName, req.body.staName).then(function (staThreshold) {
-        var resStaThreshold = {
-            userName: staThreshold.userName,
-            staName: staThreshold.staName,
-            staThreshold: staThreshold.staThreshold || {}
-        };
-        res.send(resStaThreshold)
-    }, function (error) {
-        res.send({
-            status: 400,
-            message: error
-        });
-    })
-}
+// function getUserStaThreshold(req, res) {
+//     StaThreshold.findStaThresholdByName(req.body.userName, req.body.staName).then(function (staThreshold) {
+//         var resStaThreshold = {
+//             userName: staThreshold.userName,
+//             staName: staThreshold.staName,
+//             staThreshold: staThreshold.staThreshold || {}
+//         };
+//         res.send(resStaThreshold)
+//     }, function (error) {
+//         res.send({
+//             status: 400,
+//             message: error
+//         });
+//     })
+// }
 
 
 
@@ -402,7 +402,7 @@ module.exports = {
     getStationStatus: getStationStatus,
     getStations: getStations,
     createStation: createStation,
-    getUserStaThreshold: getUserStaThreshold,
+    // getUserStaThreshold: getUserStaThreshold,
     deleteStation: deleteStation,
     addStation: addStation,
 

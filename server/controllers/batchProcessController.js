@@ -1,9 +1,7 @@
 var child_process = require('child_process');
 var BatchProcessModel = require('../data/batchProcess');
 var StationConfig = require('../data/stationConfig');
-var FollowData = require('../data/followData');
 var StatisticsProcess = require('../service/statisticsProcess');
-var FollowProcess = require('../service/followProcess.js');
 var fs = require('fs');
 var rimraf = require('rimraf');
 
@@ -53,32 +51,7 @@ function stopBatchProcess(req, res) {
     }
 }
 
-function reBatchHandleFollow() {
-    FollowData.all()
-        .then(function (allNeedHandleFollowData) {
-            for (var i = 0; i < allNeedHandleFollowData.length; i++) {
-                var needHandleInfo = allNeedHandleFollowData[i];
-                startBatchFollwData(needHandleInfo.stationId)
-            }
 
-        }, function (err) {
-            console.log(err)
-        })
-}
-//
-//function batchHandleFollow(stationName) {
-//    getNeedHandleFiles(stationName, function () {
-//        startBatchFollwData(stationName)
-//    })
-//}
-
-function startBatchFollwData(stationId){
-    StationConfig.findByStaId(stationId).then(function(config){
-        var newFollowProcess = new FollowProcess(stationId, config.stationConfig.config)//todo
-        newFollowProcess.init()
-    })
-}
-reBatchHandleFollow();
 
 module.exports = {
     startBatchProcess: startBatchProcess,
