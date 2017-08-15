@@ -69,7 +69,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
-                            settingSys(data.stationData[i]);
+                            settingSys(data.stationData[i], data.stationId);
                             showChart(data.stationData[i]);
                             showDxDy(data.stationData, 'GPSDXDY');
                             showDxDy(data.stationData, 'GLSDXDY');
@@ -132,7 +132,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
 
     }
 
-    function settingSys(dataInfo) {
+    function settingSys(dataInfo, stationId) {
         $scope.utcTime = dataInfo.timestamp
         if (dataInfo.posR[0]) {
             $scope.gpInfo = dataInfo.posR[0]
@@ -146,12 +146,13 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if (dataInfo.posR[3]) {
             $scope.groupInfo = dataInfo.posR[3]
         }
-        console.log(dataInfo.stationId)
+        console.log(stationId)
         console.log($rootScope.stationId)
-        if(dataInfo.stationId == $rootScope.stationId){
+        console.log(dataInfo)
+        if(stationId == $rootScope.stationId){
              $('.table-responsive tbody').show();
         }
-        
+
     }
     $scope.showValue = function(value){
         if(value === null){
