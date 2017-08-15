@@ -70,7 +70,7 @@ angular.module('MetronicApp').controller('StarDataController', function ($scope,
     function showStarInfo(data, stationId,sucFuc,failFuc){
         sucFuc = sucFuc? sucFuc: function(){};
         failFuc = failFuc? failFuc: function(){};
-        if(data.stationId !== stationId) return
+        if(data.stationId != stationId) return
         if(data.stationData != false) {
 
             if (data.stationData.length == 0) {

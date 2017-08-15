@@ -175,7 +175,9 @@ module.exports = {
                     }
                 })
                 newConfig.rb=newRb
+                newConfig.rbopt = 1
             }
+
             var newRbUpDate = stationConfig.rbUpDate
             if(rbUpDate != undefined){
                 newRbUpDate = rbUpDate
