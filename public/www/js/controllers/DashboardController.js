@@ -230,10 +230,11 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     function startOneStaStatus(data) {
         if(listenRootCurrentStationStatus === true) return;
         listenRootCurrentStationStatus =  $rootScope.$watch('RootCurrentStationStatus', function(data){
+
+            if(!data|| data.stationId != $rootScope.stationId) return;
             console.log('---------one ------id')
             console.log(data.stationId)
             console.log($rootScope.stationId)
-            if(!data|| data.stationId != $rootScope.stationId) return;
             data.stationData.forEach(function (chartData) {
 
                 StarMapChart.starMap(chartData.satpos);
