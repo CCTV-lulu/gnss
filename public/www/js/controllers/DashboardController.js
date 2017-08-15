@@ -69,6 +69,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                 for (var i = 0; i < (data.stationData.length); i++) {
                     if (dataId.indexOf(data.stationData[i].dataId) == -1) {
                         if (i == (data.stationData.length - 1)) {
+                            settingSys(data.stationData[i]);
                             showChart(data.stationData[i]);
                             showDxDy(data.stationData, 'GPSDXDY');
                             showDxDy(data.stationData, 'GLSDXDY');
@@ -76,13 +77,14 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
                             showDxDy(data.stationData, 'MULTIDXDY');
                             showH(data.stationData, 'H');
 
-                            settingSys(data.stationData[i]);
+
                             StarMapChart.starMap((data.stationData[i]).satpos);
                             //dataArray.cooacc = data.stationData[i].cooacc//给前端
                             //
 
                             startOneStaStatus();
-                            $('.table-responsive tbody').show();
+
+
 
                             //showSatelliteNum(data.stationData[i].satnum)
                         }
@@ -144,6 +146,12 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if (dataInfo.posR[3]) {
             $scope.groupInfo = dataInfo.posR[3]
         }
+        console.log(dataInfo.stationId)
+        console.log($rootScope.stationId)
+        if(dataInfo.stationId == $rootScope.stationId){
+             $('.table-responsive tbody').show();
+        }
+        
     }
     $scope.showValue = function(value){
         if(value === null){
