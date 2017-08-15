@@ -37,13 +37,24 @@ module.exports = function (app) {
                 if(!err){
                      name = fs.rename(files.log_file.path, cwd+'/logs/'+files.log_file.name, function (err) {
                          if(err){
+                             console.log('--------------------------------rename err')
+                             console.log( files.log_file.name)
+                             console.log(files.log_file.path)
                              res.status(404)
                                  .send('Not Found')
                          }else {
                              logProcess.addLogPath('/logs/' + files.log_file.name, function (result) {
+
+
                                  if (result.status) {
+                                     console.log('--------------------------------addLogPath success')
+                                 console.log( files.log_file.name)
+                                     console.log(files.log_file.path)
                                      return res.send('ok')
                                  }
+                                 console.log('--------------------------------addLogPath err')
+                                 console.log(files.log_file.name)
+                                 console.log(files.log_file.path)
                                  res.status(404)
                                      .send('Not Found')
                              })
