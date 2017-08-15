@@ -146,9 +146,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         if (dataInfo.posR[3]) {
             $scope.groupInfo = dataInfo.posR[3]
         }
-        console.log(stationId)
-        console.log($rootScope.stationId)
-        console.log(dataInfo)
         if(stationId == $rootScope.stationId){
              $('.table-responsive tbody').show();
         }
@@ -232,9 +229,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
         listenRootCurrentStationStatus =  $rootScope.$watch('RootCurrentStationStatus', function(data){
 
             if(!data|| data.stationId != $rootScope.stationId) return;
-            console.log('---------one ------id')
-            console.log(data.stationId)
-            console.log($rootScope.stationId)
             data.stationData.forEach(function (chartData) {
 
                 StarMapChart.starMap(chartData.satpos);
