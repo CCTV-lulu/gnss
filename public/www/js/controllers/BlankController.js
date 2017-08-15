@@ -868,8 +868,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 $scope.coordinateInfo[key].latitude ='NA'
                 $scope.coordinateInfo[key].Altitude = 'NA'
             }else {
-                $scope.coordinateInfo[key].longitude = value.new_rb_log[1]*180/Math.PI.toFixed(7)+'°'
-                $scope.coordinateInfo[key].latitude = value.new_rb_log[0]*180/Math.PI.toFixed(7)+'°'
+                $scope.coordinateInfo[key].longitude = (value.new_rb_log[1]*180/Math.PI).toFixed(7)+'°'
+                $scope.coordinateInfo[key].latitude = (value.new_rb_log[0]*180/Math.PI).toFixed(7)+'°'
                 $scope.coordinateInfo[key].Altitude = value.new_rb_log[2].toFixed(2)+'m'
             }
 
