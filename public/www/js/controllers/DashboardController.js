@@ -60,9 +60,6 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
     function loadStationStatus(staId, limit, cb) {
         getStationStatus.getStationStatus(staId, limit, function (data) {
             if (limit == 10 ) {
-                console.log(data.stationId)
-                console.log("---------------------")
-                console.log( $rootScope.stationId)
                 if(data.stationId != $rootScope.stationId)  return cb()
                 if(data.stationData == undefined) return cb()
                 if (data.stationData.length < 300) {
