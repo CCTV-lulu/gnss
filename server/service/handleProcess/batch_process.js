@@ -178,8 +178,14 @@ function getOriginXYZ(data){
     for(var i in data){
         info[i] = []
         for(var j in data[i].rb_lowpass){
+            if(data[i].rb_lowpass[j] === null){
+                info[i] =  null
+            } else if(data[i].rb_lowpass === undefined){
+                info[i] = undefined
+            }else {
+                info[i].push(data[i].rb_lowpass[j].ave)
+            }
 
-            info[i].push(data[i].rb_lowpass[j].ave)
         }
     }
 
@@ -189,16 +195,22 @@ function getOriginXYZ(data){
 function handleXYZ(info){
     var newInfo ={}
     for(var i in info){
-        var xyz = []
         if(info[i] == undefined){
-            return  info=[]
+            newInfo[i] =  undefined
+            continue
         }
+        if(info[i] == null){
+            newInfo[i] =  null
+            continue
+        }
+
+        var xyz = []
         cmn.ecef2pos(info[i],xyz)
         newInfo[i] = xyz;
     }
     return newInfo
-
 }
+
 
 function addRbLog(data, info){
     for(var i in info){

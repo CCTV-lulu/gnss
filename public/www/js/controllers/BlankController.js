@@ -449,12 +449,10 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         if (filer.options.err_hist === undefined)  return;
         // if (series.length == 0) return;
         if (series.length != 0) {
-            if (type == 'HErrHist') {
-                if ($scope.threshold == undefined) return
+            if (type == 'HErrHist'&& $scope.threshold != undefined && !isNaN($scope.threshold.dH)) {
                 series.push({name: "WARNINGDH", data: [[$scope.threshold.dH, 0], [$scope.threshold.dH, 1]]});
             }
-            if (type == 'VErrHist') {
-                if ($scope.threshold == undefined) return
+            if (type == 'VErrHist'&& $scope.threshold != undefined && !isNaN($scope.threshold.dV)) {
                 series.push({name: "WARNINGDV", data: [[$scope.threshold.dV, 0], [$scope.threshold.dV, 1]]})
             }
 
@@ -551,12 +549,10 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         });
         if (series.length == 0) return;
-        if (type == 'Hdop') {
-            if ($scope.threshold == undefined) return
+        if (type == 'Hdop'&& $scope.threshold != undefined && !isNaN($scope.threshold.HDOP)) {
             series.push({name: "WARNINGHDOP", data: [[$scope.threshold.HDOP, 0], [$scope.threshold.HDOP, 1]]})
         }
-        if (type == 'Vdop') {
-            if ($scope.threshold == undefined) return
+        if (type == 'Vdop'&& $scope.threshold != undefined && !isNaN($scope.threshold.VDOP)) {
             series.push({name: "WARNINGVDOP", data: [[$scope.threshold.VDOP, 0], [$scope.threshold.VDOP, 1]]});
         }
 
@@ -653,11 +649,11 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             }
         });
         if (series.length == 0) return;
-        if (type == 'VPL') {
-            if ($scope.threshold == undefined) return
+        if (type == 'VPL'&& $scope.threshold != undefined && !isNaN($scope.threshold.VPL)) {
+
             series.push({name: "WARNINGVPL", data: [[$scope.threshold.VPL, 0], [$scope.threshold.VPL, 1]]});
         }
-        if (type == 'HPL') {
+        if (type == 'HPL' && $scope.threshold != undefined && !isNaN($scope.threshold.HPL)) {
             if ($scope.threshold == undefined) return
             series.push({name: "WARNINGHPL", data: [[$scope.threshold.HPL, 0], [$scope.threshold.HPL, 1]]})
         }
@@ -863,9 +859,20 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         Object.keys(result).forEach(function (key) {
             var value = result[key];
             $scope.coordinateInfo[key] = {};
-            $scope.coordinateInfo[key].longitude = value.new_rb_log[0]*180/Math.PI
-            $scope.coordinateInfo[key].latitude = value.new_rb_log[1]*180/Math.PI
-            $scope.coordinateInfo[key].Altitude = value.new_rb_log[2]
+            if(value.new_rb_log == null){
+                $scope.coordinateInfo[key].longitude = '-'
+                $scope.coordinateInfo[key].latitude ='-'
+                $scope.coordinateInfo[key].Altitude = '-'
+            }else if(value.new_rb_log == undefined){
+                $scope.coordinateInfo[key].longitude = 'NA'
+                $scope.coordinateInfo[key].latitude ='NA'
+                $scope.coordinateInfo[key].Altitude = 'NA'
+            }else {
+                $scope.coordinateInfo[key].longitude = value.new_rb_log[1]*180/Math.PI.toFixed(7)+'°'
+                $scope.coordinateInfo[key].latitude = value.new_rb_log[0]*180/Math.PI.toFixed(7)+'°'
+                $scope.coordinateInfo[key].Altitude = value.new_rb_log[2].toFixed(2)+'m'
+            }
+
 
         });
     }
