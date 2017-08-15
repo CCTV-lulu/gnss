@@ -35,15 +35,21 @@ module.exports = function (app) {
             form.uploadDir = '../uploads'
             form.parse(req, function(err, fields, files) {
                 if(!err){
-                     name = fs.rename(files.log_file.path, cwd+'/logs/'+files.log_file.name, function () {
-                        logProcess.addLogPath('/logs/' + files.log_file.name, function (result) {
-                            if (result.status) {
-                                return res.send('ok')
-                            }
-                            res.status(404)
-                                .send('Not Found')
-                        })
-                    })
+                     name = fs.rename(files.log_file.path, cwd+'/logs/'+files.log_file.name, function (err) {
+                         if(err){
+                             res.status(404)
+                                 .send('Not Found')
+                         }else {
+                             logProcess.addLogPath('/logs/' + files.log_file.name, function (result) {
+                                 if (result.status) {
+                                     return res.send('ok')
+                                 }
+                                 res.status(404)
+                                     .send('Not Found')
+                             })
+                         }
+
+                     })
 
                 }else{
                     console.log('---------------err')

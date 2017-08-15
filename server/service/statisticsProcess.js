@@ -52,6 +52,8 @@ StatisticsProcess.prototype.init = function (cb) {
             if (batchProcessResult.status === 300) {
                 self.start(batchProcessResult, cb)
             }
+
+
             if (batchProcessResult.status === 301) {
                 self.noFile(cb);
             }
