@@ -237,7 +237,7 @@ angular.module('MetronicApp').controller('dashboardController', function ($rootS
             data.stationData.forEach(function (chartData) {
 
                 StarMapChart.starMap(chartData.satpos);
-                settingSys(chartData);
+                settingSys(chartData,data.stationId);
                 updateH(chartData);
                 updateDxDy(chartData)
                 updateChart(chartData);
