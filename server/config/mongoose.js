@@ -1,13 +1,13 @@
 var mongoose = require('mongoose'),
     UserModel = require('../data/Models/User'),
-    UserStationIdModel = require('../data/Models/UserStationId'),
+    // UserStationIdModel = require('../data/Models/UserStationId'),
     StationModel = require('../data/Models/Station'),
     // staThresholdModel = require('../data/Models/staThreshold'),
     StationStatusModel = require('../data/Models/StationStatus'),
     UserStationInfo = require('../data/Models/UserStationInfo'),
     StationConfig = require('../data/Models/StationConfig'),
     batchProcessModel = require('../data/Models/batchProcess'),
-    followDataModel = require('../data/Models/followData'),
+    // followDataModel = require('../data/Models/followData'),
     WarningInfo = require('../data/Models/WarningInfo');
     mongoose.Promise = global.Promise;
 
@@ -29,12 +29,12 @@ module.exports = function (config) {
     });
 
     UserModel.init();
-    UserStationIdModel.init();
+    // UserStationIdModel.init();
     StationStatusModel.init();
     StationModel.init();
     // staThresholdModel.init();
     batchProcessModel.init();
-    followDataModel.init()
+    // followDataModel.init()
     UserStationInfo.init();
     StationConfig.init();
     WarningInfo.init();

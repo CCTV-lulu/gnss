@@ -18,7 +18,7 @@ module.exports = function (app) {
     app.post('/userStartStaId', auth.isInRole('user'), controllers.station.updateStaId);
 
 
-    app.get('/userStaId', auth.isInRole('user'), controllers.station.getUserStationId);
+    // app.get('/userStaId', auth.isInRole('user'), controllers.station.getUserStationId);
     app.get('/getStationStatus', auth.isInRole('user'), controllers.station.getStationStatus);
 
 

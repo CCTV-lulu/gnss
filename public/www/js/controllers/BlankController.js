@@ -131,6 +131,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             if (station == undefined) return
             $scope.stationInfo = allThreshold.allThreshold[station]
             if ($scope.signal == undefined) return
+            if($scope.stationInfo == undefined)return
             $scope.rbUpDate = $scope.stationInfo[$scope.signal].rbUpDate
             var stationName = '';
             if ($scope.isAdmin) {

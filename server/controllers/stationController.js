@@ -14,8 +14,8 @@ var FILEPATH = '/csv';
 
 
 var encryption = require('../utilities/cripto'),
-    UserStationId = require('../data/userStationId'),
-    StationStatus = require('../data/stationStatus'),
+    // UserStationId = require('../data/userStationId'),
+    // StationStatus = require('../data/stationStatus'),
     // StaThreshold = require('../data/staThreshold'),
     Station = require('../data/station'),
 
@@ -397,7 +397,7 @@ function removeCSV(username){
 
 
 module.exports = {
-    getUserStationId: getUserStationId,
+    // getUserStationId: getUserStationId,
     updateStaId: updateStaId,
     getStationStatus: getStationStatus,
     getStations: getStations,
