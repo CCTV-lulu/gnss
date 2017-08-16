@@ -4,9 +4,9 @@
 var BatchProcessData = require('mongoose').model('BatchProcessData');
 
 module.exports = {
-    findBatchProcess: function (username) {
+    findBatchProcess: function (username, processId) {
         var defer = Promise.defer();
-        BatchProcessData.findOne({userName: username}).exec(function (err, data) {
+        BatchProcessData.findOne({userName: username, processId: processId}).exec(function (err, data) {
             if (err) {
                 return defer.reject('find station threshold error')
             }
@@ -16,7 +16,7 @@ module.exports = {
     },
     setBatchProcess: function (condition) {
         var defer = Promise.defer();
-        BatchProcessData.findOne({userName: condition.userName}).exec(function (err, batchProcessData) {
+        BatchProcessData.findOne({userName: condition.userName,processId: condition.processId}).exec(function (err, batchProcessData) {
             if (err) {
                 return defer.reject('')
             }

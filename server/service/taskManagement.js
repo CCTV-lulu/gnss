@@ -14,7 +14,7 @@ function clearProcessById(processId){
 
 
 function addProcess(chlid){
-    var processId = uuidv4();
+    var processId = chlid.stationId+"_"+uuidv4();
     Processes[processId] = chlid;
     return processId
 }

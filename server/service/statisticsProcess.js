@@ -25,7 +25,7 @@ StatisticsProcess.stopById = function (processId) {
     taskManagement.stopProcessById(this.processId);
 };
 
-StatisticsProcess.saveProcess = function (chlid) {
+StatisticsProcess.prototype.saveProcess = function (chlid) {
     return taskManagement.addProcess({stationId: this.stationId, process: chlid, username: this.username})
 };
 StatisticsProcess.prototype.stop = function () {
@@ -74,7 +74,7 @@ StatisticsProcess.prototype.init = function (cb) {
 
         });
 
-        self.processId = StatisticsProcess.saveProcess(batchChildProcess);
+        self.processId = self.saveProcess(batchChildProcess);
         self.chlid = batchChildProcess;
         self.sendInfoToProcess({config: self.config, filter: self.filter, processId: self.processId})
     })
@@ -105,7 +105,9 @@ StatisticsProcess.prototype.sendInfoToProcess = function (info) {
 };
 
 StatisticsProcess.prototype.updateBatchProcessDate = function (isRunning) {
-    BatchProcessModel.findBatchProcess(this.username).then(function (userBatchProcessStatus) {
+    console.log('-------------------------------------------------------')
+    console.log(this.processId)
+    BatchProcessModel.findBatchProcess(this.username,this.processId).then(function (userBatchProcessStatus) {
         userBatchProcessStatus.isRunning = isRunning;
         userBatchProcessStatus.save(function (err, result) {
         });
@@ -121,7 +123,8 @@ StatisticsProcess.prototype.saveBatchProcessStart = function (batchProcessResult
         isRunning: 1,
         userName: self.username,
         createTime: new Date(),
-        data: {}
+        data: {},
+        processId: self.processId
     };
     BatchProcessModel.setBatchProcess(newBatchProcess).then(function () {
         defer.resolve()

@@ -44,7 +44,7 @@ module.exports = function (app) {
     app.post('/addStation', auth.isInRole('admin'), controllers.station.addStation);
 
     /*=======batchProcess*/
-    app.get('/getBatchProcessResult', auth.isInRole('user'), controllers.batchProcess.getBatchProcess);
+    app.get('/getBatchProcessResult/:processId', auth.isInRole('user'), controllers.batchProcess.getBatchProcess);
     app.post('/startBatchProcess', auth.isInRole('user'), controllers.batchProcess.startBatchProcess);
     app.get('/stopBatchProcess/:processId', auth.isInRole('user'), controllers.batchProcess.stopBatchProcess);
     /*================threshole*/

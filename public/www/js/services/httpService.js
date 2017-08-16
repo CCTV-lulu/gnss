@@ -547,8 +547,8 @@ MetronicApp.factory('Mongodb', function ($http, $location, settingInfo, Prompt, 
                 cb(data)
             })
         }
-        function getBatchProcessResult(cb){
-            httpRequest.httpGet( url + "/getBatchProcessResult", function (data) {
+        function getBatchProcessResult(processId,cb){
+            httpRequest.httpGet( url + "/getBatchProcessResult/"+processId, function (data) {
                 cb(data)
             })
         }

@@ -10,7 +10,8 @@ module.exports.init = function () {
         isRunning: Number,
         effectiveTime: String,
         data: Object,
-        createTime:Date
+        createTime:Date,
+        processId: String
     });
 
     stationSchema.method({

@@ -27,7 +27,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
                 var hpl_num_is_able = false;
                 var vpl_num_is_able = false;
                 for (var i = 0; i < indexs.length; i++) {
-
+                        if( threshold == undefined) return
                     if (!threshold[indexs[i]] || !threshold[indexs[i]].handleData || threshold[indexs[i]].handleData.HPL === undefined||threshold[indexs[i]].handleData.HPL === null) {
                         hpl_num_is_able = true;
                         $('input[name=hpl_num]')[0].checked = false;
@@ -76,7 +76,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         $scope.setOptions = setOptions;
         $scope.optionsAble = {};
 
-        initResult();
+
         initStation();
         initOption()
     }
@@ -126,7 +126,8 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
         $scope.$watch('station', function (station) {
         if(station == undefined) return;
-        localStorage.setItem('showStation', station)
+        setOptionLocal('showStation',station)
+        // localStorage.setItem($rootScope.rootUserInfo.username + "_"+'showStation', station)
         Threshold.getHandleData(function (allThreshold) {
             if (station == undefined) return
             $scope.stationInfo = allThreshold.allThreshold[station]
@@ -199,7 +200,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             var filer = getFilter();
             findData.sys = filer.sys;
             findData.options = filer.options
-
             beStartBatchProcess(findData)
 
         } else {
@@ -265,7 +265,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function getResult(processId) {
         if ($location.path() != '/blank') return;
 
-        BatchProcess.getBatchProcessResult(function (data) {
+        BatchProcess.getBatchProcessResult(processId,function (data) {
             if (data.status == 400) {
                 return batchProcessErr()
             }
@@ -346,7 +346,17 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             $rootScope.$watch('allStations', function (allStations) {
                 if (allStations == undefined) return;
                 $scope.allStations = allStations;
-                $scope.station = localStorage.getItem('showStation') ||($scope.allStations[0] ? $scope.allStations[0].staId : '')
+                if(checkStation()){
+                    $scope.station = getOptionLocal('showStation')
+                    initResult($scope.station );
+
+                }else{
+                    $scope.station = ($scope.allStations[0] ? $scope.allStations[0].staId : '')
+                }
+
+                // console.log('--------------------')
+                // console.log(localStorage.getItem('showStation'))
+                // $scope.station = localStorage.getItem('showStation') ||($scope.allStations[0] ? $scope.allStations[0].staId : '')
 
             });
 
@@ -356,6 +366,19 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
             $scope.stationInfoName = $rootScope.stationName;
 
         }
+    }
+
+    function checkStation(){
+        var status = false;
+        console.log($scope.allStations)
+        for (var i in $scope.allStations){
+
+            if($scope.allStations[i].staId == getOptionLocal('showStation')){
+                status = true;
+                break;
+            }
+        }
+        return status
     }
 
     function getThreshold() {
@@ -409,7 +432,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     //结束配置阈值参数
 
     function showResult(data, username) {
-
         $('#dataStatisticsChartLoding').hide();
         $("#dataStatisticsChart").css("opacity", 1);
         showTime(data, username);
@@ -815,13 +837,17 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
         });
     }
 
-    function initResult() {
+    function initResult(stationId) {
         var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
         if (processId === null) return;
-        $http.get('/batchHandleResult/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
+        console.log()
+        if(processId.split('_')[0] ===stationId){
+            $http.get('/batchHandleResult/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
             showResult(data, $rootScope.rootUserInfo.username)
 
         })
+        }
+
     }
 
 

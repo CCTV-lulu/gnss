@@ -170,6 +170,7 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
             Mongodb.getStation(function (data) {
                 initUsers();
                 $scope.allStations = data;
+                $rootScope.allStations  = data
 
             })
         });

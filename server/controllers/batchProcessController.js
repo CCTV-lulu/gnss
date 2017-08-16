@@ -27,7 +27,7 @@ function startBatchProcess(req, res) {
 
 function getBatchProcess(req, res) {
     var user = req.user;
-    BatchProcessModel.findBatchProcess(user.username).then(function (userBatchProcessStatus) {
+    BatchProcessModel.findBatchProcess(user.username,req.params.processId).then(function (userBatchProcessStatus) {
         if (userBatchProcessStatus) {
             res.send({status: 200, result: userBatchProcessStatus})
         } else {
