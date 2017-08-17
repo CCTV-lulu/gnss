@@ -263,6 +263,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     function getResult(processId) {
+        if(!processId) return
         if ($location.path() != '/blank') return;
 
         BatchProcess.getBatchProcessResult(processId,function (data) {
