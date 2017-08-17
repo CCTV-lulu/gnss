@@ -370,7 +370,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function checkStation(){
         var status = false;
-        console.log($scope.allStations)
         for (var i in $scope.allStations){
 
             if($scope.allStations[i].staId == getOptionLocal('showStation')){
@@ -407,6 +406,7 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     }
 
     $scope.commitThreshold = function () {
+        if (!$scope.station||!$scope.signal||!$scope.threshold) return
         var data = {
             staId: $scope.station,
             signal: $scope.signal,
@@ -840,7 +840,6 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
     function initResult(stationId) {
         var processId = localStorage.getItem($rootScope.rootUserInfo.username + '_current_result_processId');
         if (processId === null) return;
-        console.log()
         if(processId.split('_')[0] ===stationId){
             $http.get('/batchHandleResult/' + $rootScope.rootUserInfo.username + '/' + processId + '/' + $rootScope.rootUserInfo.username + '.json').success(function (data) {
             showResult(data, $rootScope.rootUserInfo.username)
@@ -878,7 +877,9 @@ angular.module('MetronicApp').controller('BlankController', function ($http, $ro
 
     function showCoordinate(type, result) {
          var filer = getFilter();
-        if(filer.options.coordinate === undefined||filer.options.coordinate ===0) return
+        if(filer.options.coordinate === undefined||filer.options.coordinate ===0){
+           return $scope.show = true
+        }
         $scope.coordinateInfo = {};
         $('#' + type + '_loading').hide();
         $('#' + type + '_content').show();

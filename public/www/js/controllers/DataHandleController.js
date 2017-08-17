@@ -97,6 +97,7 @@ angular.module('MetronicApp').controller('DataHandleController', function ($root
             // handleData: $scope.threshold,
             config:$scope.config,
         };
+        if(!$scope.config||!$scope.station)return
         if(!isNaN($scope.config.rb[0])&&!isNaN($scope.config.rb[1])&&!isNaN($scope.config.rb[2])){
             Threshold.setHandleData(data,function(allHandleData){
 

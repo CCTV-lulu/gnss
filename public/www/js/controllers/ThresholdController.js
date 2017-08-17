@@ -71,6 +71,7 @@ angular.module('MetronicApp').controller('ThresholdController', function ($rootS
     }
 
     $scope.commitThreshold = function () {
+        if(!$scope.station||!$scope.signal||!$scope.threshold||!$scope.config) return
         var data = {
             staId: $scope.station,
             signal: $scope.signal,

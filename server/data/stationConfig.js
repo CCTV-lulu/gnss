@@ -128,10 +128,9 @@ module.exports = {
             }
 
             var newThreshold = stationConfig.threshold || {};
-            newThreshold[singal] = threshold;
+            newThreshold[singal] = threshold||{};
             var newConfig = stationConfig.config||{};
-            newConfig.elmin[parseInt(singal)] = config.elmin;
-            // newConfig.rb[parseInt(singal)]=config.rb;
+            newConfig.elmin[parseInt(singal)] = config.elmin||5;
 
             StationConfig.update({staId: staId}, {$set: {threshold:newThreshold,config: newConfig}}, function (err, result) {
 
@@ -162,7 +161,7 @@ module.exports = {
             var newConfig = stationConfig.config||{};
             var newHandleData = stationConfig.handleData || {};
             if (handleData !=undefined){
-                newHandleData[singal] = handleData;
+                newHandleData[singal] = handleData||{};
                 newHandleData[singal].elmin = 5;
             }
             var newRb=[];

@@ -81,6 +81,7 @@ angular.module('MetronicApp').controller('AdministratorController', function ($r
                 initUsers();
                 Prompt.promptBox('success', "添加用户成功！");
                 clearInput()
+                $scope.isAdmin = false
                 $scope.station = undefined
 
             })
