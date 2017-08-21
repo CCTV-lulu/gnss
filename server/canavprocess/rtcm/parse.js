@@ -167,8 +167,10 @@ function datatype(rtcm,data){
             type=getbitu(buff,24,12);
             if(type==opt.obs_type[0])
                 sync=getbitu(buff,75,1);
-            else if( type==opt.obs_type[1] || type==opt.obs_type[2] || type==opt.obs_type[3] ||
-                type==opt.obs_type[4] || type==opt.obs_type[5])
+            else if( type==opt.obs_type[1] || type==opt.obs_type[2] ||
+                type==opt.obs_type[3] || type==opt.obs_type[4] ||
+                type==opt.obs_type[5] || type==opt.obs_type[6] ||
+                type==opt.obs_type[7])
                 sync=getbitu(buff,78,1);
             i+=len+3;
             if(sync==0 && rtcm.index>=i){

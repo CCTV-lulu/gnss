@@ -157,6 +157,7 @@ function batch_process(batchProcessFiler, config, processId) {
                     }
 
                 }
+
                 var info = getOriginXYZ(data)
                 var newInfo = handleXYZ(info)
                 var newData = addRbLog(data,newInfo)

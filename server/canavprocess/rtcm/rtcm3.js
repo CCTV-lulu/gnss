@@ -357,6 +357,7 @@ function decode_head1104(buff,rtcm){
     rtcm.obsd.nsat=nsat;
     return 1;
 }
+
 function decode_msm_head(buff,rtcm, sys, h, msh){
     var h0=ca.msm_h_t();
     var tow,tod;
@@ -640,6 +641,64 @@ function decode_type1012(buff,rtcm){
     rtcm.time=rtcm.obsd.time;
     return 1;
 }
+/* decode type 1004: extended L1&L2 gps rtk observables ----------------------*/
+function decode_type1004(buff,rtcm){
+//    const int L2codes[]={CODE_L2C,CODE_L2P,CODE_L2W,CODE_L2W};
+    var L2codes=[ca.CODE_L2W,ca.CODE_L2P,ca.CODE_L2W,ca.CODE_L2W];//ldy 20131214
+
+    var pr1,cnr1,cnr2,tt,cp1,cp2;
+    var i=24+64,j,index,nsat,sync,prn,sat,code1,code2,pr21,ppr1,ppr2;
+    var lock1,lock2,amb,sys;
+    var ep2=new Array(6),ep=[2014, 1,  4, 22, 33, 0.0000000];	//add test code by LDY ,6/1/2014//  > 2014  1  4 22 26 55.0000000  0 19
+
+    if ((id=decode_head1001(buff,rtcm))<0) return -1;
+
+    for (j=0;j<rtcm.obsd.nsat&& i+125<=rtcm.len*8;j++) {
+
+        prn  =getbitu(buff,i, 6); i+= 6;
+        code1=getbitu(buff,i, 1); i+= 1;
+        pr1  =getbitu(buff,i,24); i+=24;
+        ppr1 =getbits(buff,i,20); i+=20;
+        lock1=getbitu(buff,i, 7); i+= 7;
+        amb  =getbitu(buff,i, 8); i+= 8;
+        cnr1 =getbitu(buff,i, 8); i+= 8;
+        code2=getbitu(buff,i, 2); i+= 2;
+        pr21 =getbits(buff,i,14); i+=14;
+        ppr2 =getbits(buff,i,20); i+=20;
+        lock2=getbitu(buff,i, 7); i+= 7;
+        cnr2 =getbitu(buff,i, 8); i+= 8;
+
+        sys=ca.SYS_GPS;
+        sat=prn;
+
+        if ((index=obsindex(rtcm.obsd,sys,sat))<0) continue;
+        pr1=pr1*0.02+amb*PRUNIT_GPS;
+        if (ppr1!=0xFFF80000) {
+            rtcm.obsd.obs[index].P[0]=pr1;
+            cp1=adjcp(rtcm.obsd,sys,sat,0,ppr1*0.0005/cmn.lam_carr[0]);
+            rtcm.obsd.obs[index].L[0]=pr1/cmn.lam_carr[0]+cp1;
+        }
+        rtcm.obsd.obs[index].LLI[0]=lossoflock(rtcm.obsd,sys,sat,0,lock1);
+        rtcm.obsd.obs[index].SNR[0]=snratio(cnr1*0.25);
+        rtcm.obsd.obs[index].code[0]=code1?ca.CODE_L1P:ca.CODE_L1C;
+
+        if (pr21!=0xFFFFE000) {
+            rtcm.obsd.obs[index].P[1]=pr1+pr21*0.02;
+        }
+        if (ppr2!=0xFFF80000) {
+            cp2=adjcp(rtcm.obsd,sys,sat,1,ppr2*0.0005/cmn.lam_carr[1]);
+            rtcm.obsd.obs[index].L[1]=pr1/cmn.lam_carr[1]+cp2;
+        }
+        rtcm.obsd.obs[index].LLI[1]=lossoflock(rtcm.obsd,sys,sat,1,lock2);
+        rtcm.obsd.obs[index].SNR[1]=snratio(cnr2*0.25);
+        rtcm.obsd.obs[index].code[1]=L2codes[code2];
+
+
+    }
+    rtcm.id=id;
+    rtcm.time=rtcm.obsd.time;
+    return 1;
+}
 //GPS观测数据
 /* decode type 2004: extended L1&L2 gps rtk observables ----------------------*/
 function decode_type2004(buff,rtcm){
@@ -694,6 +753,104 @@ function decode_type2004(buff,rtcm){
     rtcm.time=rtcm.obsd.time;
     return 1;
 }
+/* decode type 1104: extended B1&B2&B3 BD rtk observables ----------------------*/
+function decode_type1104(buff,rtcm){
+    // const int L2codes[]={CODE_L2C,CODE_L2P,CODE_L2W,CODE_L2W};
+    var pr1,pr2,pr3,cnr1,cnr2,cnr3,tt,cp1,cp2,cp3;
+    var i=24+64,j,index,nsat,sync,prn,sat,code1,code2,ppr1,ppr2,code3,ppr3;
+    var lock1,lock2,lock3,amb1,amb2,amb3,sys;
+    var BD_indicator;
+    var LL=0,iL;
+
+    var sow;//test
+
+    if ((id=decode_head1104(buff,rtcm))<0) return -1;
+
+    BD_indicator=getbitu(buff,i, 3);i+=3;
+
+    for(iL=0;iL<3;iL++){
+        if((BD_indicator>>iL)&0x1) LL += 71;
+    }
+
+    for (j=0;j<rtcm.obsd.nsat && i+LL<=rtcm.len*8;j++) {
+        prn  =getbitu(buff,i, 6); i+= 6;
+
+        /* ---探测协议中的异常 */
+        //sow = time2gpst(rtcm->time,NULL);
+
+        /* ---------------------------- */
+
+        if((BD_indicator>>2)&0x1)
+        {
+            code1=getbitu(buff,i, 2); i+= 2;
+            pr1  =getbitu(buff,i,24); i+=24;
+            ppr1 =getbits(buff,i,20); i+=20;
+            lock1=getbitu(buff,i, 7); i+= 7;
+            amb1 =getbitu(buff,i, 8); i+= 8;
+            cnr1 =getbitu(buff,i, 8); i+= 8;
+        }
+
+        if((BD_indicator>>1)&0x1)
+        {
+            code2=getbitu(buff,i, 2); i+= 2;
+            pr2  =getbitu(buff,i,24); i+=24;
+            ppr2 =getbits(buff,i,20); i+=20;
+            lock2=getbitu(buff,i, 7); i+= 7;
+            amb2 =getbitu(buff,i, 8); i+= 8;
+            cnr2 =getbitu(buff,i, 8); i+= 8;
+        }
+
+        if(BD_indicator&0x1)
+        {
+            code3=getbitu(buff,i, 2); i+= 2;
+            pr3  =getbitu(buff,i,24); i+=24;
+            ppr3 =getbits(buff,i,20); i+=20;
+            lock3=getbitu(buff,i, 7); i+= 7;
+            amb3 =getbitu(buff,i, 8); i+= 8;
+            cnr3 =getbitu(buff,i, 8); i+= 8;
+        }
+
+        sys=ca.SYS_CMP;
+        sat=prn;
+
+        if ((index=obsindex(rtcm.obsd,sys,sat))<0) continue;
+        if((BD_indicator>>2)&0x1){
+            pr1=pr1*0.02+amb1*PRUNIT_GPS;
+            if (ppr1!=0xFFF80000) {
+                rtcm.obsd.obs[index].P[0]=pr1;
+                cp1=adjcp(rtcm.obsd,sys,sat,0,ppr1*0.0005/cmn.lam_carr[6]);
+                rtcm.obsd.obs[index].L[0]=pr1/cmn.lam_carr[6]+cp1;
+            }
+            rtcm.obsd.obs[index].LLI[0]=lossoflock(rtcm.obsd,sys,sat,0,lock1);
+            rtcm.obsd.obs[index].SNR[0]=snratio(cnr1*0.25);
+            rtcm.obsd.obs[index].code[0]=ca.CODE_L2I;
+        }
+        if((BD_indicator>>1)&0x1){
+            pr2=pr2*0.02+amb2*PRUNIT_GPS;
+            if (ppr2!=0xFFF80000) {
+                rtcm.obsd.obs[index].P[1]=pr2;
+                cp2=adjcp(rtcm.obsd,sys,sat,1,ppr2*0.0005/cmn.lam_carr[7]);
+                rtcm.obsd.obs[index].L[1]=pr2/cmn.lam_carr[7]+cp2;
+            }
+            rtcm.obsd.obs[index].LLI[1]=lossoflock(rtcm.obsd,sys,sat,1,lock2);
+            rtcm.obsd.obs[index].SNR[1]=snratio(cnr2*0.25);
+            rtcm.obsd.obs[index].code[1]=ca.CODE_L7I;
+        }
+        if(BD_indicator&0x1){
+            pr3=pr3*0.02+amb3*PRUNIT_GPS;
+            if (ppr3!=0xFFF80000) {
+                rtcm.obsd.obs[index].P[2]=pr3;
+                cp3=adjcp(rtcm.obsd,sys,sat,2,ppr3*0.0005/cmn.lam_carr[8]);
+                rtcm.obsd.obs[index].L[2]=pr3/cmn.lam_carr[8]+cp3;
+            }
+            rtcm.obsd.obs[index].LLI[2]=lossoflock(rtcm.obsd,sys,sat,2,lock3);
+            rtcm.obsd.obs[index].SNR[2]=snratio(cnr3*0.25);
+            rtcm.obsd.obs[index].code[2]=ca.CODE_L6I;
+        }
+    }
+    rtcm.time=rtcm.obsd.time;
+    return 1;
+}
 //北斗观测数据
 /* decode type 2104: extended B1&B2&B3 gps rtk observables ----------------------*/
 function decode_type2104(buff,rtcm){
@@ -720,8 +877,7 @@ function decode_type2104(buff,rtcm){
 
         /* ---------------------------- */
 
-        if((BD_indicator>>2)&0x1)
-        {
+        if((BD_indicator>>2)&0x1) {
             code1=getbitu(buff,i, 2); i+= 2;
             pr1  =getbitu(buff,i,24); i+=24;
             ppr1 =getbits(buff,i,20); i+=20;
@@ -731,8 +887,7 @@ function decode_type2104(buff,rtcm){
             doppler_1=getbits(buff,i,32); i+=32;
         }
 
-        if((BD_indicator>>1)&0x1)
-        {
+        if((BD_indicator>>1)&0x1) {
             code2=getbitu(buff,i, 2); i+= 2;
             pr2  =getbitu(buff,i,24); i+=24;
             ppr2 =getbits(buff,i,20); i+=20;
@@ -742,8 +897,7 @@ function decode_type2104(buff,rtcm){
             doppler_2=getbits(buff,i,32); i+=32;
         }
 
-        if(BD_indicator&0x1)
-        {
+        if(BD_indicator&0x1){
             code3=getbitu(buff,i, 2); i+= 2;
             pr3  =getbitu(buff,i,24); i+=24;
             ppr3 =getbits(buff,i,20); i+=20;
@@ -756,8 +910,7 @@ function decode_type2104(buff,rtcm){
         sat=prn;
 
         if ((index=obsindex(rtcm.obsd,sys,sat))<0) continue;
-        if((BD_indicator>>2)&0x1)
-        {
+        if((BD_indicator>>2)&0x1){
             pr1=pr1*0.02+amb1*PRUNIT_GPS;
             if (ppr1!=0xFFF80000) {
                 rtcm.obsd.obs[index].P[0]=pr1;
@@ -770,8 +923,7 @@ function decode_type2104(buff,rtcm){
             rtcm.obsd.obs[index].D[0]=doppler_1*0.001;
         }
 
-        if((BD_indicator>>1)&0x1)
-        {
+        if((BD_indicator>>1)&0x1){
             pr2=pr2*0.02+amb2*PRUNIT_GPS;
             if (ppr2!=0xFFF80000) {
                 rtcm.obsd.obs[index].P[1]=pr2;
@@ -1243,6 +1395,12 @@ function decode_rtcm3(buff,rtcm) {
          break;*/
         case 1119://北斗星历数据
             ret = decode_type1119(buff,rtcm);
+            break;
+        case 1004://GPS观测数据
+            ret = decode_type1004(buff,rtcm);
+            break;
+        case 1104://北斗观测数据
+            ret = decode_type1104(buff,rtcm);
             break;
         case 1012://GLONASS观测数据
             ret = decode_type1012(buff,rtcm);

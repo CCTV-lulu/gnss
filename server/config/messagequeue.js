@@ -216,10 +216,8 @@ function getStationConfig(staId) {
     return {config:0, threshold:{}}
 
 }
-
 // Handle an incomming message.
 function onMessage(data) {
-
     var message = data;
     var buf = Buffer.from(message.data, 'base64');
     var optJson = getStationConfig([data.station]).config
