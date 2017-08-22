@@ -36,7 +36,7 @@ module.exports = function (app) {
     app.get('/getUserStationInfo', controllers.station.getUserStationInfo);
     app.post('/changePassword', auth.isInRole('user'), controllers.users.changePassword);
     app.get('/findAllUsers', auth.isInRole('admin'), controllers.users.getAllUser);
-    app.post('/addUser', controllers.users.addUser);
+    app.post('/addUser',auth.isInRole('admin') ,controllers.users.addUser);
     app.post('/deleteUser', auth.isInRole('admin'), controllers.users.deleteUser);
 
     /*==========station*/

@@ -6,7 +6,6 @@ var encryption = require('../utilities/cripto'),
 
 module.exports = {
 
-
     changePassword: function (req, res) {
         if (req.user.username == req.body.userId || req.user.roles.indexOf('admin') > -1) {
             var updatedUserData = {
@@ -91,11 +90,6 @@ module.exports = {
 
 
     },
-
-    getUserInfo: function(){
-
-    },
-
 
     deleteUser: function (req, res) {
         User.deleteByName(req.body.username, function (err, result) {
